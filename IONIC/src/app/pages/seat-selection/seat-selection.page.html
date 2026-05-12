@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/schedule-list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Select Seat</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="schedule">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>{{ schedule.origin }} → {{ schedule.destination }}</ion-card-subtitle>
+        <ion-card-title>{{ schedule.departure_time | date:'shortTime' }}</ion-card-title>
+      </ion-card-header>
+    </ion-card>
+
+    <h3 class="ion-text-center">Select your seat</h3>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3" *ngFor="let seat of schedule.seats">
+          <div
+            class="seat-box"
+            [class.booked]="seat.status === 'booked'"
+            [class.selected]="selectedSeat?.id === seat.id"
+            (click)="selectSeat(seat)"
+          >
+            {{ seat.seat_number }}
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-button expand="block" [disabled]="!selectedSeat" (click)="confirmBooking()" class="ion-margin-top">
+      Book Selected Seat
+    </ion-button>
+  </div>
+</ion-content>

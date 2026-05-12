@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Track Shuttle</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="map-placeholder ion-padding ion-text-center" style="height: 300px; background: #e0e0e0; display: flex; flex-direction: column; justify-content: center;">
+    <ion-icon name="map-outline" style="font-size: 64px;"></ion-icon>
+    <p>Map showing location of shuttle...</p>
+    <div *ngIf="location">
+      <p>Latitude: {{ location.latitude }}</p>
+      <p>Longitude: {{ location.longitude }}</p>
+    </div>
+  </div>
+
+  <ion-card *ngIf="trip">
+    <ion-card-header>
+      <ion-card-subtitle>Trip Status: {{ trip.status }}</ion-card-subtitle>
+      <ion-card-title>{{ trip.schedule?.origin }} → {{ trip.schedule?.destination }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Driver: {{ trip.schedule?.driver?.name }}</p>
+      <p>Vehicle: {{ trip.schedule?.vehicle?.name }} ({{ trip.schedule?.vehicle?.license_plate }})</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

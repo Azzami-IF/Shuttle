@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Trips (Driver)</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item-sliding *ngFor="let trip of trips">
+      <ion-item>
+        <ion-label>
+          <h2>{{ trip.schedule?.origin }} → {{ trip.schedule?.destination }}</h2>
+          <p>Departure: {{ trip.schedule?.departure_time | date:'short' }}</p>
+          <p>Status: <ion-badge [color]="getStatusColor(trip.status)">{{ trip.status }}</ion-badge></p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="success" (click)="startTrip(trip)" *ngIf="trip.status === 'scheduled'">
+          Start
+        </ion-item-option>
+        <ion-item-option color="primary" (click)="completeTrip(trip)" *ngIf="trip.status === 'on-going'">
+          Complete
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <div *ngIf="activeTrip" class="ion-padding active-trip-section">
+    <h3>Active Trip: {{ activeTrip.schedule?.origin }} → {{ activeTrip.schedule?.destination }}</h3>
+    <ion-button expand="block" (click)="updateLocation()">
+      Send Location Update
+    </ion-button>
+  </div>
+</ion-content>

@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Shuttle Schedules</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let schedule of schedules" (click)="viewSchedule(schedule.id)" button>
+      <ion-label>
+        <h2>{{ schedule.origin }} to {{ schedule.destination }}</h2>
+        <p>{{ schedule.departure_time | date:'medium' }}</p>
+        <p>Vehicle: {{ schedule.vehicle?.name }} ({{ schedule.vehicle?.license_plate }})</p>
+      </ion-label>
+      <ion-badge slot="end" color="success">{{ getAvailableSeats(schedule) }} Seats</ion-badge>
+    </ion-item>
+  </ion-list>
+
+  <ion-text color="medium" class="ion-text-center" *ngIf="schedules.length === 0">
+    <p>No schedules found.</p>
+  </ion-text>
+</ion-content>
