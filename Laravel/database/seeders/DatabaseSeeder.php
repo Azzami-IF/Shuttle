@@ -18,35 +18,43 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin
-        User::create([
-            'name' => 'Admin System',
-            'email' => 'admin@shuttle.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@shuttle.com'],
+            [
+                'name' => 'Admin System',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
         // Drivers
-        $driver1 = User::create([
-            'name' => 'John Driver',
-            'email' => 'driver1@shuttle.com',
-            'password' => Hash::make('password'),
-            'role' => 'driver',
-        ]);
+        $driver1 = User::updateOrCreate(
+            ['email' => 'driver1@shuttle.com'],
+            [
+                'name' => 'John Driver',
+                'password' => Hash::make('password'),
+                'role' => 'driver',
+            ]
+        );
 
         // Customers
-        User::create([
-            'name' => 'Alice Customer',
-            'email' => 'alice@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'customer',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'alice@gmail.com'],
+            [
+                'name' => 'Alice Customer',
+                'password' => Hash::make('password'),
+                'role' => 'customer',
+            ]
+        );
 
         // Vehicles
-        $bus1 = Vehicle::create([
-            'name' => 'Ambatu Express 01',
-            'license_plate' => 'B 1234 ABC',
-            'capacity' => 12,
-        ]);
+        $bus1 = Vehicle::updateOrCreate(
+            ['license_plate' => 'B 1234 ABC'],
+            [
+                'name' => 'Ambatu Express 01',
+                'capacity' => 12,
+            ]
+        );
 
         // Schedule
         $schedule = Schedule::create([

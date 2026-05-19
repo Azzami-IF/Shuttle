@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
 @Component({
+  standalone: false,
   selector: 'app-schedule-list',
   templateUrl: './schedule-list.page.html',
   styleUrls: ['./schedule-list.page.scss'],

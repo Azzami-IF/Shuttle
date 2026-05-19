@@ -1,4 +1,4 @@
-.login-page {
+.register-page {
   --background: transparent;
   background: linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 50%, #1f331f 100%);
   display: flex;
@@ -52,7 +52,7 @@
   opacity: 0.2;
 }
 
-.login-wrapper {
+.register-wrapper {
   position: relative;
   z-index: 10;
   width: 100%;
@@ -60,18 +60,18 @@
   padding: 20px;
 }
 
-.login-card {
+.register-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 40px 30px;
+  padding: 30px 25px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
 .logo-box {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   margin: 0 auto;
 }
 
@@ -84,13 +84,13 @@
 .brand-title {
   color: white;
   margin: 0;
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
 .brand-subtitle {
   color: #d9f99d;
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-top: 5px;
 }
 
@@ -98,8 +98,8 @@
   .input-label {
     display: block;
     color: white;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
   }
 
   .input-container {
@@ -111,7 +111,7 @@
       position: absolute;
       left: 12px;
       color: #bef264;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
 
     .custom-input {
@@ -119,7 +119,7 @@
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 10px;
-      padding: 12px 12px 12px 40px;
+      padding: 10px 10px 10px 38px;
       color: white;
       outline: none;
       transition: all 0.3s;
@@ -134,33 +134,16 @@
       }
     }
 
-    .toggle-password {
-      position: absolute;
-      right: 12px;
-      color: #bef264;
-      font-size: 1.2rem;
+    .select-input {
+      appearance: none;
       cursor: pointer;
+      color: white;
+
+      option {
+        background: #1a2e1a;
+        color: white;
+      }
     }
-  }
-}
-
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-
-  .remember-checkbox {
-    --size: 18px;
-    --checkbox-background-checked: #84cc16;
-    --border-color: rgba(255, 255, 255, 0.3);
-    color: #d9f99d;
-  }
-
-  .forgot-link {
-    color: #bef264;
-    text-decoration: none;
-    &:hover { color: white; }
   }
 }
 
@@ -169,7 +152,7 @@
   background: linear-gradient(to right, #9dc847, #7fb52a);
   color: white;
   border: none;
-  padding: 15px;
+  padding: 14px;
   border-radius: 10px;
   font-size: 1.1rem;
   font-weight: 600;
@@ -189,8 +172,9 @@
 
 .footer-link {
   color: #d9f99d;
+  font-size: 0.9rem;
   p { margin: 0; }
-  .register-link {
+  .login-link {
     color: #bef264;
     font-weight: 600;
     cursor: pointer;
@@ -202,5 +186,5 @@
 .copyright-text {
   color: rgba(190, 242, 100, 0.5);
   font-size: 0.8rem;
-  margin-top: 20px;
+  margin-top: 15px;
 }

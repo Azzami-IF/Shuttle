@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
 @Component({
+  standalone: false,
   selector: 'app-trip-tracking',
   templateUrl: './trip-tracking.page.html',
   styleUrls: ['./trip-tracking.page.scss'],

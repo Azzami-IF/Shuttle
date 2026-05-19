@@ -1,34 +1,74 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Login - Ambatu Bus</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="login-page">
+  <div class="stars-container">
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+  </div>
 
-<ion-content class="ion-padding">
-  <div class="login-container">
-    <div class="logo-section ion-text-center">
-      <img src="assets/icon/favicon.png" alt="Logo" style="width: 80px;">
-      <h1>Welcome Back</h1>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="header-section ion-text-center">
+        <div class="logo-box ion-margin-bottom">
+          <img src="assets/icon/favicon.png" alt="Logo" class="logo-img">
+        </div>
+        <h1 class="brand-title">Ambatu Bus</h1>
+        <p class="brand-subtitle">Masuk ke sistem manajemen bus</p>
+      </div>
+
+      <form (ngSubmit)="onLogin()">
+        <div class="input-group">
+          <label class="input-label">Email</label>
+          <div class="input-container">
+            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+            <input
+              type="email"
+              [(ngModel)]="credentials.email"
+              name="email"
+              placeholder="driver@ambatubus.com"
+              required
+              autocomplete="off"
+              class="custom-input"
+            >
+          </div>
+        </div>
+
+        <div class="input-group ion-margin-top">
+          <label class="input-label">Password</label>
+          <div class="input-container">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="credentials.password"
+              name="password"
+              placeholder="••••••••"
+              required
+              autocomplete="off"
+              class="custom-input"
+            >
+            <ion-icon
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+              class="toggle-password"
+              (click)="showPassword = !showPassword"
+            ></ion-icon>
+          </div>
+        </div>
+
+        <div class="form-options ion-margin-top ion-margin-bottom">
+          <ion-checkbox labelPlacement="end" justify="start" class="remember-checkbox">Ingat saya</ion-checkbox>
+          <a href="#" class="forgot-link">Lupa password?</a>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Masuk ke Sistem
+        </button>
+      </form>
+
+      <div class="footer-link ion-text-center ion-margin-top">
+        <p>Belum punya akun? <a (click)="goToRegister()" class="register-link">Daftar sekarang</a></p>
+      </div>
     </div>
-
-    <form (ngSubmit)="onLogin()">
-      <ion-item lines="full">
-        <ion-label position="floating">Email</ion-label>
-        <ion-input type="email" [(ngModel)]="credentials.email" name="email" required></ion-input>
-      </ion-item>
-
-      <ion-item lines="full">
-        <ion-label position="floating">Password</ion-label>
-        <ion-input type="password" [(ngModel)]="credentials.password" name="password" required></ion-input>
-      </ion-item>
-
-      <ion-button expand="block" type="submit" class="ion-margin-top">
-        Login
-      </ion-button>
-    </form>
-
-    <div class="ion-text-center ion-margin-top">
-      <p>Don't have an account? <a routerLink="/register">Register here</a></p>
-    </div>
+    <p class="copyright-text ion-text-center">
+      © 2026 Ambatu Bus. Sistem manajemen transportasi.
+    </p>
   </div>
 </ion-content>

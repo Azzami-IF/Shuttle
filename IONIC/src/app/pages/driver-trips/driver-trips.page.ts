@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 
 @Component({
+  standalone: false,
   selector: 'app-driver-trips',
   templateUrl: './driver-trips.page.html',
   styleUrls: ['./driver-trips.page.scss'],

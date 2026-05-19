@@ -1,44 +1,110 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/login"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Register</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="register-page">
+  <div class="stars-container">
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+  </div>
 
-<ion-content class="ion-padding">
-  <form (ngSubmit)="onRegister()">
-    <ion-item lines="full">
-      <ion-label position="floating">Full Name</ion-label>
-      <ion-input type="text" [(ngModel)]="user.name" name="name" required></ion-input>
-    </ion-item>
+  <div class="register-wrapper">
+    <div class="register-card">
+      <div class="header-section ion-text-center">
+        <div class="logo-box ion-margin-bottom">
+          <img src="assets/icon/favicon.png" alt="Logo" class="logo-img">
+        </div>
+        <h1 class="brand-title">Daftar Akun</h1>
+        <p class="brand-subtitle">Bergabung dengan Ambatu Bus</p>
+      </div>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" [(ngModel)]="user.email" name="email" required></ion-input>
-    </ion-item>
+      <form (ngSubmit)="onRegister()">
+        <div class="input-group">
+          <label class="input-label">Nama Lengkap</label>
+          <div class="input-container">
+            <ion-icon name="person-outline" class="input-icon"></ion-icon>
+            <input
+              type="text"
+              [(ngModel)]="user.name"
+              name="name"
+              placeholder="Masukkan nama lengkap"
+              required
+              autocomplete="off"
+              class="custom-input"
+            >
+          </div>
+        </div>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Phone Number</ion-label>
-      <ion-input type="tel" [(ngModel)]="user.phone" name="phone"></ion-input>
-    </ion-item>
+        <div class="input-group ion-margin-top">
+          <label class="input-label">Email</label>
+          <div class="input-container">
+            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+            <input
+              type="email"
+              [(ngModel)]="user.email"
+              name="email"
+              placeholder="email@contoh.com"
+              required
+              autocomplete="off"
+              class="custom-input"
+            >
+          </div>
+        </div>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" [(ngModel)]="user.password" name="password" required></ion-input>
-    </ion-item>
+        <div class="input-group ion-margin-top">
+          <label class="input-label">Nomor Telepon</label>
+          <div class="input-container">
+            <ion-icon name="phone-portrait-outline" class="input-icon"></ion-icon>
+            <input
+              type="tel"
+              [(ngModel)]="user.phone"
+              name="phone"
+              placeholder="0812xxxx"
+              autocomplete="off"
+              class="custom-input"
+            >
+          </div>
+        </div>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Role</ion-label>
-      <ion-select [(ngModel)]="user.role" name="role">
-        <ion-select-option value="customer">Customer</ion-select-option>
-        <ion-select-option value="driver">Driver</ion-select-option>
-      </ion-select>
-    </ion-item>
+        <div class="input-group ion-margin-top">
+          <label class="input-label">Password</label>
+          <div class="input-container">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <input
+              type="password"
+              [(ngModel)]="user.password"
+              name="password"
+              placeholder="Min. 8 karakter"
+              required
+              autocomplete="off"
+              class="custom-input"
+            >
+          </div>
+        </div>
 
-    <ion-button expand="block" type="submit" class="ion-margin-top">
-      Register
-    </ion-button>
-  </form>
+        <div class="input-group ion-margin-top">
+          <label class="input-label">Daftar Sebagai</label>
+          <div class="input-container">
+            <ion-icon name="people-outline" class="input-icon"></ion-icon>
+            <select
+              [(ngModel)]="user.role"
+              name="role"
+              class="custom-input select-input"
+            >
+              <option value="customer">Penumpang (Customer)</option>
+              <option value="driver">Sopir (Driver)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn ion-margin-top">
+          Daftar Sekarang
+        </button>
+      </form>
+
+      <div class="footer-link ion-text-center ion-margin-top">
+        <p>Sudah punya akun? <a (click)="goToLogin()" class="login-link">Masuk di sini</a></p>
+      </div>
+    </div>
+    <p class="copyright-text ion-text-center">
+      © 2026 Ambatu Bus. Sistem manajemen transportasi.
+    </p>
+  </div>
 </ion-content>

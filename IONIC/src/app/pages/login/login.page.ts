@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
+  standalone: false,
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
@@ -12,6 +13,7 @@ export class LoginPage {
     email: '',
     password: ''
   };
+  showPassword = false;
 
   constructor(
     private auth: AuthService,
@@ -29,5 +31,9 @@ export class LoginPage {
         alert('Login failed: ' + (err.error?.message || 'Unknown error'));
       }
     });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 }

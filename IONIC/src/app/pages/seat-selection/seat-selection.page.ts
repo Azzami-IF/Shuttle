@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
 @Component({
+  standalone: false,
   selector: 'app-seat-selection',
   templateUrl: './seat-selection.page.html',
   styleUrls: ['./seat-selection.page.scss'],
