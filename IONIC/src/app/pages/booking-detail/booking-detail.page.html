@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Booking Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="booking">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Booking #{{ booking.id }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Route:</strong> {{ booking.schedule.origin }} - {{ booking.schedule.destination }}</p>
+        <p><strong>Seat:</strong> {{ booking.seat.seat_number }}</p>
+        <p><strong>Status:</strong> {{ booking.status }}</p>
+        <p><strong>Time:</strong> {{ booking.schedule.departure_time | date:'medium' }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <div *ngIf="!booking" class="ion-text-center">
+    <ion-spinner></ion-spinner>
+    <p>Loading booking details...</p>
+  </div>
+</ion-content>
