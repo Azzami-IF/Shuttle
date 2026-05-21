@@ -1,38 +1,54 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>My Trips (Driver)</ion-title>
+    <ion-title>Tugas Driver</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-item-sliding *ngFor="let trip of trips">
-      <ion-item>
-        <ion-label>
-          <h2>{{ trip.schedule?.origin }} → {{ trip.schedule?.destination }}</h2>
-          <p>Departure: {{ trip.schedule?.departure_time | date:'short' }}</p>
-          <p>Status: <ion-badge [color]="getStatusColor(trip.status)">{{ trip.status }}</ion-badge></p>
-        </ion-label>
-      </ion-item>
+<ion-content class="driver-trips-page">
+  <div class="trip-card" *ngFor="let trip of trips">
+    <div class="status-badge" [class]="trip.status">
+      {{ trip.status | uppercase }}
+    </div>
 
-      <ion-item-options side="end">
-        <ion-item-option color="success" (click)="startTrip(trip)" *ngIf="trip.status === 'scheduled'">
-          Start
-        </ion-item-option>
-        <ion-item-option color="primary" (click)="completeTrip(trip)" *ngIf="trip.status === 'on-going'">
-          Complete
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+    <div class="route-text">
+      {{ trip.schedule?.origin }}
+      <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      {{ trip.schedule?.destination }}
+    </div>
 
-  <div *ngIf="activeTrip" class="ion-padding active-trip-section">
-    <h3>Active Trip: {{ activeTrip.schedule?.origin }} → {{ activeTrip.schedule?.destination }}</h3>
-    <ion-button expand="block" (click)="updateLocation()">
-      Send Location Update
-    </ion-button>
+    <div class="time-text">
+      <span class="material-symbols-outlined text-[18px]">schedule</span>
+      {{ trip.schedule?.departure_time | date:'EEEE, d MMM HH:mm' }}
+    </div>
+
+    <div class="action-row">
+      <button class="details-btn" [routerLink]="['/trip-tracking', { id: trip.id }]">Detail</button>
+      <button class="start-btn" (click)="startTrip(trip)" *ngIf="trip.status === 'scheduled'">Mulai</button>
+      <button class="complete-btn" (click)="completeTrip(trip)" *ngIf="trip.status === 'on-the-way'">Selesai</button>
+    </div>
+  </div>
+
+  <div class="active-trip-panel" *ngIf="activeTrip">
+    <div class="panel-header">
+      <span class="title">Sedang Berjalan</span>
+      <span class="status">ON THE WAY</span>
+    </div>
+
+    <div class="location-update">
+      <span class="material-symbols-outlined text-[24px]">my_location</span>
+      <div class="flex flex-col">
+        <span class="text-xs opacity-70">Update Lokasi</span>
+        <span class="text-sm font-bold">Terakhir: Baru saja</span>
+      </div>
+      <button class="update-btn" (click)="updateLocation()">Update</button>
+    </div>
+  </div>
+
+  <div class="text-center py-12" *ngIf="trips.length === 0">
+    <span class="material-symbols-outlined text-gray-400 text-6xl">assignment_late</span>
+    <p class="text-gray-500 mt-4">Belum ada tugas perjalanan hari ini.</p>
   </div>
 </ion-content>

@@ -1,32 +1,59 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Booking Detail</ion-title>
+    <ion-title>Riwayat Perjalanan</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div *ngIf="booking">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Status: {{ booking.status }}</ion-card-subtitle>
-        <ion-card-title>{{ booking.schedule?.origin }} → {{ booking.schedule?.destination }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p><strong>Departure:</strong> {{ booking.schedule?.departure_time | date:'medium' }}</p>
-        <p><strong>Seat Number:</strong> {{ booking.seat?.seat_number }}</p>
-        <p><strong>Vehicle:</strong> {{ booking.schedule?.vehicle?.name }} ({{ booking.schedule?.vehicle?.license_plate }})</p>
-      </ion-card-content>
-    </ion-card>
+<ion-content class="booking-history-page ion-padding">
+  <div class="search-filter">
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input type="text" placeholder="Cari riwayat rute..." [(ngModel)]="searchTerm" (input)="onSearchChange()" autocomplete="off">
+    </div>
+    <button class="filter-btn">
+      <span class="material-symbols-outlined">tune</span>
+    </button>
+  </div>
 
-    <ion-button expand="block" color="danger" *ngIf="booking.status === 'booked'" (click)="cancelBooking()">
-      Cancel Booking
-    </ion-button>
+  <div class="space-y-4">
+    <div class="history-card" *ngFor="let item of bookings">
+      <div class="card-header">
+        <div>
+          <div class="date">{{ item.created_at | date:'EEEE, d MMM y' }}</div>
+          <div class="route">{{ item.schedule?.origin }} → {{ item.schedule?.destination }}</div>
+        </div>
+        <span class="status-badge">{{ item.status }}</span>
+      </div>
 
-    <ion-button expand="block" color="success" class="ion-margin-top" routerLink="/trip-tracking" [queryParams]="{id: booking.schedule?.trip?.id}" *ngIf="booking.schedule?.trip?.status === 'on-going'">
-      Track My Shuttle
-    </ion-button>
+      <div class="card-details">
+        <div class="item">
+          <span class="material-symbols-outlined text-[20px]">schedule</span>
+          {{ item.schedule?.departure_time | date:'HH:mm' }}
+        </div>
+        <div class="item">
+          <span class="material-symbols-outlined text-[20px]">payments</span>
+          Rp 85.000
+        </div>
+        <div class="item" *ngIf="item.seat">
+          <span class="material-symbols-outlined text-[20px]">event_seat</span>
+          {{ item.seat?.label }}
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="ticket-id">Tiket #TCK{{ item.id }}</div>
+        <button class="view-btn" (click)="viewTracking(item)" *ngIf="item.schedule?.trip?.status === 'on-the-way'">
+          Lacak Bus <span class="material-symbols-outlined text-[16px]">near_me</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="text-center py-12" *ngIf="bookings.length === 0">
+      <span class="material-symbols-outlined text-gray-400 text-6xl">history</span>
+      <p class="text-gray-500 mt-4">Belum ada riwayat perjalanan.</p>
+    </div>
   </div>
 </ion-content>

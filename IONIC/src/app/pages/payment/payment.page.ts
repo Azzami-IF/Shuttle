@@ -50,11 +50,12 @@ export class PaymentPage implements OnInit {
   confirmPayment() {
     this.api.post(`bookings/${this.bookingId}/confirm-payment`, {}).subscribe({
       next: () => {
-        alert('Payment confirmed successfully!');
-        this.router.navigate(['/booking-detail', { id: this.bookingId }]);
+        // Use toast or similar in production, alert for now
+        alert('Pembayaran berhasil dikonfirmasi!');
+        this.router.navigate(['/booking-detail'], { replaceUrl: true });
       },
       error: (err) => {
-        alert('Failed to confirm payment: ' + (err.error?.message || 'Unknown error'));
+        alert('Gagal konfirmasi: ' + (err.error?.message || 'Error server'));
       }
     });
   }

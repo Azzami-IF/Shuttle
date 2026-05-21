@@ -1,0 +1,239 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Driver Login - Ambatu Bus</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f8faf5",
+                    "surface-container": "#edeeea",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#d4e7d8",
+                    "on-secondary-container": "#57674d",
+                    "secondary-fixed-dim": "#baccad",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#191c1c",
+                    "primary-fixed-dim": "#b8cbbc",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface": "#f8faf5",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#191c1a",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-surface-variant": "#434844",
+                    "surface-dim": "#d9dbd6",
+                    "secondary-fixed": "#d6e8c8",
+                    "on-secondary-fixed-variant": "#3c4b33",
+                    "secondary": "#536349",
+                    "on-secondary-fixed": "#111f0b",
+                    "surface-container-high": "#e7e9e4",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#e1e3e2",
+                    "surface-variant": "#e1e3df",
+                    "surface-container-low": "#f2f4f0",
+                    "secondary-container": "#d3e5c5",
+                    "on-surface": "#191c1a",
+                    "surface-bright": "#f8faf5",
+                    "tertiary": "#232525",
+                    "surface-tint": "#516356",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#f0f1ed",
+                    "outline-variant": "#c3c8c2",
+                    "inverse-surface": "#2e312e",
+                    "on-primary-fixed-variant": "#394b3f",
+                    "primary": "#18281e",
+                    "on-primary-fixed": "#0e1f15",
+                    "tertiary-container": "#383b3b",
+                    "surface-container-highest": "#e1e3df",
+                    "primary-container": "#2d3e33",
+                    "on-tertiary-container": "#a3a5a4",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#737873",
+                    "inverse-primary": "#b8cbbc",
+                    "on-primary-container": "#96a99b",
+                    "tertiary-fixed-dim": "#c5c7c6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "base": "8px",
+                    "margin-desktop": "64px",
+                    "sm": "12px",
+                    "md": "24px",
+                    "lg": "48px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #f8faf5;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center justify-center">
+<!-- Top AppBar (Simplified for Login) -->
+<header class="fixed top-0 w-full h-16 flex justify-between items-center px-margin-mobile md:px-margin-desktop bg-surface/80 backdrop-blur-md z-50">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary text-3xl">directions_bus</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">Ambatu Bus</span>
+</div>
+<div class="hidden md:block">
+<span class="font-label-md text-label-md text-on-surface-variant">Fleet Operations v1.0.4</span>
+</div>
+</header>
+<main class="w-full max-w-[1440px] px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row items-center justify-center gap-lg mt-16 pb-16">
+<!-- Left Side: Atmospheric Brand Visual -->
+<div class="hidden lg:flex flex-col w-1/2 items-start justify-center pr-lg">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden shadow-sm">
+<img alt="Modern Transit" class="w-full h-full object-cover" data-alt="A serene cinematic shot of a modern electric bus driving through a clean, tree-lined city boulevard during a soft golden hour. The lighting is diffused and professional, emphasizing the sleek metallic surfaces of the vehicle and the lush botanical greenery of the surroundings. The color palette consists of soft sage greens, deep forest greens, and clean white architectural elements, reflecting a calm and efficient transit ecosystem." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3xqVQnYeemy5tHhY6BqZsayv7q-wkcLjBjdOGbYUDdL6F0FI5fimjNykvkN1Si_3ZyJdlgs7_DR_T0_niA1_jbBCra-855OqkCcPjjh7Lylj-ME02jPKYhWoNovTmcgTPcpNxGgm0w4f3Auv-k4HVT420nbVqwSlTgLLTP6sfKWux3sZoeuXm7HlY767c9mchwvgohr2Z-jyhXYie6xogm-KOnNpCSfOPu3L0sQc8IAwnajPrYwaGOEK9lETWHGDmZan_XH3_OsCE">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+<div class="absolute bottom-md left-md right-md text-white">
+<h2 class="font-headline-lg text-headline-lg mb-xs">Professional Excellence</h2>
+<p class="font-body-md text-body-md opacity-90 max-w-sm">Driving the future of sustainable and stress-free urban mobility, one journey at a time.</p>
+</div>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full lg:w-[480px] flex flex-col items-start">
+<div class="w-full bg-white md:bg-surface-container-lowest p-md md:p-lg rounded-xl md:shadow-sm border border-outline-variant/30">
+<div class="mb-lg">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-xs">Driver Login</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter your credentials to access the operational dashboard and routes.</p>
+</div>
+<form class="space-y-md" onsubmit="return false;">
+<!-- Input: Driver ID -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface-variant block ml-1" for="driver_id">Driver ID or Email</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">badge</span>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all font-body-md text-on-surface" id="driver_id" name="driver_id" placeholder="e.g. DRV-8829 or email@ambatu.com" type="text">
+</div>
+</div>
+<!-- Input: Password -->
+<div class="space-y-xs">
+<div class="flex justify-between items-center ml-1">
+<label class="font-label-md text-label-md text-on-surface-variant" for="password">Password</label>
+<a class="font-label-sm text-label-sm text-secondary hover:underline" href="#">Forgot?</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">lock</span>
+<input class="w-full h-14 pl-12 pr-12 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all font-body-md text-on-surface" id="password" name="password" placeholder="••••••••" type="password">
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center gap-sm py-xs">
+<input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer" id="remember" type="checkbox">
+<label class="font-label-md text-label-md text-on-surface-variant cursor-pointer" for="remember">Keep me logged in on this device</label>
+</div>
+<!-- Primary Action -->
+<button class="w-full h-14 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-base active:scale-95 transition-transform shadow-md hover:bg-primary-container group" type="submit" onclick="window.location.href='{{DATA:SCREEN:SCREEN_9}}'">
+                        Login as Driver
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+<div class="mt-lg pt-lg border-t border-outline-variant/30 flex flex-col items-center gap-md">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">Operational Support</p>
+<div class="grid grid-cols-2 gap-sm w-full">
+<button class="flex items-center justify-center gap-xs p-sm bg-surface-container border border-outline-variant/50 rounded-lg font-label-sm text-label-sm text-on-secondary-container hover:bg-secondary-container/30 transition-colors">
+<span class="material-symbols-outlined text-lg">support_agent</span>
+                            Help Desk
+                        </button>
+<button class="flex items-center justify-center gap-xs p-sm bg-surface-container border border-outline-variant/50 rounded-lg font-label-sm text-label-sm text-on-secondary-container hover:bg-secondary-container/30 transition-colors">
+<span class="material-symbols-outlined text-lg">description</span>
+                            Manual
+                        </button>
+</div>
+</div><div class="mt-4 text-center">
+    <a href="{{DATA:SCREEN:SCREEN_32}}" class="font-label-md text-label-md text-secondary hover:underline flex items-center justify-center gap-1">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to Passenger Login
+    </a>
+</div>
+</div>
+<p class="mt-md w-full text-center font-label-sm text-label-sm text-on-surface-variant">
+                © 2024 Ambatu Transit Systems. All rights reserved.
+            </p>
+</div>
+</main>
+<!-- Background Decorative Elements -->
+<div class="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-secondary-fixed/10 blur-[120px] -z-10"></div>
+<div class="fixed bottom-[-5%] left-[-5%] w-[30%] h-[30%] rounded-full bg-primary-fixed/20 blur-[100px] -z-10"></div>
+<script>
+        // Simple form interaction
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const btn = this.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Authenticating...';
+            btn.classList.add('opacity-80', 'pointer-events-none');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+                btn.classList.remove('opacity-80', 'pointer-events-none');
+                // Normally redirect here
+                console.log("Login attempt for Driver");
+            }, 1500);
+        });
+
+        // Toggle Password Visibility
+        const togglePass = document.querySelector('button[type="button"]');
+        const passInput = document.getElementById('password');
+        togglePass.addEventListener('click', () => {
+            const isPass = passInput.type === 'password';
+            passInput.type = isPass ? 'text' : 'password';
+            togglePass.querySelector('span').textContent = isPass ? 'visibility_off' : 'visibility';
+        });
+    </script>
+
+
+</body></html>

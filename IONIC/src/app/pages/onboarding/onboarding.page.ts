@@ -12,6 +12,10 @@ export class OnboardingPage implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.router.navigate(['/dashboard'], { replaceUrl: true });
+    }
   }
 
   goToLogin() {

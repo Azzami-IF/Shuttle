@@ -8,22 +8,43 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './schedule-list.page.html',
   styleUrls: ['./schedule-list.page.scss'],
 })
-export class ScheduleListPage implements OnInit {
+export class ScheduleListPage {
   schedules: any[] = [];
+  filters = {
+    origin: '',
+    destination: '',
+    date: ''
+  };
 
   constructor(
     private api: ApiService,
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.loadSchedules();
   }
 
   loadSchedules() {
-    this.api.get('schedules').subscribe(res => {
+    let params: any = {};
+    if (this.filters.origin) params.origin = this.filters.origin;
+    if (this.filters.destination) params.destination = this.filters.destination;
+    if (this.filters.date) params.date = this.filters.date;
+
+    // We'll need to update ApiService to handle params, or just append manually
+    const query = Object.keys(params)
+      .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+      .join('&');
+
+    const path = query ? `schedules?${query}` : 'schedules';
+
+    this.api.get(path).subscribe(res => {
       this.schedules = res;
     });
+  }
+
+  onFilterChange() {
+    this.loadSchedules();
   }
 
   getAvailableSeats(schedule: any) {

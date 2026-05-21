@@ -1,0 +1,349 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f8faf5",
+                        "surface-container": "#edeeea",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#d4e7d8",
+                        "on-secondary-container": "#57674d",
+                        "secondary-fixed-dim": "#baccad",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#191c1c",
+                        "primary-fixed-dim": "#b8cbbc",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface": "#f8faf5",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1a",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface-variant": "#434844",
+                        "surface-dim": "#d9dbd6",
+                        "secondary-fixed": "#d6e8c8",
+                        "on-secondary-fixed-variant": "#3c4b33",
+                        "secondary": "#536349",
+                        "on-secondary-fixed": "#111f0b",
+                        "surface-container-high": "#e7e9e4",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e1e3e2",
+                        "surface-variant": "#e1e3df",
+                        "surface-container-low": "#f2f4f0",
+                        "secondary-container": "#d3e5c5",
+                        "on-surface": "#191c1a",
+                        "surface-bright": "#f8faf5",
+                        "tertiary": "#232525",
+                        "surface-tint": "#516356",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f0f1ed",
+                        "outline-variant": "#c3c8c2",
+                        "inverse-surface": "#2e312e",
+                        "on-primary-fixed-variant": "#394b3f",
+                        "primary": "#18281e",
+                        "on-primary-fixed": "#0e1f15",
+                        "tertiary-container": "#383b3b",
+                        "surface-container-highest": "#e1e3df",
+                        "primary-container": "#2d3e33",
+                        "on-tertiary-container": "#a3a5a4",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#737873",
+                        "inverse-primary": "#b8cbbc",
+                        "on-primary-container": "#96a99b",
+                        "tertiary-fixed-dim": "#c5c7c6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "margin-desktop": "64px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+        .trip-card-glow {
+            transition: all 0.3s ease;
+        }
+        .trip-card-glow:hover {
+            box-shadow: 0 10px 25px -5px rgba(24, 40, 30, 0.08);
+            transform: translateY(-2px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar Component -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm dark:shadow-none font-headline-md text-headline-md font-semibold docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop w-full h-16">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Ambatu Bus</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="active:scale-95 transition-transform p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-primary">admin_panel_settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop pt-8">
+<!-- Summary Dashboard (Bento Style) -->
+<section class="mb-10">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6 text-primary">Ringkasan Minggu Ini</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Trip Summary Card -->
+<div class="bg-primary-container p-6 rounded-xl flex flex-col justify-between min-h-[160px] relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-md text-label-md text-on-primary-container opacity-80 mb-2">Total Perjalanan</p>
+<h3 class="font-headline-lg text-headline-lg text-on-primary-container">42</h3>
+</div>
+<div class="z-10 flex items-center gap-2 text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+<span class="font-label-sm text-label-sm">+12% dari minggu lalu</span>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">directions_bus</span>
+</div>
+</div>
+<!-- Distance Summary Card -->
+<div class="bg-secondary-container p-6 rounded-xl flex flex-col justify-between min-h-[160px] relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-md text-label-md text-on-secondary-container opacity-80 mb-2">Jarak Tempuh</p>
+<h3 class="font-headline-lg text-headline-lg text-on-secondary-container">1.284 <span class="text-label-md">km</span></h3>
+</div>
+<div class="z-10 flex items-center gap-2 text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">speed</span>
+<span class="font-label-sm text-label-sm">Efisiensi Bahan Bakar Optimal</span>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">route</span>
+</div>
+</div>
+<!-- Profile Small Card -->
+<div class="bg-surface-container p-6 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-primary-fixed border-2 border-white shrink-0">
+<img alt="Supir Profile" class="w-full h-full object-cover" data-alt="A professional portrait of a senior transit operator in a modern, forest-green uniform. He is standing in a brightly lit, clean transportation hub with glass walls. The lighting is soft and natural, emphasizing a calm and reliable professional persona. The overall aesthetic is minimalist and corporate modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfsXkt5YCTY2FjaUdXtTt_11kDcPZvexogXi3d63A1mHCSAUKFWXAFjaDPzD08ciVthgvtBet_t2GXnats04tjqdmbKD7IqsAknV4Q13B2D6RVb8wX4XC3jDOVd2xkNEHx5vYqDNqBSPMLAA3j-3osIbVeQhVdmSdnx-eODwf0fQxiy4-qYZBGCVYqANb8XYbRJ_xGHy6yZOHSS9NIawaBgG625K1YQ-dzV40EhkTZkzu-bXNHVkXe-_z-2YcsOjD79_htvODlwsLT">
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Operator Aktif</p>
+<h4 class="font-label-md text-label-md text-on-surface font-bold">Budi Santoso</h4>
+<div class="flex items-center gap-1 mt-1 text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-sm text-label-sm">ID: AB-2024001</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trip History List -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Riwayat Perjalanan</h2>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full font-label-md text-label-md text-on-surface hover:bg-outline-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+                    Filter
+                </button>
+</div>
+<div class="space-y-4">
+<!-- Entry 1 -->
+<div class="trip-card-glow bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">24 Mei 2024</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">08:30 - 10:45</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold mt-1">Koridor 1: Terminal Lebak Bulus - Kota</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">Bus: #AB-102</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">32.5 km</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-none pt-4 md:pt-0">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                            Selesai
+                        </div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-90 transition-all">chevron_right</button>
+</div>
+</div>
+<!-- Entry 2 -->
+<div class="trip-card-glow bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">23 Mei 2024</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">14:15 - 16:30</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold mt-1">Koridor 3: Kalideres - Pasar Baru</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">Bus: #AB-088</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">28.2 km</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-none pt-4 md:pt-0">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                            Selesai
+                        </div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-90 transition-all">chevron_right</button>
+</div>
+</div>
+<!-- Entry 3 -->
+<div class="trip-card-glow bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">23 Mei 2024</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:00 - 11:20</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold mt-1">Koridor 1: Terminal Lebak Bulus - Kota</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">Bus: #AB-102</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">32.5 km</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-none pt-4 md:pt-0">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                            Selesai
+                        </div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-90 transition-all">chevron_right</button>
+</div>
+</div>
+<!-- Entry 4 -->
+<div class="trip-card-glow bg-surface-container-lowest border border-outline-variant rounded-xl p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">22 Mei 2024</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">16:45 - 19:10</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold mt-1">Koridor 7: Kp. Rambutan - Kp. Melayu</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">Bus: #AB-045</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface">19.8 km</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-4 border-t md:border-none pt-4 md:pt-0">
+<div class="flex items-center gap-1.5 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                            Selesai
+                        </div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-90 transition-all">chevron_right</button>
+</div>
+</div>
+</div>
+<!-- Pagination/Load More -->
+<div class="mt-8 flex justify-center">
+<button class="px-8 py-3 bg-primary text-on-primary rounded-full font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 shadow-sm">
+                    Muat Lebih Banyak
+                </button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-2 bg-surface dark:bg-inverse-surface shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_9}}">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm">Jadwal</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_23}}">
+<span class="material-symbols-outlined">directions_bus</span>
+<span class="font-label-sm text-label-sm">Kendaraan</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_17}}">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Monitoring</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-full px-4 py-1 hover:opacity-80 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_4}}">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">route</span>
+<span class="font-label-sm text-label-sm">Status</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for cards
+        document.querySelectorAll('.trip-card-glow').forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 100);
+            });
+        });
+    </script>
+
+
+</body></html>

@@ -1,40 +1,68 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/schedule-list"></ion-back-button>
+      <ion-back-button defaultHref="/schedule-list" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Select Seat</ion-title>
+    <ion-title>Pilih Kursi</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div *ngIf="schedule">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>{{ schedule.origin }} → {{ schedule.destination }}</ion-card-subtitle>
-        <ion-card-title>{{ schedule.departure_time | date:'shortTime' }}</ion-card-title>
-      </ion-card-header>
-    </ion-card>
+<ion-content class="seat-selection-page">
+  <section class="legend-container">
+    <div class="legend-item">
+      <div class="box available"></div>
+      <span>Tersedia</span>
+    </div>
+    <div class="legend-item">
+      <div class="box selected"></div>
+      <span>Terpilih</span>
+    </div>
+    <div class="legend-item">
+      <div class="box occupied"></div>
+      <span>Terisi</span>
+    </div>
+  </section>
 
-    <h3 class="ion-text-center">Select your seat</h3>
+  <main>
+    <div class="bus-layout">
+      <div class="steering-wheel">
+        <span class="material-symbols-outlined text-[32px]">motion_photos_auto</span>
+      </div>
 
-    <ion-grid>
-      <ion-row>
-        <ion-col size="3" *ngFor="let seat of schedule.seats">
-          <div
-            class="seat-box"
-            [class.booked]="seat.status === 'booked'"
-            [class.selected]="selectedSeat?.id === seat.id"
-            (click)="selectSeat(seat)"
-          >
-            {{ seat.seat_number }}
+      <div class="seat-rows">
+        <div class="seat-row" *ngFor="let row of rows">
+          <div class="pair">
+            <button class="seat"
+                    *ngFor="let seat of row.left"
+                    [class.selected]="selectedSeatId === seat.id"
+                    [class.occupied]="seat.is_occupied"
+                    [disabled]="seat.is_occupied"
+                    (click)="selectSeat(seat.id)">
+              {{ seat.label }}
+            </button>
           </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+          <div class="pair">
+            <button class="seat"
+                    *ngFor="let seat of row.right"
+                    [class.selected]="selectedSeatId === seat.id"
+                    [class.occupied]="seat.is_occupied"
+                    [disabled]="seat.is_occupied"
+                    (click)="selectSeat(seat.id)">
+              {{ seat.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-    <ion-button expand="block" [disabled]="!selectedSeat" (click)="confirmBooking()" class="ion-margin-top">
-      Book Selected Seat
-    </ion-button>
-  </div>
+  <footer class="selection-footer">
+    <div class="price-info">
+      <div class="label">Kursi: <strong>{{ selectedSeatId || 'Belum dipilih' }}</strong></div>
+      <div class="amount">Rp {{ price | number:'1.0-0' }}</div>
+    </div>
+    <button class="confirm-btn" [disabled]="!selectedSeatId" (click)="confirmBooking()">
+      Konfirmasi
+    </button>
+  </footer>
 </ion-content>

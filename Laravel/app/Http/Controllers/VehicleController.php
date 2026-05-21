@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Vehicle::all());
+        $query = Vehicle::query();
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('license_plate', 'like', "%{$search}%");
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)

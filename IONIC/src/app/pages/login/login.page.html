@@ -1,74 +1,99 @@
-<ion-content [fullscreen]="true" class="login-page">
-  <div class="stars-container">
-    <div class="stars"></div>
-    <div class="stars2"></div>
-    <div class="stars3"></div>
-  </div>
-
-  <div class="login-wrapper">
-    <div class="login-card">
-      <div class="header-section ion-text-center">
-        <div class="logo-box ion-margin-bottom">
-          <img src="assets/icon/favicon.png" alt="Logo" class="logo-img">
-        </div>
-        <h1 class="brand-title">Ambatu Bus</h1>
-        <p class="brand-subtitle">Masuk ke sistem manajemen bus</p>
+<ion-content class="login-page">
+  <div class="relative w-full min-h-screen bg-surface-container-lowest overflow-hidden flex flex-col">
+    <!-- Hero Illustration Section -->
+    <div class="hero-section">
+      <div class="hero-img-container">
+        <img alt="Modern bus" class="hero-img" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000">
+        <div class="hero-overlay"></div>
       </div>
 
-      <form (ngSubmit)="onLogin()">
+      <!-- Header UI -->
+      <div class="header-ui">
+        <button class="back-btn" (click)="goBack()">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="lang-selector">
+          <span class="text-[18px]">🇮🇩</span>
+          <span>ID</span>
+          <span class="material-symbols-outlined text-[16px]">expand_more</span>
+        </div>
+      </div>
+
+      <!-- Logo -->
+      <div class="logo-container">
+        <img alt="Ambatu Bus Logo" class="logo-img animate-float" src="assets/icon/favicon.png">
+      </div>
+    </div>
+
+    <!-- Login Form Content -->
+    <div class="login-form-content glass-panel">
+      <div class="text-center">
+        <h1>Selamat Datang!</h1>
+        <p>Masuk untuk memesan tiket bus favoritmu dengan lebih cepat.</p>
+      </div>
+
+      <form (submit)="onLogin($event)">
+        <!-- Input Group: Email/Phone -->
         <div class="input-group">
-          <label class="input-label">Email</label>
-          <div class="input-container">
-            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-            <input
-              type="email"
-              [(ngModel)]="credentials.email"
-              name="email"
-              placeholder="driver@ambatubus.com"
-              required
-              autocomplete="off"
-              class="custom-input"
-            >
+          <label>Email / No. Telp</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined icon">person</span>
+            <input type="text" [(ngModel)]="loginData.email" name="email" placeholder="Masukkan Email atau No. Telp" autocomplete="off" required>
           </div>
         </div>
 
-        <div class="input-group ion-margin-top">
-          <label class="input-label">Password</label>
-          <div class="input-container">
-            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              [(ngModel)]="credentials.password"
-              name="password"
-              placeholder="••••••••"
-              required
-              autocomplete="off"
-              class="custom-input"
-            >
-            <ion-icon
-              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
-              class="toggle-password"
-              (click)="showPassword = !showPassword"
-            ></ion-icon>
+        <!-- Input Group: Password -->
+        <div class="input-group">
+          <label>Kata Sandi</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined icon">lock</span>
+            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" name="password" placeholder="Masukkan Kata Sandi" autocomplete="off" required>
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+              <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+          <div class="forgot-password">
+            <a href="javascript:void(0)">Lupa Sandi?</a>
           </div>
         </div>
 
-        <div class="form-options ion-margin-top ion-margin-bottom">
-          <ion-checkbox labelPlacement="end" justify="start" class="remember-checkbox">Ingat saya</ion-checkbox>
-          <a href="#" class="forgot-link">Lupa password?</a>
-        </div>
-
-        <button type="submit" class="submit-btn">
-          Masuk ke Sistem
+        <!-- Primary CTA -->
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Masuk</span>
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
         </button>
       </form>
 
-      <div class="footer-link ion-text-center ion-margin-top">
-        <p>Belum punya akun? <a (click)="goToRegister()" class="register-link">Daftar sekarang</a></p>
+      <!-- Registration Prompt -->
+      <div class="register-prompt">
+        <p>Belum punya akun? <a [routerLink]="['/register']">Daftar Sekarang</a></p>
+      </div>
+
+      <!-- Separator -->
+      <div class="separator">
+        <div class="line"></div>
+        <span>Atau gunakan akun</span>
+        <div class="line"></div>
+      </div>
+
+      <!-- Social Logins -->
+      <div class="social-logins">
+        <button class="social-btn">
+          <img alt="Google" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png">
+          Google
+        </button>
+        <button class="social-btn">
+          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">phone_iphone</span>
+          Apple
+        </button>
+      </div>
+
+      <!-- Guest Access -->
+      <div class="guest-access">
+        <button class="guest-btn" (click)="continueAsGuest()">
+          Masuk Tanpa Daftar
+        </button>
       </div>
     </div>
-    <p class="copyright-text ion-text-center">
-      © 2026 Ambatu Bus. Sistem manajemen transportasi.
-    </p>
   </div>
 </ion-content>

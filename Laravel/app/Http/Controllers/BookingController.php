@@ -14,10 +14,25 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        if ($user->role === 'admin') {
-            return response()->json(Booking::with(['user', 'schedule', 'seat'])->get());
+        $query = Booking::with(['user', 'schedule', 'seat']);
+
+        if ($user->role !== 'admin') {
+            $query->where('user_id', $user->id);
         }
-        return response()->json(Booking::where('user_id', $user->id)->with(['schedule', 'seat'])->get());
+
+        if ($request->has('status')) {
+            $query->where('status', $request->get('status'));
+        }
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->whereHas('schedule', function ($q) use ($search) {
+                $q->where('origin', 'like', "%{$search}%")
+                  ->orWhere('destination', 'like', "%{$search}%");
+            });
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
@@ -42,13 +57,26 @@ class BookingController extends Controller
                 'user_id' => $request->user()->id,
                 'schedule_id' => $request->schedule_id,
                 'seat_id' => $request->seat_id,
-                'status' => 'booked',
+                'status' => 'pending_payment',
+                'payment_code' => 'QR' . strtoupper(bin2hex(random_bytes(4))),
             ]);
 
+            // We lock the seat immediately to prevent others from picking it while payment is pending
             $seat->update(['status' => 'booked']);
 
             return response()->json($booking->load(['schedule', 'seat']), 201);
         });
+    }
+
+    public function confirmPayment(Booking $booking)
+    {
+        if ($booking->status !== 'pending_payment') {
+            return response()->json(['message' => 'Booking is not in pending payment status'], 422);
+        }
+
+        $booking->update(['status' => 'booked']);
+
+        return response()->json(['message' => 'Payment confirmed', 'booking' => $booking]);
     }
 
     public function show(Booking $booking)

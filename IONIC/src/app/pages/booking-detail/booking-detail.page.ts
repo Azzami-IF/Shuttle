@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -8,40 +8,44 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './booking-detail.page.html',
   styleUrls: ['./booking-detail.page.scss'],
 })
-export class BookingDetailPage implements OnInit {
-  bookingId: any;
-  booking: any;
+export class BookingDetailPage {
+  bookings: any[] = [];
+  searchTerm: string = '';
 
   constructor(
-    private route: ActivatedRoute,
     private api: ApiService,
     private router: Router
   ) {}
 
-  ngOnInit() {
-    this.bookingId = this.route.snapshot.paramMap.get('id');
-    if (this.bookingId) {
-      this.loadBooking();
-    } else {
-        // If no ID provided, maybe show latest booking?
-        this.api.get('bookings').subscribe(res => {
-            if (res.length > 0) {
-                this.booking = res[res.length - 1];
-            }
-        });
+  ionViewWillEnter() {
+    this.loadBookings();
+  }
+
+  loadBookings() {
+    let path = 'bookings';
+    if (this.searchTerm) {
+      path += `?search=${encodeURIComponent(this.searchTerm)}`;
     }
-  }
 
-  loadBooking() {
-    this.api.get(`bookings/${this.bookingId}`).subscribe(res => {
-      this.booking = res;
+    this.api.get(path).subscribe({
+      next: (res: any) => {
+        this.bookings = res.sort((a: any, b: any) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      },
+      error: (err) => {
+        console.error('Error loading bookings', err);
+      }
     });
   }
 
-  cancelBooking() {
-    this.api.post(`bookings/${this.booking.id}/cancel`, {}).subscribe(() => {
-      alert('Booking cancelled');
-      this.router.navigate(['/dashboard']);
-    });
+  onSearchChange() {
+    this.loadBookings();
+  }
+
+  viewTracking(booking: any) {
+    if (booking.schedule?.trip?.id) {
+      this.router.navigate(['/trip-tracking', { id: booking.schedule.trip.id }]);
+    }
   }
 }

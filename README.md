@@ -1,92 +1,92 @@
-# Ambatu Bus - Shuttle Booking & Tracking System
+# Ambatu Bus - Sistem Pemesanan & Pelacakan Shuttle
 
-Ambatu Bus is a comprehensive shuttle management solution featuring a high-fidelity mobile application for customers and drivers, paired with a robust web-based administrative dashboard. The project is built with a focus on "Serene Transit"—providing a calm, reliable, and modern travel experience.
+Ambatu Bus adalah solusi manajemen shuttle komprehensif yang menghadirkan aplikasi mobile *high-fidelity* untuk pelanggan dan pengemudi, dipadukan dengan dashboard administrasi berbasis web yang kokoh. Proyek ini dibangun dengan fokus pada "Serene Transit"—memberikan pengalaman perjalanan yang tenang, andal, dan modern.
 
-## 🌿 Design Philosophy: Serene Transit
-The system utilizes a nature-inspired aesthetic ("Forest Green" and "Sage" tones) with a modern **Glassmorphism** UI. It focuses on clarity, ease of use, and visual stability, ensuring that users can book and track their journeys without stress.
+## 🌿 Filosofi Desain: Serene Transit
+Sistem ini menggunakan estetika yang terinspirasi dari alam (nada "Forest Green" dan "Sage") dengan UI **Glassmorphism** modern. Fokus utamanya adalah pada kejelasan, kemudahan penggunaan, dan stabilitas visual, memastikan pengguna dapat memesan dan melacak perjalanan mereka tanpa stres.
 
-## 🚀 Tech Stack
+## 🚀 Stack Teknologi
 
 ### Backend (API & Admin)
 - **Framework:** Laravel 11
-- **Database:** SQLite (Local Development)
-- **Authentication:** Laravel Sanctum (Token-based for Mobile, Session-based for Web)
+- **Database:** SQLite (Pengembangan Lokal)
+- **Autentikasi:** Laravel Sanctum (Berbasis Token untuk Mobile, Berbasis Sesi untuk Web)
 - **Styling:** Tailwind CSS (Admin Dashboard)
-- **Charts:** Chart.js
+- **Grafik:** Chart.js
 
-### Mobile Application
+### Aplikasi Mobile
 - **Framework:** Ionic Framework (Angular)
-- **Design:** Custom SCSS with CSS Variables (Design System)
-- **Icons:** Material Symbols & Google Fonts (Hanken Grotesk)
-- **Maps:** Leaflet.js with OpenStreetMap
+- **Desain:** SCSS Kustom dengan Variabel CSS (Sistem Desain)
+- **Ikon:** Material Symbols & Google Fonts (Hanken Grotesk)
+- **Peta:** Leaflet.js dengan OpenStreetMap
 
-## ✨ Key Features
+## ✨ Fitur Utama
 
-### 📱 Mobile App (Customer & Driver)
-- **Onboarding:** Smooth introduction to the app's core values.
-- **Smart Booking:** Interactive 2-2 seat map selection with real-time availability.
-- **QRIS Payment:** Integrated payment flow with a 15-minute countdown timer and unique QR generation.
-- **Live Tracking:** Real-time shuttle movement on an interactive map using Leaflet.
-- **Role-based Dashboard:** 
-  - **Customers:** Search schedules, manage bookings, and view AmbatuPay balance.
-  - **Drivers:** Manage assigned trips, update GPS location, and start/complete journeys.
+### 📱 Aplikasi Mobile (Pelanggan & Pengemudi)
+- **Onboarding:** Pengenalan halus terhadap nilai-utama aplikasi.
+- **Smart Booking:** Pemilihan kursi interaktif (peta kursi 2-2) dengan ketersediaan real-time.
+- **Pembayaran QRIS:** Alur pembayaran terintegrasi dengan timer hitung mundur 15 menit dan pembuatan kode QR unik.
+- **Pelacakan Live:** Pergerakan shuttle secara real-time di peta interaktif menggunakan Leaflet.
+- **Dashboard Berbasis Peran:** 
+  - **Pelanggan:** Cari jadwal, kelola pemesanan, dan lihat saldo AmbatuPay.
+  - **Pengemudi:** Kelola tugas perjalanan, perbarui lokasi GPS, dan mulai/selesaikan perjalanan.
 
-### 💻 Admin Dashboard (Web)
-- **Operational Overview:** Real-time statistics and 7-day booking trend charts.
-- **Master Data Management:** Full CRUD (Create, Read, Update, Delete) for Vehicles and Schedules.
-- **User Management:** Monitor and manage drivers and customer accounts.
-- **Live Monitoring:** Track all active trips and recent successful bookings in one place.
+### 💻 Dashboard Admin (Web)
+- **Ringkasan Operasional:** Statistik real-time dan grafik tren pemesanan 7 hari terakhir.
+- **Manajemen Data Master:** CRUD penuh (Buat, Baca, Perbarui, Hapus) untuk Kendaraan dan Jadwal.
+- **Manajemen Pengguna:** Pantau dan kelola akun pengemudi serta pelanggan.
+- **Monitoring Langsung:** Lacak semua perjalanan aktif dan aktivitas pemesanan terbaru di satu tempat.
 
-## 🛠️ Installation & Setup
+## 🛠️ Instalasi & Setup
 
-### Prerequisites
+### Prasyarat
 - PHP 8.2+
 - Node.js & NPM
 - Composer
 - Ionic CLI (`npm install -g @ionic/cli`)
 
-### Backend Setup (Laravel)
-1. Navigate to the `Laravel` directory:
+### Setup Backend (Laravel)
+1. Masuk ke direktori `Laravel`:
    ```bash
    cd Laravel
    ```
-2. Install dependencies:
+2. Instal dependensi:
    ```bash
    composer install
    ```
-3. Setup environment:
+3. Setup lingkungan:
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-4. Run migrations and seeders:
+4. Jalankan migrasi dan seeder:
    ```bash
    php artisan migrate:fresh --seed
    ```
-5. Start the server:
+5. Jalankan server:
    ```bash
    php artisan serve
    ```
 
-### Mobile Setup (Ionic)
-1. Navigate to the `IONIC` directory:
+### Setup Mobile (Ionic)
+1. Masuk ke direktori `IONIC`:
    ```bash
    cd IONIC
    ```
-2. Install dependencies:
+2. Instal dependensi:
    ```bash
    npm install
    ```
-3. Start the application:
+3. Jalankan aplikasi:
    ```bash
    ionic serve
    ```
 
-## 🔐 Credentials (Demo)
-Use the following accounts to explore the system (Password: `password`):
+## 🔐 Kredensial (Demo)
+Gunakan akun berikut untuk menjelajahi sistem (Kata sandi: `password`):
 - **Admin:** `admin@shuttle.com`
 - **Customer:** `alice@gmail.com`
 - **Driver:** `driver1@shuttle.com`
 
 ---
-Built with ❤️ for a better transit experience.
+Dibuat dengan ❤️ untuk pengalaman transit yang lebih baik.

@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('bookings', [\App\Http\Controllers\BookingController::class, 'index']);
     Route::post('bookings', [\App\Http\Controllers\BookingController::class, 'store']);
     Route::get('bookings/{booking}', [\App\Http\Controllers\BookingController::class, 'show']);
+    Route::post('bookings/{booking}/confirm-payment', [\App\Http\Controllers\BookingController::class, 'confirmPayment']);
     Route::post('bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel']);
 
     // Trip Management

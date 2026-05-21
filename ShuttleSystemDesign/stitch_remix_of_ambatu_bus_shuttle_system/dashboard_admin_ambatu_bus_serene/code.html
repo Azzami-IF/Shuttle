@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ambatu Bus | Dashboard Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Hanken+Grotesk', sans-serif;
+            background-color: #f8faf5;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(225, 227, 223, 0.5);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f2f4f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #baccad;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#a3a5a4",
+                        "inverse-on-surface": "#f0f1ed",
+                        "surface-tint": "#516356",
+                        "surface-container-low": "#f2f4f0",
+                        "surface-container-highest": "#e1e3df",
+                        "tertiary-fixed-dim": "#c5c7c6",
+                        "secondary": "#536349",
+                        "on-tertiary-fixed": "#191c1c",
+                        "inverse-surface": "#2e312e",
+                        "inverse-primary": "#b8cbbc",
+                        "primary": "#18281e",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e1e3df",
+                        "primary-fixed": "#d4e7d8",
+                        "secondary-container": "#d3e5c5",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#232525",
+                        "outline": "#737873",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#edeeea",
+                        "primary-fixed-dim": "#b8cbbc",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf5",
+                        "on-secondary-fixed": "#111f0b",
+                        "tertiary-fixed": "#e1e3e2",
+                        "tertiary-container": "#383b3b",
+                        "on-surface-variant": "#434844",
+                        "background": "#f8faf5",
+                        "secondary-fixed-dim": "#baccad",
+                        "on-primary-fixed-variant": "#394b3f",
+                        "on-surface": "#191c1a",
+                        "surface-dim": "#d9dbd6",
+                        "surface-bright": "#f8faf5",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1a",
+                        "on-secondary-container": "#57674d",
+                        "on-primary-container": "#96a99b",
+                        "primary-container": "#2d3e33",
+                        "surface-container-high": "#e7e9e4",
+                        "outline-variant": "#c3c8c2",
+                        "on-primary-fixed": "#0e1f15",
+                        "on-secondary-fixed-variant": "#3c4b33",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#d6e8c8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "md": "24px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "lg": "48px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<!-- Top Navigation -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm dark:shadow-none flex justify-between items-center px-margin-mobile md:px-margin-desktop w-full h-16 fixed top-0 z-50">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container transition-colors p-2 rounded-full active:scale-95">menu</button>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Ambatu Bus</span>
+</div>
+<div class="flex items-center gap-base">
+<div class="hidden md:flex gap-4 items-center mr-6">
+<span class="text-primary dark:text-primary-fixed font-bold font-label-md text-label-md cursor-pointer">Dashboard Admin</span>
+<span class="text-on-surface-variant dark:text-on-tertiary-container font-label-md text-label-md cursor-pointer hover:bg-surface-container px-3 py-1 rounded-full transition-colors">Laporan Operasional</span>
+</div>
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed p-2 hover:bg-surface-container rounded-full active:scale-95 transition-transform">admin_panel_settings</button>
+</div>
+</header>
+<!-- Side Drawer (Desktop Only Anchor) -->
+<aside class="h-full w-72 fixed left-0 top-0 z-40 bg-surface dark:bg-inverse-surface shadow-xl hidden lg:flex flex-col py-md px-base pt-20">
+<div class="px-4 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img alt="Admin User" class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged man with a friendly expression, wearing a clean charcoal grey suit. The background is a blurred, bright corporate office with soft natural lighting and indoor botanical plants. The overall aesthetic is clean, professional, and serene, aligning with a premium transit management identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArgFKifmaM2RWjnVsQOgE48JXi5BT1iaLjQmPB0Q3dLFx7lP-716gg2rlgjkcbWOvNLIzeZN8iPtazSpfDbvPRIjX7M_vczRjw9oWyTSHEEF-gvIxX95xA0o8VhfCNyo11WNEWClphot5nhQz-HXLZTaiGbVytqaxMy7pPglnbDUbMuFR5DO49Lp4R7asy2JgvBuUFrdZXVT8cRwwRDaY_M2Z2kKvzF67_QloYoLJq1DRSKg2O2t4_ZByYIO4HJVen3ZIvC4X2QFrB"/>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold text-primary">Admin Panel</p>
+<p class="text-xs text-on-surface-variant">Ambatu Bus Ops</p>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-bold rounded-r-full transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard Admin</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-high dark:hover:bg-tertiary-container rounded-r-full transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Manajemen Supir</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-high dark:hover:bg-tertiary-container rounded-r-full transition-all" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">Laporan Operasional</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container-high dark:hover:bg-tertiary-container rounded-r-full transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Pengaturan Sistem</span>
+</a>
+</nav>
+<div class="mt-auto px-4 pb-4">
+<span class="text-xs text-on-surface-variant opacity-50">v1.0.4</span>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-24 lg:pb-12 px-margin-mobile md:px-margin-desktop lg:ml-72 transition-all">
+<!-- Summary Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<!-- Stat 1 -->
+<div class="glass-card rounded-xl p-6 flex items-start justify-between group hover:border-secondary transition-all">
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md mb-1">Total Booking</p>
+<h3 class="text-headline-lg font-headline-lg text-primary">1,284</h3>
+<div class="flex items-center gap-1 text-secondary mt-2">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-bold">+12% Bulan ini</span>
+</div>
+</div>
+<div class="bg-secondary-container text-on-secondary-container p-3 rounded-xl">
+<span class="material-symbols-outlined">confirmation_number</span>
+</div>
+</div>
+<!-- Stat 2 -->
+<div class="glass-card rounded-xl p-6 flex items-start justify-between group hover:border-secondary transition-all">
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md mb-1">Armada Aktif</p>
+<h3 class="text-headline-lg font-headline-lg text-primary">42 / 48</h3>
+<div class="flex items-center gap-1 text-secondary mt-2">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-xs font-bold">Semua Operasional</span>
+</div>
+</div>
+<div class="bg-secondary-container text-on-secondary-container p-3 rounded-xl">
+<span class="material-symbols-outlined">directions_bus</span>
+</div>
+</div>
+<!-- Stat 3 -->
+<div class="glass-card rounded-xl p-6 flex items-start justify-between group hover:border-secondary transition-all">
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md mb-1">Pendapatan</p>
+<h3 class="text-headline-lg font-headline-lg text-primary">Rp 45.2M</h3>
+<div class="flex items-center gap-1 text-secondary mt-2">
+<span class="material-symbols-outlined text-sm">payments</span>
+<span class="text-xs font-bold">Target 85% Tercapai</span>
+</div>
+</div>
+<div class="bg-secondary-container text-on-secondary-container p-3 rounded-xl">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- Left Column: Schedule & Fleet Management -->
+<div class="xl:col-span-2 space-y-8">
+<!-- Schedule Management Section -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-headline-md font-headline-md text-primary">Manajemen Jadwal Shuttle</h2>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full font-label-md text-label-md flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-md">
+<span class="material-symbols-outlined text-base">add</span>
+                            Tambah Jadwal
+                        </button>
+</div>
+<div class="space-y-3">
+<!-- Schedule Item 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="bg-primary-fixed text-on-primary-fixed w-12 h-12 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">route</span>
+</div>
+<div>
+<p class="font-bold text-primary font-body-md text-body-md">Jakarta → Bandung (Executive)</p>
+<div class="flex gap-3 mt-1">
+<span class="text-xs px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full">08:00 WIB</span>
+<span class="text-xs px-2 py-0.5 bg-surface-container-highest text-on-surface-variant rounded-full">Bus AB-221</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right hidden sm:block">
+<p class="text-xs text-on-surface-variant font-medium">Sisa Kursi</p>
+<p class="text-label-md font-bold text-secondary">4 / 20</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-2 text-error hover:bg-error-container rounded-full transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</div>
+</div>
+<!-- Schedule Item 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="bg-primary-fixed text-on-primary-fixed w-12 h-12 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">route</span>
+</div>
+<div>
+<p class="font-bold text-primary font-body-md text-body-md">Bandung → Jakarta (Premier)</p>
+<div class="flex gap-3 mt-1">
+<span class="text-xs px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full">10:30 WIB</span>
+<span class="text-xs px-2 py-0.5 bg-surface-container-highest text-on-surface-variant rounded-full">Bus AB-305</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right hidden sm:block">
+<p class="text-xs text-on-surface-variant font-medium">Sisa Kursi</p>
+<p class="text-label-md font-bold text-secondary">18 / 20</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-2 text-error hover:bg-error-container rounded-full transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Vehicle & Capacity Section -->
+<section>
+<h2 class="text-headline-md font-headline-md text-primary mb-4">Kendaraan &amp; Kapasitas</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex items-center gap-4 hover:shadow-md transition-shadow">
+<div class="relative">
+<div class="w-16 h-16 rounded-xl overflow-hidden">
+<img alt="Bus Executive" class="w-full h-full object-cover" data-alt="A luxurious modern tour bus parked in a clean terminal under soft evening light. The bus has a sleek forest green and silver metallic finish with 'Ambatu' branding. The setting is serene and organized, with polished concrete floors and minimalist architectural details in the background. High-key lighting highlights the bus's premium curves." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdR66qjxczDKqN657OLB1aRk-wi4BtMexRQDMpHUJooRYQ7BNBvwrjrFpKqXU_CeOMlPv3Rvbzaysnt-szx62-zuWmEAAEdiEdVs9UFXFOdSIIUmP1nwPod4TrysBi9bCafMT0TVdh6BRGNgcpPhrA_ucTm7O0kurupfHRe3vUy8oBPtwX1QMKcFRUjnThfmjCsrqlL39Ti4OSv5draQFaLKsbInNJ9I3tJdn4mX9sB8kYpHAWvbgr-9Q2BgTy_uau40dNC6owPMAw"/>
+</div>
+<span class="absolute -top-2 -right-2 bg-secondary text-on-secondary text-[10px] px-1.5 py-0.5 rounded-full">Ready</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-primary">Scania K410IB</p>
+<p class="text-xs text-on-surface-variant">AB-221 • Executive</p>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full mt-2">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 80%"></div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex items-center gap-4 hover:shadow-md transition-shadow">
+<div class="relative">
+<div class="w-16 h-16 rounded-xl overflow-hidden">
+<img alt="Bus Premier" class="w-full h-full object-cover" data-alt="A modern electric bus at a charging station during golden hour. The bus is painted in a soft sage green and white duo-tone. The environment is a clean, eco-friendly transit hub with wooden accents and lush green trees. The lighting is warm and cinematic, emphasizing the serene and sustainable nature of the transport." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZu2ZLezpNSYXekyaGUQ1C4hx3gYH3HCBh92KP3gOzunlFDo0L6R0BIvzTy5f9CEiC_APN-AoPyQSKlMAw5T5a5wF4VtoOEmIv5kiPFN7t4H5ycd9cWJTNjNnh6NsD-5tR2ZKiIKUvzG11cvAPohRPMnLuw6eTAmL9N7NuWB426oDHBc2K945wXsYDwDTlSNr1qcr0yOvaxFFmtR2wgxHOziO1b9LF6AVDiyfaYT5rI9zkfzg0ULmOihCbpB9yNM2BkELJCjJIvxhP"/>
+</div>
+<span class="absolute -top-2 -right-2 bg-error text-on-error text-[10px] px-1.5 py-0.5 rounded-full">Service</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-primary">Mercedes-Benz OF</p>
+<p class="text-xs text-on-surface-variant">AB-305 • Premier</p>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full mt-2">
+<div class="bg-error h-1.5 rounded-full" style="width: 10%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Real-time Monitoring -->
+<div class="xl:col-span-1">
+<section class="glass-card rounded-2xl p-6 h-full border border-secondary/20">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-headline-md font-headline-md text-primary">Live Monitoring</h2>
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+</div>
+<!-- Real-time Booking List -->
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<div class="w-px h-full bg-outline-variant my-1"></div>
+</div>
+<div class="flex-1 pb-4">
+<div class="flex justify-between items-start">
+<p class="font-bold text-primary">Ahmad Fauzi</p>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Baru Saja</span>
+</div>
+<p class="text-sm text-on-surface-variant">JKT-BDG • 2 Kursi (A1, A2)</p>
+<div class="mt-2 text-[11px] font-medium text-on-surface-variant/70 italic flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">payments</span>
+                                    Pembayaran Berhasil
+                                </div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<div class="w-px h-full bg-outline-variant my-1"></div>
+</div>
+<div class="flex-1 pb-4">
+<div class="flex justify-between items-start">
+<p class="font-bold text-primary">Siti Aminah</p>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">5 mnt lalu</span>
+</div>
+<p class="text-sm text-on-surface-variant">BDG-JKT • 1 Kursi (C4)</p>
+<div class="mt-2 text-[11px] font-medium text-on-surface-variant/70 italic flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">pending_actions</span>
+                                    Menunggu Pembayaran
+                                </div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="font-bold text-primary">Budi Santoso</p>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">12 mnt lalu</span>
+</div>
+<p class="text-sm text-on-surface-variant">JKT-BDG • 1 Kursi (B2)</p>
+<div class="mt-2 text-[11px] font-medium text-on-surface-variant/70 italic flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">payments</span>
+                                    Pembayaran Berhasil
+                                </div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant">
+<p class="text-xs font-bold text-on-surface-variant mb-4 uppercase">Kepadatan Armada</p>
+<div class="bg-surface-container rounded-xl p-4 overflow-hidden relative group">
+<div class="flex items-center justify-between relative z-10">
+<div>
+<p class="text-sm font-bold text-primary">Rute Terfavorit</p>
+<p class="text-xs text-on-surface-variant">Jakarta - Bandung (PP)</p>
+</div>
+<p class="text-headline-md font-headline-md text-secondary">88%</p>
+</div>
+<!-- Subtle wave effect -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-secondary/10 group-hover:h-2 transition-all"></div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-2 bg-surface dark:bg-inverse-surface shadow-lg lg:hidden">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm">Jadwal</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">directions_bus</span>
+<span class="font-label-sm text-label-sm">Kendaraan</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-full px-4 py-1 hover:opacity-80 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label-sm text-label-sm">Monitoring</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined">route</span>
+<span class="font-label-sm text-label-sm">Status</span>
+</div>
+</nav>
+<!-- Micro-interactions Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hover effect for stats
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-4px)';
+                    card.style.transition = 'transform 0.3s ease';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Simulate Live Update
+            setInterval(() => {
+                const statusDot = document.querySelector('.animate-ping');
+                if (statusDot) {
+                    statusDot.classList.add('opacity-100');
+                    setTimeout(() => statusDot.classList.remove('opacity-100'), 1000);
+                }
+            }, 3000);
+        });
+    </script>
+</body></html>

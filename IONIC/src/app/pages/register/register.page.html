@@ -1,110 +1,80 @@
-<ion-content [fullscreen]="true" class="register-page">
-  <div class="stars-container">
-    <div class="stars"></div>
-    <div class="stars2"></div>
-    <div class="stars3"></div>
-  </div>
-
-  <div class="register-wrapper">
-    <div class="register-card">
-      <div class="header-section ion-text-center">
-        <div class="logo-box ion-margin-bottom">
-          <img src="assets/icon/favicon.png" alt="Logo" class="logo-img">
-        </div>
-        <h1 class="brand-title">Daftar Akun</h1>
-        <p class="brand-subtitle">Bergabung dengan Ambatu Bus</p>
+<ion-content class="login-page register-page">
+  <div class="relative w-full min-h-screen bg-surface-container-lowest overflow-hidden flex flex-col">
+    <!-- Hero Illustration Section -->
+    <div class="hero-section">
+      <div class="hero-img-container">
+        <img alt="Modern bus" class="hero-img" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000">
+        <div class="hero-overlay"></div>
       </div>
 
-      <form (ngSubmit)="onRegister()">
+      <!-- Header UI -->
+      <div class="header-ui">
+        <button class="back-btn" (click)="goBack()">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+      </div>
+
+      <!-- Logo -->
+      <div class="logo-container">
+        <img alt="Ambatu Bus Logo" class="logo-img animate-float" src="assets/icon/favicon.png">
+      </div>
+    </div>
+
+    <!-- Register Form Content -->
+    <div class="login-form-content glass-panel">
+      <div class="text-center">
+        <h1>Daftar Akun</h1>
+        <p>Bergabunglah dengan Ambatu Bus untuk perjalanan yang lebih tenang.</p>
+      </div>
+
+      <form (submit)="onRegister($event)">
+        <!-- Input Group: Full Name -->
         <div class="input-group">
-          <label class="input-label">Nama Lengkap</label>
-          <div class="input-container">
-            <ion-icon name="person-outline" class="input-icon"></ion-icon>
-            <input
-              type="text"
-              [(ngModel)]="user.name"
-              name="name"
-              placeholder="Masukkan nama lengkap"
-              required
-              autocomplete="off"
-              class="custom-input"
-            >
+          <label>Nama Lengkap</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined icon">badge</span>
+            <input type="text" [(ngModel)]="registerData.name" name="name" placeholder="Masukkan Nama Lengkap" autocomplete="off" required>
           </div>
         </div>
 
-        <div class="input-group ion-margin-top">
-          <label class="input-label">Email</label>
-          <div class="input-container">
-            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-            <input
-              type="email"
-              [(ngModel)]="user.email"
-              name="email"
-              placeholder="email@contoh.com"
-              required
-              autocomplete="off"
-              class="custom-input"
-            >
+        <!-- Input Group: Email -->
+        <div class="input-group">
+          <label>Email</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined icon">mail</span>
+            <input type="email" [(ngModel)]="registerData.email" name="email" placeholder="Masukkan Email" autocomplete="off" required>
           </div>
         </div>
 
-        <div class="input-group ion-margin-top">
-          <label class="input-label">Nomor Telepon</label>
-          <div class="input-container">
-            <ion-icon name="phone-portrait-outline" class="input-icon"></ion-icon>
-            <input
-              type="tel"
-              [(ngModel)]="user.phone"
-              name="phone"
-              placeholder="0812xxxx"
-              autocomplete="off"
-              class="custom-input"
-            >
+        <!-- Input Group: Phone -->
+        <div class="input-group">
+          <label>No. Telp</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined icon">phone</span>
+            <input type="tel" [(ngModel)]="registerData.phone" name="phone" placeholder="Masukkan No. Telp" autocomplete="off" required>
           </div>
         </div>
 
-        <div class="input-group ion-margin-top">
-          <label class="input-label">Password</label>
-          <div class="input-container">
-            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-            <input
-              type="password"
-              [(ngModel)]="user.password"
-              name="password"
-              placeholder="Min. 8 karakter"
-              required
-              autocomplete="off"
-              class="custom-input"
-            >
+        <!-- Input Group: Password -->
+        <div class="input-group">
+          <label>Kata Sandi</label>
+          <div class="input-wrapper">
+            <span class="material-symbols-outlined icon">lock</span>
+            <input type="password" [(ngModel)]="registerData.password" name="password" placeholder="Masukkan Kata Sandi" autocomplete="off" required>
           </div>
         </div>
 
-        <div class="input-group ion-margin-top">
-          <label class="input-label">Daftar Sebagai</label>
-          <div class="input-container">
-            <ion-icon name="people-outline" class="input-icon"></ion-icon>
-            <select
-              [(ngModel)]="user.role"
-              name="role"
-              class="custom-input select-input"
-            >
-              <option value="customer">Penumpang (Customer)</option>
-              <option value="driver">Sopir (Driver)</option>
-            </select>
-          </div>
-        </div>
-
-        <button type="submit" class="submit-btn ion-margin-top">
-          Daftar Sekarang
+        <!-- Primary CTA -->
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Daftar</span>
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
         </button>
       </form>
 
-      <div class="footer-link ion-text-center ion-margin-top">
-        <p>Sudah punya akun? <a (click)="goToLogin()" class="login-link">Masuk di sini</a></p>
+      <!-- Login Prompt -->
+      <div class="register-prompt">
+        <p>Sudah punya akun? <a [routerLink]="['/login']">Masuk Sekarang</a></p>
       </div>
     </div>
-    <p class="copyright-text ion-text-center">
-      © 2026 Ambatu Bus. Sistem manajemen transportasi.
-    </p>
   </div>
 </ion-content>

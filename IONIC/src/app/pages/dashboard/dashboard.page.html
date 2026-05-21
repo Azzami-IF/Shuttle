@@ -1,57 +1,218 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Dashboard</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="logout()">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
-  <div *ngIf="user$ | async as user">
-    <h2>Hello, {{ user.name }}!</h2>
-    <p>You are logged in as <strong>{{ user.role }}</strong></p>
-
-    <ion-grid>
-      <ion-row>
-        <!-- Customer Actions -->
-        <ion-col size="12" *ngIf="user.role === 'customer'">
-          <ion-card routerLink="/schedule-list">
-            <ion-card-header>
-              <ion-card-title>Book Shuttle</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              Find available schedules and book your seat.
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-
-        <!-- Driver Actions -->
-        <ion-col size="12" *ngIf="user.role === 'driver'">
-          <ion-card routerLink="/driver-trips">
-            <ion-card-header>
-              <ion-card-title>My Trips</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              Manage your assigned trips and update location.
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-
-        <!-- Common Actions -->
-        <ion-col size="12">
-          <ion-card routerLink="/booking-detail">
-            <ion-card-header>
-              <ion-card-title>Booking History</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              View your past and upcoming bookings.
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+<ion-content class="dashboard-page">
+  <div class="top-bar">
+    <div class="brand">
+      <span class="material-symbols-outlined">directions_bus</span>
+      <span>Ambatu Bus</span>
+    </div>
+    <div class="actions">
+      <button class="nav-btn" (click)="showPending()">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button class="nav-btn" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+      </button>
+    </div>
   </div>
+
+  <main *ngIf="user$ | async as user">
+    <!-- Hero Section -->
+    <section class="hero-section hero-gradient">
+      <p class="greeting">Selamat Siang,</p>
+      <h2 class="user-name">{{ user.name | uppercase }}</h2>
+    </section>
+
+    <!-- Wallet Card -->
+    <section class="wallet-card">
+      <div class="wallet-top">
+        <div class="balance-info">
+          <div class="label">
+            <span class="material-symbols-outlined text-[16px]">account_balance_wallet</span>
+            AmbatuPay
+          </div>
+          <div class="amount">Rp 125.000</div>
+        </div>
+        <div class="actions">
+          <button (click)="showPending()">
+            <div class="icon-box">
+              <span class="material-symbols-outlined">qr_code_scanner</span>
+            </div>
+            <span>Scan</span>
+          </button>
+          <button (click)="showPending()">
+            <div class="icon-box">
+              <span class="material-symbols-outlined">add_circle</span>
+            </div>
+            <span>Isi Saldo</span>
+          </button>
+        </div>
+      </div>
+      <div class="wallet-bottom" (click)="showPending()">
+        <div class="points">
+          <span class="material-symbols-outlined text-secondary">stars</span>
+          <span class="count">1.240</span>
+          <span class="label ml-1">BusPoints</span>
+        </div>
+        <div class="badge">
+          <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+          Premium
+        </div>
+      </div>
+    </section>
+
+    <!-- Route Selection Card (Customer Only) -->
+    <section class="search-card" *ngIf="user.role === 'customer'">
+      <div class="route-picker">
+        <div class="point">
+          <div class="indicator">
+            <div class="dot"></div>
+            <div class="line"></div>
+          </div>
+          <div class="info">
+            <label>Asal</label>
+            <p>Terminal Leuwi Panjang</p>
+          </div>
+        </div>
+        <div class="point">
+          <div class="indicator">
+            <div class="dot destination"></div>
+          </div>
+          <div class="info">
+            <label>Tujuan</label>
+            <p>Terminal Kampung Rambutan</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Tanggal Perjalanan</label>
+          <div class="val">
+            <span class="material-symbols-outlined">calendar_month</span>
+            Kamis, 24 Okt
+          </div>
+        </div>
+        <div class="detail-item">
+          <label>Jumlah Penumpang</label>
+          <div class="val">
+            <span class="material-symbols-outlined">person</span>
+            1 Dewasa
+          </div>
+        </div>
+      </div>
+
+      <button class="search-btn" routerLink="/schedule-list">
+        <span class="material-symbols-outlined">search</span>
+        Cari Tiket Bus
+      </button>
+    </section>
+
+    <!-- Driver Specific Card -->
+    <section class="search-card" *ngIf="user.role === 'driver'">
+      <div class="text-center py-4">
+        <h3 class="font-bold text-lg mb-2">Tugas Hari Ini</h3>
+        <p class="text-gray-600 mb-4">Anda memiliki rute aktif yang harus dimulai.</p>
+        <button class="search-btn" routerLink="/driver-trips">
+          <span class="material-symbols-outlined">route</span>
+          Lihat Perjalanan
+        </button>
+      </div>
+    </section>
+
+    <!-- Quick Access Menu -->
+    <section class="quick-menu">
+      <button class="menu-item" routerLink="/schedule-list">
+        <div class="icon-box">
+          <span class="material-symbols-outlined">schedule</span>
+        </div>
+        <span>Jadwal</span>
+      </button>
+      <button class="menu-item" routerLink="/trip-tracking">
+        <div class="icon-box secondary">
+          <span class="material-symbols-outlined">near_me</span>
+        </div>
+        <span>Monitoring</span>
+      </button>
+      <button class="menu-item" routerLink="/booking-detail">
+        <div class="icon-box tertiary">
+          <span class="material-symbols-outlined">history</span>
+        </div>
+        <span>Riwayat</span>
+      </button>
+      <button class="menu-item" (click)="showPending()">
+        <div class="icon-box error">
+          <span class="material-symbols-outlined">redeem</span>
+        </div>
+        <span>Promo</span>
+      </button>
+    </section>
+
+    <!-- Promo Section -->
+    <section class="promo-section">
+      <div class="section-header">
+        <h3 class="font-bold text-lg">Promo Terbaru</h3>
+        <button class="see-all" (click)="showPending()">LIHAT SEMUA</button>
+      </div>
+      <div class="promo-scroll hide-scrollbar">
+        <div class="promo-card" (click)="showPending()">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwFroXbPfl-88N_n8wg4EOdWw5uN89ImK_yhgu3xvITDm5XLs0vql1XCGNpmxfTwQewl9iWHh1TvRC_EaElZRUMFdUyh1-oAgYUZEHe--w3fsj_tB2MUuaK-gJti3VtOu275HIv7ZPpcDMshdMv35btjdk51RfNqoo1KGfMbz78Yrl2t8I9FNy1ljB2u_Rv9KgRTC3x1zgg6RKtbr9_7Pe9IWR8OnniMaV_pFKKcw4aH6BZq69t7E491pQ1Ep3M_8xdC5I79Qxs3zS" alt="Promo Bus">
+          <div class="content">
+            <span class="badge error">TERBATAS</span>
+            <h4>Diskon 50% Tiket Perdana!</h4>
+            <p>Nikmati perjalanan ke Bandung dengan harga spesial...</p>
+          </div>
+        </div>
+        <div class="promo-card" (click)="showPending()">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIw7_z46niAYPciVoCGpDe_eygxHAdOXTrJGw1CgbBfR9maLKbKD8FnjSxqRtD9zbfqajyTqBWp7SE-Or0b9Kzp1XtzTrE9YtsOdw7X31W7jVeZ4WhbRHi1R4uSCV7YWAPd_6KOZkJ4v7IDC-hxWTg-EzBq_qb7fh55dTYk1YRrELvJdCzBc60l_5MJYyQJzE6_MPts2mzvM0bQf3iIKGXQkgy5kWkBXhvg2kDcy1pL6WXE4mle_z9lZtNBPU0vMx_hQHmfgTwS3-r" alt="Cashback">
+          <div class="content">
+            <span class="badge primary">CASHBACK</span>
+            <h4>Cashback AmbatuPay 15%</h4>
+            <p>Gunakan AmbatuPay untuk setiap transaksi...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section">
+      <h3 class="font-bold text-lg mb-4">Informasi Penting</h3>
+      <div class="info-grid">
+        <div class="info-banner primary-fixed" (click)="showPending()">
+          <div class="content">
+            <span class="label">WAJIB MASKER</span>
+            <p>Protokol kesehatan tetap berlaku di seluruh armada.</p>
+          </div>
+          <span class="material-symbols-outlined icon">masks</span>
+        </div>
+        <div class="info-item surface-high" (click)="showPending()">
+          <span class="material-symbols-outlined secondary">support_agent</span>
+          <span class="title">Bantuan 24/7</span>
+          <p>Hubungi CS kami kapan saja.</p>
+        </div>
+        <div class="info-item surface-high" (click)="showPending()">
+          <span class="material-symbols-outlined primary">verified_user</span>
+          <span class="title">Asuransi</span>
+          <p>Setiap perjalanan terlindungi.</p>
+        </div>
+      </div>
+    </section>
+  </main>
 </ion-content>
+
+<nav class="bottom-nav">
+  <button class="nav-item active">
+    <span class="material-symbols-outlined">home</span>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" routerLink="/schedule-list">
+    <span class="material-symbols-outlined">directions_bus</span>
+    <span>Schedule</span>
+  </button>
+  <button class="nav-item" routerLink="/booking-detail">
+    <span class="material-symbols-outlined">confirmation_number</span>
+    <span>Bookings</span>
+  </button>
+  <button class="nav-item" (click)="showPending()">
+    <span class="material-symbols-outlined">person</span>
+    <span>Profile</span>
+  </button>
+</nav>

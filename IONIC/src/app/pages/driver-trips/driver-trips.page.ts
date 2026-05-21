@@ -7,13 +7,13 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './driver-trips.page.html',
   styleUrls: ['./driver-trips.page.scss'],
 })
-export class DriverTripsPage implements OnInit {
+export class DriverTripsPage {
   trips: any[] = [];
   activeTrip: any = null;
 
   constructor(private api: ApiService) {}
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.loadTrips();
   }
 

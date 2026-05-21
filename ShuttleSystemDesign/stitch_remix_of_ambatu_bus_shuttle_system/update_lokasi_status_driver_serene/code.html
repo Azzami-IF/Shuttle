@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Driver Panel - Ambatu Bus</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#a3a5a4",
+                    "inverse-on-surface": "#f0f1ed",
+                    "surface-tint": "#516356",
+                    "surface-container-low": "#f2f4f0",
+                    "surface-container-highest": "#e1e3df",
+                    "tertiary-fixed-dim": "#c5c7c6",
+                    "secondary": "#536349",
+                    "on-tertiary-fixed": "#191c1c",
+                    "inverse-surface": "#2e312e",
+                    "inverse-primary": "#b8cbbc",
+                    "primary": "#18281e",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e1e3df",
+                    "primary-fixed": "#d4e7d8",
+                    "secondary-container": "#d3e5c5",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#232525",
+                    "outline": "#737873",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#edeeea",
+                    "primary-fixed-dim": "#b8cbbc",
+                    "on-secondary": "#ffffff",
+                    "surface": "#f8faf5",
+                    "on-secondary-fixed": "#111f0b",
+                    "tertiary-fixed": "#e1e3e2",
+                    "tertiary-container": "#383b3b",
+                    "on-surface-variant": "#434844",
+                    "background": "#f8faf5",
+                    "secondary-fixed-dim": "#baccad",
+                    "on-primary-fixed-variant": "#394b3f",
+                    "on-surface": "#191c1a",
+                    "surface-dim": "#d9dbd6",
+                    "surface-bright": "#f8faf5",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-primary": "#ffffff",
+                    "on-background": "#191c1a",
+                    "on-secondary-container": "#57674d",
+                    "on-primary-container": "#96a99b",
+                    "primary-container": "#2d3e33",
+                    "surface-container-high": "#e7e9e4",
+                    "outline-variant": "#c3c8c2",
+                    "on-primary-fixed": "#0e1f15",
+                    "on-secondary-fixed-variant": "#3c4b33",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#d6e8c8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "md": "24px",
+                    "margin-desktop": "64px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "margin-mobile": "16px",
+                    "lg": "48px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "label-md": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .status-dot-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(0.95); opacity: 1; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="bg-surface dark:bg-inverse-surface text-primary dark:text-primary-fixed font-headline-md text-headline-md font-semibold docked full-width top-0 shadow-sm dark:shadow-none flex justify-between items-center px-margin-mobile md:px-margin-desktop w-full h-16 z-50">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Ambatu Bus</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex flex-col items-end mr-2">
+<span class="font-label-md text-label-md text-on-surface">Budi Santoso</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ID: AB-90210</span>
+</div>
+<button class="hover:bg-surface-container dark:hover:bg-tertiary-container transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+</button>
+</div>
+</header>
+<main class="flex-grow p-margin-mobile md:p-margin-desktop max-w-[1440px] mx-auto w-full">
+<!-- Main Dashboard Grid -->
+<div class="bento-grid">
+<!-- Map & Live Status (Large Cell) -->
+<section class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-md border border-outline-variant relative overflow-hidden h-[400px] lg:h-[500px]">
+<div class="absolute inset-0 z-0 bg-surface-container">
+<img class="w-full h-full object-cover opacity-60 grayscale-[20%]" data-alt="A clean, minimalist vector-style digital map of a modern city grid in Indonesia. The map uses a soft Sage Green and Off-White color palette to represent urban areas and parks. A single, bold Forest Green transit line highlights a bus route with a pulsing marker representing a vehicle. The lighting is bright and even, evoking a professional and serene operational dashboard aesthetic." data-location="Jakarta, Indonesia" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCeYGPgMReiUWDcCV6ieZkeKZkp4OAN0FQIXvUij9HWTx8mdzfKVq9eED93Yr1IapEAdB9QCT5UC75WRspXPOfw0xVXC_WSQReIxe31zJYKSAMVCtOz3PfdH5uz8EWuogriSjPP9r4n7MH0U4boNUh1jbD7spIxW_2gQFVyBvmAwU4yIbvLH8JQAW2No1T7M8Fq3u7oV5tEfbCd7olFfpltzrVU6KzyFwMySYwjN3vHyrJXalYRaSfz80LkaQ4nnAWLXbSQTeOqyiW"/>
+</div>
+<div class="relative z-10 flex flex-col h-full justify-between pointer-events-none">
+<div class="flex justify-between items-start pointer-events-auto">
+<div class="bg-surface/90 backdrop-blur-md p-4 rounded-xl shadow-sm border border-outline-variant flex items-center gap-4">
+<div class="w-3 h-3 bg-secondary rounded-full status-dot-pulse"></div>
+<div>
+<h3 class="font-headline-md text-[18px] text-primary">Live Tracking</h3>
+<p class="font-label-sm text-on-surface-variant">Bus 7A - Koridor Sudirman</p>
+</div>
+</div>
+<button class="bg-primary text-on-primary font-label-md px-6 py-3 rounded-full flex items-center gap-2 shadow-lg active:scale-95 transition-transform pointer-events-auto" id="updateLocation">
+<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+                            Update Lokasi
+                        </button>
+</div>
+<div class="bg-surface/90 backdrop-blur-md p-md rounded-xl border border-outline-variant flex flex-wrap gap-lg pointer-events-auto">
+<div class="flex flex-col">
+<span class="font-label-sm text-on-surface-variant">Next Stop</span>
+<span class="font-headline-md text-primary">Bundaran HI</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-on-surface-variant">ETA</span>
+<span class="font-headline-md text-primary">4 Menit</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-on-surface-variant">Jarak</span>
+<span class="font-headline-md text-primary">1.2 KM</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Status Management (Tall Cell) -->
+<section class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant flex-grow">
+<div class="flex items-center gap-2 mb-md text-primary">
+<span class="material-symbols-outlined" data-icon="route">route</span>
+<h2 class="font-headline-md text-headline-md">Status Perjalanan</h2>
+</div>
+<div class="space-y-4">
+<label class="block">
+<span class="font-label-md text-on-surface-variant mb-2 block">Pilih Status Aktif:</span>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-outline-variant rounded-lg p-4 font-body-md text-primary appearance-none focus:ring-2 focus:ring-secondary transition-all" id="statusSelect">
+<option value="scheduled">Scheduled</option>
+<option selected="" value="ongoing">On-going</option>
+<option value="completed">Completed</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</label>
+<div class="p-4 bg-secondary-container/30 rounded-lg border border-secondary/20">
+<p class="font-body-md text-on-secondary-container">
+                                Status saat ini: <strong>On-going</strong>. Penumpang dapat melihat posisi bus Anda di peta publik.
+                            </p>
+</div>
+</div>
+<div class="mt-lg">
+<h3 class="font-label-md text-on-surface-variant mb-sm uppercase tracking-wider">Metrik Operasional</h3>
+<div class="grid grid-cols-2 gap-base">
+<div class="p-3 bg-surface-container rounded-lg">
+<span class="font-label-sm text-on-surface-variant block">Bahan Bakar</span>
+<span class="font-headline-md text-primary">82%</span>
+</div>
+<div class="p-3 bg-surface-container rounded-lg">
+<span class="font-label-sm text-on-surface-variant block">Suhu Mesin</span>
+<span class="font-headline-md text-primary">Normal</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary text-on-primary rounded-xl p-md shadow-sm">
+<div class="flex justify-between items-center">
+<div>
+<p class="font-label-sm opacity-80">Shift Berakhir Dalam</p>
+<p class="font-headline-md">03:24:15</p>
+</div>
+<span class="material-symbols-outlined text-[40px] opacity-40" data-icon="timer">timer</span>
+</div>
+</div>
+</section>
+<!-- Passenger List (Asymmetric/Wide Cell) -->
+<section class="col-span-12 bg-surface-container-lowest rounded-xl p-md border border-outline-variant">
+<div class="flex justify-between items-end mb-md">
+<div>
+<div class="flex items-center gap-2 text-primary mb-1">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<h2 class="font-headline-md text-headline-md">Daftar Penumpang</h2>
+</div>
+<p class="font-body-md text-on-surface-variant">24 Penumpang Terdaftar (18 Sudah Naik)</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high hover:bg-surface-container-highest p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+</button>
+<button class="bg-secondary text-on-secondary font-label-md px-4 py-2 rounded-lg active:scale-95 transition-transform">
+                            Scan QR Penumpang
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+<!-- Passenger Card 1 -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold">
+                            AA
+                        </div>
+<div class="flex-grow">
+<p class="font-label-md text-primary">Ahmad Al-Fath</p>
+<p class="font-label-sm text-on-surface-variant">Halte: Blok M</p>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Passenger Card 2 -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed font-bold">
+                            SN
+                        </div>
+<div class="flex-grow">
+<p class="font-label-md text-primary">Siti Nurhaliza</p>
+<p class="font-label-sm text-on-surface-variant">Halte: Senayan</p>
+</div>
+<span class="material-symbols-outlined text-on-tertiary-container" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<!-- Passenger Card 3 -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold">
+                            RP
+                        </div>
+<div class="flex-grow">
+<p class="font-label-md text-primary">Rian Pratama</p>
+<p class="font-label-sm text-on-surface-variant">Halte: Dukuh Atas</p>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Passenger Card 4 -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex items-center gap-4 opacity-70 italic">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant font-bold">
+                            +20
+                        </div>
+<div class="flex-grow">
+<p class="font-label-md">Penumpang Lainnya</p>
+</div>
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="md:hidden bg-surface dark:bg-inverse-surface shadow-lg fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-2 rounded-t-xl">
+<div class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+<span class="font-label-sm text-label-sm">Status</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-sm text-label-sm">Jadwal</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-sm text-label-sm">Monitoring</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="route">route</span>
+<span class="font-label-sm text-label-sm">Rute</span>
+</div>
+</nav>
+<!-- Spacer for Bottom Nav on Mobile -->
+<div class="h-24 md:hidden"></div>
+<script>
+        // Micro-interaction for Update Location button
+        const updateBtn = document.getElementById('updateLocation');
+        updateBtn.addEventListener('click', function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = `<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Updating...`;
+            this.classList.add('opacity-80');
+            
+            setTimeout(() => {
+                this.innerHTML = `<span class="material-symbols-outlined text-green-400" data-icon="check_circle">check_circle</span> Berhasil`;
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('opacity-80');
+                }, 2000);
+            }, 1500);
+        });
+
+        // Toggle logic for Status Select
+        const statusSelect = document.getElementById('statusSelect');
+        statusSelect.addEventListener('change', function(e) {
+            const status = e.target.value;
+            const container = e.target.closest('div').nextElementSibling;
+            
+            if (status === 'ongoing') {
+                container.className = "p-4 bg-secondary-container/30 rounded-lg border border-secondary/20 mt-4";
+                container.querySelector('p').innerHTML = "Status saat ini: <strong>On-going</strong>. Penumpang dapat melihat posisi bus Anda di peta publik.";
+            } else if (status === 'scheduled') {
+                container.className = "p-4 bg-surface-container rounded-lg border border-outline-variant mt-4";
+                container.querySelector('p').innerHTML = "Status saat ini: <strong>Scheduled</strong>. Perjalanan belum dimulai.";
+            } else {
+                container.className = "p-4 bg-primary-container/10 rounded-lg border border-primary/20 mt-4";
+                container.querySelector('p').innerHTML = "Status saat ini: <strong>Completed</strong>. Perjalanan telah selesai. Data sedang diarsipkan.";
+            }
+        });
+    </script>
+</body></html>

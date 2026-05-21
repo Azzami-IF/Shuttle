@@ -11,9 +11,23 @@ use Illuminate\Support\Facades\DB;
 
 class ScheduleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Schedule::with(['vehicle', 'driver'])->get());
+        $query = Schedule::with(['vehicle', 'driver']);
+
+        if ($request->has('origin')) {
+            $query->where('origin', 'like', "%{$request->get('origin')}%");
+        }
+
+        if ($request->has('destination')) {
+            $query->where('destination', 'like', "%{$request->get('destination')}%");
+        }
+
+        if ($request->has('date')) {
+            $query->whereDate('departure_time', $request->get('date'));
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
