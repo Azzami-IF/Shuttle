@@ -1,0 +1,353 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "background": "#f8faf5",
+                  "surface-container": "#edeeea",
+                  "error-container": "#ffdad6",
+                  "primary-fixed": "#d4e7d8",
+                  "on-secondary-container": "#57674d",
+                  "secondary-fixed-dim": "#baccad",
+                  "on-error": "#ffffff",
+                  "on-tertiary-fixed": "#191c1c",
+                  "primary-fixed-dim": "#b8cbbc",
+                  "on-tertiary": "#ffffff",
+                  "error": "#ba1a1a",
+                  "surface": "#f8faf5",
+                  "on-secondary": "#ffffff",
+                  "on-background": "#191c1a",
+                  "on-tertiary-fixed-variant": "#454747",
+                  "on-surface-variant": "#434844",
+                  "surface-dim": "#d9dbd6",
+                  "secondary-fixed": "#d6e8c8",
+                  "on-secondary-fixed-variant": "#3c4b33",
+                  "secondary": "#536349",
+                  "on-secondary-fixed": "#111f0b",
+                  "surface-container-high": "#e7e9e4",
+                  "on-error-container": "#93000a",
+                  "tertiary-fixed": "#e1e3e2",
+                  "surface-variant": "#e1e3df",
+                  "surface-container-low": "#f2f4f0",
+                  "secondary-container": "#d3e5c5",
+                  "on-surface": "#191c1a",
+                  "surface-bright": "#f8faf5",
+                  "tertiary": "#232525",
+                  "surface-tint": "#516356",
+                  "on-primary": "#ffffff",
+                  "inverse-on-surface": "#f0f1ed",
+                  "outline-variant": "#c3c8c2",
+                  "inverse-surface": "#2e312e",
+                  "on-primary-fixed-variant": "#394b3f",
+                  "primary": "#18281e",
+                  "on-primary-fixed": "#0e1f15",
+                  "tertiary-container": "#383b3b",
+                  "surface-container-highest": "#e1e3df",
+                  "primary-container": "#2d3e33",
+                  "on-tertiary-container": "#a3a5a4",
+                  "surface-container-lowest": "#ffffff",
+                  "outline": "#737873",
+                  "inverse-primary": "#b8cbbc",
+                  "on-primary-container": "#96a99b",
+                  "tertiary-fixed-dim": "#c5c7c6"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin-mobile": "16px",
+                  "gutter": "24px",
+                  "xs": "4px",
+                  "base": "8px",
+                  "margin-desktop": "64px",
+                  "sm": "12px",
+                  "md": "24px",
+                  "lg": "48px"
+          },
+          "fontFamily": {
+                  "headline-md": ["Hanken Grotesk"],
+                  "body-lg": ["Hanken Grotesk"],
+                  "label-md": ["Hanken Grotesk"],
+                  "headline-lg-mobile": ["Hanken Grotesk"],
+                  "label-sm": ["Hanken Grotesk"],
+                  "headline-lg": ["Hanken Grotesk"],
+                  "body-md": ["Hanken Grotesk"]
+          },
+          "fontSize": {
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                  "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      font-family: 'Hanken Grotesk', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm dark:shadow-none fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform text-primary dark:text-primary-fixed">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Ambatu Bus</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">admin_panel_settings</span>
+</div>
+</header>
+<main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-screen-xl mx-auto">
+<!-- Header Section -->
+<section class="mb-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<p class="font-label-md text-label-md text-secondary uppercase tracking-widest mb-xs">Driver Schedule</p>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Hello, Captain Rahmad</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Your agenda for Monday, Oct 24, 2023</p>
+</div>
+<div class="flex items-center bg-secondary-container text-on-secondary-container px-md py-sm rounded-xl gap-3">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">4 Trips Assigned Today</span>
+</div>
+</div>
+</section>
+<!-- Bento Grid Schedule Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Current/Next Upcoming Trip (Highlighted Hero Card) -->
+<div class="md:col-span-8 group">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-md">
+<div class="relative h-48 md:h-64 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A wide cinematic shot of a modern clean white luxury bus traveling through a lush green Indonesian mountain highway during a soft golden hour. The landscape is serene with tropical foliage and a clear soft sky, reflecting a professional and calm transit atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5ygY15Ml17Xz0_ogzkrnE2u3tX2zIyGB3mNYHDluBMGRvrpnHeMPIVPWiFkViPEcsn2_Mjt8muKLkucYSi32EtMsdmsLrw1Kjo5pDSHkR2mQXB9Ek1M3MiBIqL4aVulXKsv2HdDx4oet1PoYdLAS-HsC0-Yrjb8hO1o8FKj8tp1pUM6frr9xCXj4uUdfUVcxwv8GFv7_P3h0HVJDgz-Z9Hsk_T7Zq9obnK31z4rCFffM3DmWDZLMb1fw4gBWNR0_crLuyOJj1-dML">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent"></div>
+<div class="absolute bottom-md left-md right-md text-white">
+<span class="bg-white/20 backdrop-blur-md px-base py-xs rounded-full text-xs font-bold uppercase tracking-wider mb-base inline-block">Next Departure • 15 Mins Left</span>
+<h3 class="font-headline-md text-headline-md text-white">Jakarta Central → Bandung Terminal</h3>
+</div>
+</div>
+<div class="p-md flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="flex flex-wrap gap-lg">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Departure</p>
+<p class="font-headline-md text-headline-md text-primary">09:30 AM</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Bus Unit</p>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary">directions_bus</span>
+<p class="font-headline-md text-headline-md text-primary">AB-2044</p>
+</div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Type</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Express Executive</p>
+</div>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-lg py-md rounded-full flex items-center justify-center gap-base transition-all hover:opacity-90 active:scale-95 whitespace-nowrap shadow-lg" onclick="window.location.href='{{DATA:SCREEN:SCREEN_23}}'">
+<span class="material-symbols-outlined">play_arrow</span>
+              Start Trip
+            </button>
+</div>
+</div>
+</div>
+<!-- Quick Metrics/Status Side -->
+<div class="md:col-span-4 flex flex-col gap-gutter">
+<div class="bg-surface-container border border-outline-variant rounded-xl p-md flex-1">
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-md uppercase tracking-wider">Fleet Status</h4>
+<div class="space-y-md">
+<div class="flex items-center justify-between p-sm bg-white rounded-lg border border-outline-variant">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-secondary">oil_barrel</span>
+<span class="font-body-md text-body-md">Fuel Level</span>
+</div>
+<span class="font-bold text-secondary">88%</span>
+</div>
+<div class="flex items-center justify-between p-sm bg-white rounded-lg border border-outline-variant">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-secondary">tire_repair</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</div>
+<span class="font-bold text-secondary">Ready</span>
+</div>
+</div>
+</div>
+<div class="bg-secondary-fixed border border-secondary text-on-secondary-fixed p-md rounded-xl">
+<div class="flex items-center gap-sm mb-base">
+<span class="material-symbols-outlined">notification_important</span>
+<span class="font-label-md text-label-md font-bold uppercase">System Message</span>
+</div>
+<p class="font-body-md text-body-md">Roadwork expected on Cipularang KM 72. Expect 15 min delay for afternoon trips.</p>
+</div>
+</div>
+<!-- Remaining Schedule List -->
+<div class="md:col-span-12">
+<h4 class="font-headline-md text-headline-md mb-md">Later Today</h4>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Trip Card 2 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md flex flex-col justify-between hover:border-secondary transition-colors">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="bg-surface-container px-base py-xs rounded-full text-xs font-bold uppercase text-on-surface-variant">Scheduled</div>
+<span class="font-label-md text-label-md text-on-surface-variant">13:45</span>
+</div>
+<div class="flex items-center gap-sm mb-xs">
+<span class="material-symbols-outlined text-outline text-sm">circle</span>
+<p class="font-body-md text-body-md text-on-surface">Bandung Terminal</p>
+</div>
+<div class="h-6 w-px bg-outline-variant ml-[6px] mb-xs"></div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary text-sm">location_on</span>
+<p class="font-body-md text-body-md text-on-surface">Jakarta South Hub</p>
+</div>
+</div>
+<div class="mt-lg pt-md border-t border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-base">directions_bus</span>
+<span class="font-label-sm text-label-sm">AB-2044</span>
+</div>
+<button class="text-secondary font-label-md text-label-md hover:underline">Details</button>
+</div>
+</div>
+<!-- Trip Card 3 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md flex flex-col justify-between hover:border-secondary transition-colors opacity-75">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="bg-surface-container px-base py-xs rounded-full text-xs font-bold uppercase text-on-surface-variant">Scheduled</div>
+<span class="font-label-md text-label-md text-on-surface-variant">16:30</span>
+</div>
+<div class="flex items-center gap-sm mb-xs">
+<span class="material-symbols-outlined text-outline text-sm">circle</span>
+<p class="font-body-md text-body-md text-on-surface">Jakarta South Hub</p>
+</div>
+<div class="h-6 w-px bg-outline-variant ml-[6px] mb-xs"></div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary text-sm">location_on</span>
+<p class="font-body-md text-body-md text-on-surface">Bogor Terminal</p>
+</div>
+</div>
+<div class="mt-lg pt-md border-t border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-base">directions_bus</span>
+<span class="font-label-sm text-label-sm">AB-2044</span>
+</div>
+<button class="text-secondary font-label-md text-label-md hover:underline">Details</button>
+</div>
+</div>
+<!-- Trip Card 4 -->
+<div class="bg-white border border-outline-variant rounded-xl p-md flex flex-col justify-between hover:border-secondary transition-colors opacity-75">
+<div>
+<div class="flex justify-between items-start mb-md">
+<div class="bg-surface-container px-base py-xs rounded-full text-xs font-bold uppercase text-on-surface-variant">Scheduled</div>
+<span class="font-label-md text-label-md text-on-surface-variant">19:15</span>
+</div>
+<div class="flex items-center gap-sm mb-xs">
+<span class="material-symbols-outlined text-outline text-sm">circle</span>
+<p class="font-body-md text-body-md text-on-surface">Bogor Terminal</p>
+</div>
+<div class="h-6 w-px bg-outline-variant ml-[6px] mb-xs"></div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary text-sm">location_on</span>
+<p class="font-body-md text-body-md text-on-surface">Jakarta Central</p>
+</div>
+</div>
+<div class="mt-lg pt-md border-t border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-base">directions_bus</span>
+<span class="font-label-sm text-label-sm">AB-2044</span>
+</div>
+<button class="text-secondary font-label-md text-label-md hover:underline">Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-2 bg-surface dark:bg-inverse-surface shadow-lg rounded-t-xl">
+<!-- Jadwal Active -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_9}}">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm">Jadwal</span>
+</a>
+<!-- Kendaraan Inactive -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_23}}">
+<span class="material-symbols-outlined">directions_bus</span>
+<span class="font-label-sm text-label-sm">Kendaraan</span>
+</a>
+<!-- Monitoring Inactive -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_17}}">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Monitoring</span>
+</a>
+<!-- Status Inactive -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-tertiary-container hover:opacity-80 active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_4}}">
+<span class="material-symbols-outlined">route</span>
+<span class="font-label-sm text-label-sm">Status</span>
+</a>
+</nav>
+<script>
+    function startTripAnimation(btn) {
+      const originalContent = btn.innerHTML;
+      btn.innerHTML = `
+        <span class="material-symbols-outlined animate-spin">sync</span>
+        Initializing GPS...
+      `;
+      btn.classList.add('bg-secondary');
+      
+      setTimeout(() => {
+        btn.innerHTML = `
+          <span class="material-symbols-outlined">check_circle</span>
+          Trip Started
+        `;
+        btn.classList.remove('bg-primary');
+        btn.classList.add('bg-on-secondary-container', 'text-white');
+        
+        // Show notification mock
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-20 right-4 bg-primary text-white p-4 rounded-lg shadow-xl translate-x-full transition-transform duration-500 z-[100]';
+        notification.innerHTML = 'Trip started. Navigation engaged.';
+        document.body.appendChild(notification);
+        setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+        setTimeout(() => {
+          notification.style.transform = 'translateX(200%)';
+          setTimeout(() => notification.remove(), 500);
+        }, 3000);
+      }, 1500);
+    }
+  </script>
+
+
+</body></html>

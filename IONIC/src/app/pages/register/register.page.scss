@@ -1,0 +1,11 @@
+@import "../login/login.page.scss";
+
+.register-page {
+  .hero-section {
+    height: 240px; // Slightly shorter for register
+  }
+
+  .login-form-content {
+    margin-top: -32px;
+  }
+}
