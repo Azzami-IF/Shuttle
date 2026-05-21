@@ -1,0 +1,74 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <button class="back-btn" (click)="goBack()">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+    </ion-buttons>
+    <ion-title>Pembayaran QRIS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="payment-page">
+  <div class="main-container">
+    <!-- Timer Card -->
+    <div class="timer-card">
+      <div class="label">
+        <span class="material-symbols-outlined text-[20px]">schedule</span>
+        <span>Bayar dalam</span>
+      </div>
+      <div class="countdown">{{ countdown }}</div>
+    </div>
+
+    <!-- QR Section -->
+    <div class="qr-card">
+      <img src="https://images.unsplash.com/photo-1622394537152-a5214041b65b?auto=format&fit=crop&q=80&w=400" alt="QRIS Logo" class="qris-logo">
+
+      <div class="qr-container">
+        <div class="qr-wrapper">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={{booking?.payment_code}}" alt="Payment QR Code">
+        </div>
+      </div>
+
+      <p class="instruction">Simpan QR Code atau scan langsung untuk menyelesaikan pembayaran</p>
+    </div>
+
+    <!-- Booking Summary -->
+    <div class="summary-card" *ngIf="booking">
+      <h2>Ringkasan Pesanan</h2>
+      <div class="summary-details">
+        <div class="info">
+          <span class="route">{{ booking.schedule?.origin }} → {{ booking.schedule?.destination }}</span>
+          <span class="sub">{{ booking.schedule?.vehicle?.name }} • {{ booking.seat?.label }}</span>
+        </div>
+        <div class="price-box">
+          <span class="total-label">Total Pembayaran</span>
+          <span class="total-amount">Rp {{ 150000 | number:'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instruction Steps -->
+    <div class="instructions">
+      <div class="step">
+        <div class="num">1</div>
+        <p>Buka aplikasi mobile banking atau e-wallet pilihanmu.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <p>Pilih menu 'Scan' atau 'QRIS' dan arahkan ke kode di atas.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <p>Periksa detail transaksi dan masukkan PIN untuk membayar.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="payment-footer">
+    <button class="confirm-btn" (click)="confirmPayment()">
+      Cek Status Pembayaran
+    </button>
+    <button class="help-btn">Butuh Bantuan?</button>
+  </footer>
+</ion-content>

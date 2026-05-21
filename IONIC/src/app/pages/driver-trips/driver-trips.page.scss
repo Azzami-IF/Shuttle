@@ -1,0 +1,108 @@
+.driver-trips-page {
+  --background: var(--ion-background-color);
+}
+
+.trip-card {
+  background: white;
+  border-radius: 16px;
+  margin: 16px var(--container-margin);
+  padding: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--outline-variant);
+
+  .status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    &.scheduled { background: var(--surface-container-high); color: var(--outline); }
+    &.on-the-way { background: var(--secondary-container); color: var(--on-secondary-container); }
+    &.completed { background: var(--primary-fixed); color: var(--on-primary-fixed); }
+  }
+
+  .route-text {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ion-text-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .time-text {
+    font-size: 14px;
+    color: var(--outline);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .action-row {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--surface-container-low);
+    display: flex;
+    gap: 12px;
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      border: none;
+      transition: all 0.2s;
+
+      &.start-btn { background: var(--ion-color-primary); color: white; }
+      &.details-btn { background: var(--surface-container-low); color: var(--ion-text-color); }
+      &.complete-btn { background: var(--ion-color-secondary); color: white; }
+    }
+  }
+}
+
+.active-trip-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--primary-container);
+  color: white;
+  padding: 24px var(--container-margin);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .title { font-size: 18px; font-weight: 700; }
+    .status { font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 9999px; }
+  }
+
+  .location-update {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    border-radius: 12px;
+
+    .update-btn {
+      margin-left: auto;
+      background: white;
+      color: var(--primary-container);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      border: none;
+    }
+  }
+}

@@ -1,0 +1,83 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pilih Jadwal</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <span class="material-symbols-outlined">filter_list</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="schedule-list-page">
+  <section class="search-summary p-4">
+    <div class="flex flex-col gap-3 bg-white/10 p-4 rounded-xl">
+      <div class="flex items-center gap-2">
+        <ion-input placeholder="Asal" [(ngModel)]="filters.origin" (ionChange)="onFilterChange()" class="text-white border-b border-white/30"></ion-input>
+        <span class="material-symbols-outlined text-[16px] text-white">arrow_forward</span>
+        <ion-input placeholder="Tujuan" [(ngModel)]="filters.destination" (ionChange)="onFilterChange()" class="text-white border-b border-white/30"></ion-input>
+      </div>
+      <ion-input type="date" [(ngModel)]="filters.date" (ionChange)="onFilterChange()" class="text-white border-b border-white/30"></ion-input>
+    </div>
+  </section>
+
+  <section class="filter-bar">
+    <div class="filter-item">
+      <span class="material-symbols-outlined text-[16px]">sort</span>
+      Tercepat
+    </div>
+    <div class="filter-item">
+      <span class="material-symbols-outlined text-[16px]">payments</span>
+      Termurah
+    </div>
+    <div class="filter-item">
+      <span class="material-symbols-outlined text-[16px]">history</span>
+      Terakhir
+    </div>
+  </section>
+
+  <main>
+    <div class="schedule-card" *ngFor="let schedule of schedules" (click)="viewSchedule(schedule.id)">
+      <div class="card-top">
+        <div class="time-info">
+          <div class="time">{{ schedule.departure_time | date:'HH:mm' }}</div>
+          <div class="duration">2 jam 30 mnt</div>
+        </div>
+        <div class="price-info">
+          <div class="price">Rp 85.000</div>
+          <div class="seats">{{ getAvailableSeats(schedule) }} Kursi Tersedia</div>
+        </div>
+      </div>
+
+      <div class="route-details">
+        <div class="visual">
+          <div class="dot"></div>
+          <div class="line"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="points">
+          <div>{{ schedule.origin }}</div>
+          <div>{{ schedule.destination }}</div>
+        </div>
+      </div>
+
+      <div class="vehicle-info">
+        <span class="material-symbols-outlined text-[16px]">directions_bus</span>
+        {{ schedule.vehicle?.name }} • {{ schedule.vehicle?.license_plate }}
+        <div class="amenities">
+          <span class="material-symbols-outlined text-[16px]">wifi</span>
+          <span class="material-symbols-outlined text-[16px]">ac_unit</span>
+          <span class="material-symbols-outlined text-[16px]">electrical_services</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state-container" *ngIf="schedules.length === 0">
+      <span class="material-symbols-outlined">search_off</span>
+      <p>Tidak ada jadwal ditemukan untuk rute ini.</p>
+    </div>
+  </main>
+</ion-content>

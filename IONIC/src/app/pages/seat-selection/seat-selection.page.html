@@ -1,0 +1,68 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/schedule-list" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pilih Kursi</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="seat-selection-page">
+  <section class="legend-container">
+    <div class="legend-item">
+      <div class="box available"></div>
+      <span>Tersedia</span>
+    </div>
+    <div class="legend-item">
+      <div class="box selected"></div>
+      <span>Terpilih</span>
+    </div>
+    <div class="legend-item">
+      <div class="box occupied"></div>
+      <span>Terisi</span>
+    </div>
+  </section>
+
+  <main>
+    <div class="bus-layout">
+      <div class="steering-wheel">
+        <span class="material-symbols-outlined text-[32px]">motion_photos_auto</span>
+      </div>
+
+      <div class="seat-rows">
+        <div class="seat-row" *ngFor="let row of rows">
+          <div class="pair">
+            <button class="seat"
+                    *ngFor="let seat of row.left"
+                    [class.selected]="selectedSeatId === seat.id"
+                    [class.occupied]="seat.is_occupied"
+                    [disabled]="seat.is_occupied"
+                    (click)="selectSeat(seat.id)">
+              {{ seat.label }}
+            </button>
+          </div>
+          <div class="pair">
+            <button class="seat"
+                    *ngFor="let seat of row.right"
+                    [class.selected]="selectedSeatId === seat.id"
+                    [class.occupied]="seat.is_occupied"
+                    [disabled]="seat.is_occupied"
+                    (click)="selectSeat(seat.id)">
+              {{ seat.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="selection-footer">
+    <div class="price-info">
+      <div class="label">Kursi: <strong>{{ selectedSeatId || 'Belum dipilih' }}</strong></div>
+      <div class="amount">Rp {{ price | number:'1.0-0' }}</div>
+    </div>
+    <button class="confirm-btn" [disabled]="!selectedSeatId" (click)="confirmBooking()">
+      Konfirmasi
+    </button>
+  </footer>
+</ion-content>

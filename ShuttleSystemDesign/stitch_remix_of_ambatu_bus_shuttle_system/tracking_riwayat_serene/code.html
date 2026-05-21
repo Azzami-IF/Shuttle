@@ -1,0 +1,343 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#b8cbbc",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#d9dbd6",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "surface-bright": "#f8faf5",
+                    "surface-container-highest": "#e1e3df",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#edeeea",
+                    "secondary-fixed-dim": "#baccad",
+                    "on-tertiary-fixed": "#191c1c",
+                    "surface-container-low": "#f2f4f0",
+                    "on-primary-fixed-variant": "#394b3f",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#57674d",
+                    "tertiary": "#232525",
+                    "surface-variant": "#e1e3df",
+                    "outline-variant": "#c3c8c2",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#111f0b",
+                    "inverse-primary": "#b8cbbc",
+                    "error": "#ba1a1a",
+                    "outline": "#737873",
+                    "secondary": "#536349",
+                    "on-primary-container": "#96a99b",
+                    "inverse-surface": "#2e312e",
+                    "tertiary-fixed-dim": "#c5c7c6",
+                    "primary-fixed": "#d4e7d8",
+                    "primary-container": "#2d3e33",
+                    "on-tertiary-container": "#a3a5a4",
+                    "surface-tint": "#516356",
+                    "inverse-on-surface": "#f0f1ed",
+                    "on-primary-fixed": "#0e1f15",
+                    "on-secondary-fixed-variant": "#3c4b33",
+                    "on-error-container": "#93000a",
+                    "primary": "#18281e",
+                    "secondary-fixed": "#d6e8c8",
+                    "tertiary-container": "#383b3b",
+                    "on-background": "#191c1a",
+                    "background": "#f8faf5",
+                    "on-surface": "#191c1a",
+                    "surface": "#f8faf5",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#d3e5c5",
+                    "tertiary-fixed": "#e1e3e2",
+                    "on-surface-variant": "#434844",
+                    "surface-container-high": "#e7e9e4",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "16px",
+                    "section-padding": "32px",
+                    "stack-md": "16px",
+                    "stack-sm": "8px",
+                    "stack-lg": "24px",
+                    "container-margin": "20px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"],
+                    "headline-sm": ["Hanken Grotesk"],
+                    "label-bold": ["Hanken Grotesk"],
+                    "label-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-animation {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(1.1); }
+        }
+        .shuttle-shadow {
+            box-shadow: 0 4px 12px rgba(24, 40, 30, 0.05);
+        }
+        .tab-transition {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .hide-tab {
+            transform: translateX(20px);
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<!-- Top AppBar -->
+<header class="w-full sticky top-0 z-50 bg-surface dark:bg-surface-dim shadow-sm flex items-center justify-between px-container-margin h-16">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary" data-icon="directions_bus">directions_bus</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-inverse-primary tracking-tight">Ambatu Bus</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform" data-icon="notifications">notifications</button>
+</div>
+</header>
+<main class="pb-24">
+<!-- Tabs Selection -->
+<div class="px-container-margin mt-6">
+<div class="bg-surface-container-low p-1 rounded-xl flex gap-1">
+<button class="flex-1 py-2 rounded-lg font-label-bold text-label-bold transition-all bg-primary text-on-primary shadow-sm" id="tab-btn-tracking" onclick="switchTab('tracking')">
+                PELACAKAN LIVE
+            </button>
+<button class="flex-1 py-2 rounded-lg font-label-bold text-label-bold transition-all text-on-surface-variant hover:bg-surface-container-high" id="tab-btn-history" onclick="switchTab('history')">
+                RIWAYAT PERJALANAN
+            </button>
+</div>
+</div>
+<!-- Tracking Tab Content -->
+<section class="tab-transition space-y-6" id="tracking-content">
+<!-- Map Section (Bento Style) -->
+<div class="px-container-margin mt-6">
+<div class="relative w-full h-[350px] rounded-3xl overflow-hidden shadow-lg bg-surface-container-highest border border-outline-variant">
+<img class="w-full h-full object-cover opacity-80" data-alt="A highly detailed overhead digital map interface of a modern urban city with clean white streets and subtle gray buildings. A vibrant dark green shuttle icon with a pulsing signal ring is positioned on a primary route. The aesthetic is clean, professional with a soft green and white color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUJr_yin_R8zwHMPd3_MWj4FTbJzZtLfg_SFUqpnXnLps2YruUjE41UdYXy9OVnr8wXnZgDk6Lc5nMwcBdAfW8TQNzkks64Bn0BpNN0wK0Fl4gHMGNXGLqvYwmuasnYUem6wudSdbHbnqlVhIS6q8PwfOTNw0-ZolEdgCmBuCkn5fZILOqlETkymwmrGuVZNfx_R88iFC4fI7ZVTtTA2fonWxuijCFqj7tKc17yYUqXBBmWhYcMScubZ-ftfvkBP8q23LjvxN-5YyY">
+<!-- Floating Map Controls -->
+<div class="absolute top-4 right-4 flex flex-col gap-2">
+<button class="w-10 h-10 bg-surface-container-lowest rounded-full shadow-md flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+</button>
+<button class="w-10 h-10 bg-surface-container-lowest rounded-full shadow-md flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+</button>
+</div>
+<!-- Live Indicator Overlay -->
+<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1.5 rounded-full flex items-center gap-2 shadow-lg pulse-animation">
+<span class="w-2 h-2 bg-on-primary rounded-full"></span>
+<span class="font-label-bold text-label-bold uppercase tracking-wider">Sedang Berjalan</span>
+</div>
+<!-- Shuttle Position Marker -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<div class="bg-primary-container p-3 rounded-2xl shadow-xl border-2 border-surface-container-lowest">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="directions_bus" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div class="mt-2 bg-surface-container-lowest px-2 py-0.5 rounded shadow-sm">
+<p class="font-label-bold text-label-bold text-primary">B 1234 ABC</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Trip Details Card (Elevated) -->
+<div class="px-container-margin">
+<div class="bg-surface-container-lowest p-5 rounded-3xl shuttle-shadow border border-outline-variant/30">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Detil Perjalanan</h2>
+<p class="font-body-md text-on-surface-variant">Rute: Central Park - Sudirman</p>
+</div>
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase">Estimasi Kedatangan</p>
+<p class="font-display-lg text-display-lg text-primary">08:45</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 border-t border-outline-variant/20 pt-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A professional and friendly portrait of a male driver in a clean green uniform. He is smiling warmly against a blurred outdoor background. The lighting is bright and natural, creating a sense of reliability and trust in a modern corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIag0QdjNe11QUcnCoNQlynFVizkr4iP_UAoz-Js2_uW2W7JuR-q1S3B8TLr67YUtiYkb2Hd_4uZQw9jZX0IqZ8VAhZq4idVxCrQoAuJSgApuUINm_nDsFzHsMssiQk_4rUb6sz0Jz_BEmhJYf7eSj1TsISBrLIYc5gjtt_DGq1nL7_ld8RP5afKdmvb12tZednwONUwtdbCGsqwC6cQGpTGR0puTZ-vXhOZmST4-Gper7pXEWH_7qEyLF_1ScU2G9ZCrP5Y--nhi0">
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Pengemudi</p>
+<p class="font-label-bold text-label-bold">Bpk. Agus Santoso</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="pin">pin</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Plat Nomor</p>
+<p class="font-label-bold text-label-bold uppercase">B 1234 ABC</p>
+</div>
+</div>
+</div>
+<div class="mt-6 flex gap-3">
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-2xl font-headline-sm text-center shadow-md active:scale-[0.98] transition-transform">
+                        Hubungi Driver
+                    </button>
+<button class="w-14 bg-surface-container text-primary flex items-center justify-center rounded-2xl active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- History Tab Content -->
+<section class="tab-transition px-container-margin mt-6 space-y-4 hide-tab" id="history-content">
+<!-- Search & Filter -->
+<div class="flex gap-2 mb-4">
+<div class="flex-1 bg-surface-container-low rounded-xl px-4 py-2 flex items-center gap-2 border border-outline-variant/30">
+<span class="material-symbols-outlined text-outline text-body-lg" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-md placeholder:text-outline" placeholder="Cari riwayat rute..." type="text">
+</div>
+<button class="w-12 bg-surface-container-low border border-outline-variant/30 rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- History Cards -->
+<div class="space-y-4">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl shuttle-shadow border border-outline-variant/20 hover:border-primary-fixed transition-colors">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="font-label-bold text-label-bold text-on-surface-variant">Senin, 12 Okt 2023</p>
+<h3 class="font-headline-sm text-headline-sm text-primary">Sudirman → Thamrin</h3>
+</div>
+<span class="bg-primary text-on-primary px-2 py-1 rounded-md font-label-bold text-[10px] uppercase tracking-wide">SELESAI</span>
+</div>
+<div class="flex items-center gap-4 py-3 border-y border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-body-lg text-outline" data-icon="schedule">schedule</span>
+<p class="font-body-md text-on-surface-variant">15:30 - 16:15</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-body-lg text-outline" data-icon="payments">payments</span>
+<p class="font-body-md text-on-surface-variant">Rp 15.000</p>
+</div>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<p class="font-label-md text-label-md text-on-surface-variant">Tiket #TCK99821</p>
+<button class="text-primary font-label-bold flex items-center gap-1 hover:underline">
+                        Lihat Tiket <span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl shuttle-shadow border border-outline-variant/20">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="font-label-bold text-label-bold text-on-surface-variant">Minggu, 11 Okt 2023</p>
+<h3 class="font-headline-sm text-headline-sm text-primary">Bintaro → Lebak Bulus</h3>
+</div>
+<span class="bg-primary text-on-primary px-2 py-1 rounded-md font-label-bold text-[10px] uppercase tracking-wide">SELESAI</span>
+</div>
+<div class="flex items-center gap-4 py-3 border-y border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-body-lg text-outline" data-icon="schedule">schedule</span>
+<p class="font-body-md text-on-surface-variant">08:00 - 08:45</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-body-lg text-outline" data-icon="payments">payments</span>
+<p class="font-body-md text-on-surface-variant">Rp 12.000</p>
+</div>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<p class="font-label-md text-label-md text-on-surface-variant">Tiket #TCK99754</p>
+<button class="text-primary font-label-bold flex items-center gap-1 hover:underline">
+                        Lihat Tiket <span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_-4px_12px_rgba(24,40,30,0.05)] flex justify-around items-center h-20 px-4 pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-label-md text-label-md mt-1">Schedule</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="confirmation_number" style="font-variation-settings: 'FILL' 1;">confirmation_number</span>
+<span class="font-label-md text-label-md mt-1">Bookings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</a>
+</nav>
+<script>
+    function switchTab(tab) {
+        const trackingContent = document.getElementById('tracking-content');
+        const historyContent = document.getElementById('history-content');
+        const trackingBtn = document.getElementById('tab-btn-tracking');
+        const historyBtn = document.getElementById('tab-btn-history');
+
+        if (tab === 'tracking') {
+            trackingContent.classList.remove('hide-tab');
+            historyContent.classList.add('hide-tab');
+            
+            trackingBtn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+            trackingBtn.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
+            
+            historyBtn.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
+            historyBtn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        } else {
+            trackingContent.classList.add('hide-tab');
+            historyContent.classList.remove('hide-tab');
+            
+            historyBtn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+            historyBtn.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
+            
+            trackingBtn.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
+            trackingBtn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        }
+    }
+</script>
+</body></html>
