@@ -1,0 +1,277 @@
+@import "../../components/shared/design-system.scss";
+
+.driver-dashboard-page {
+  --background: var(--ion-background-color);
+}
+
+.top-bar {
+  background: var(--ion-color-primary);
+  color: white;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--container-margin);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: white;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+
+      &:active {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+}
+
+.hero-section {
+  position: relative;
+  background: var(--hero-gradient);
+  padding: 24px var(--container-margin) 80px;
+  color: white;
+  overflow: hidden;
+
+  .decorative-blob {
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    filter: blur(40px);
+  }
+
+  .greeting-content {
+    position: relative;
+    z-index: 2;
+
+    .greeting {
+      opacity: 0.8;
+      font-size: 14px;
+    }
+
+    .user-name {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 4px 0 0;
+    }
+  }
+}
+
+.metrics-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin: -60px var(--container-margin) 0;
+  position: relative;
+  z-index: 20;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &.glass-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+  }
+
+  .metric-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .status-info {
+      .label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--outline);
+        text-transform: uppercase;
+      }
+      .status-val {
+        margin-top: 4px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ion-text-color);
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #ccc;
+          &.active { background: #4caf50; box-shadow: 0 0 8px #4caf50; }
+        }
+      }
+    }
+
+    .divider {
+      width: 1px;
+      height: 40px;
+      background: var(--outline-variant);
+    }
+
+    .shift-info {
+      text-align: right;
+      .label { font-size: 12px; color: var(--outline); }
+      .time { font-size: 18px; font-weight: 700; color: var(--ion-color-primary); }
+    }
+  }
+
+  .metric-bottom {
+    border-top: 1px solid var(--outline-variant);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--ion-text-color);
+
+      .count { font-weight: 700; }
+      .label { color: var(--outline); }
+    }
+
+    .badge.premium {
+      background: var(--secondary-fixed);
+      color: var(--on-secondary-fixed);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+.quick-actions {
+  padding: 24px var(--container-margin);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+
+    .icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--ion-color-primary-rgb), 0.05);
+      color: var(--ion-color-primary);
+      transition: background 0.2s;
+
+      &.secondary { color: var(--ion-color-secondary); background: rgba(var(--ion-color-secondary-rgb), 0.05); }
+      &.tertiary { color: var(--tertiary, #232525); background: rgba(35, 37, 37, 0.05); }
+      &.error { color: var(--ion-color-danger, #ba1a1a); background: rgba(186, 26, 26, 0.05); }
+    }
+
+    span { font-size: 12px; color: var(--ion-color-step-600); }
+  }
+}
+
+.info-section {
+  padding: 0 var(--container-margin) 100px;
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--ion-text-color);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    .info-banner {
+      grid-column: span 2;
+      background: var(--primary-fixed, #d4e7d8);
+      color: var(--on-primary-fixed, #0e1f15);
+      padding: 16px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+
+      .content {
+        position: relative;
+        z-index: 2;
+        .label { font-size: 12px; font-weight: 700; color: var(--on-primary-fixed); }
+        p { margin: 4px 0 0; font-size: 14px; opacity: 0.8; }
+      }
+
+      .icon {
+        font-size: 64px;
+        opacity: 0.1;
+        position: absolute;
+        right: -10px;
+        top: 0;
+      }
+    }
+
+    .info-item {
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--surface-container-high, #e7e9e4);
+
+      .material-symbols-outlined {
+        margin-bottom: 8px;
+        &.secondary { color: var(--ion-color-secondary); }
+        &.primary { color: var(--ion-color-primary); }
+      }
+
+      .title { display: block; font-size: 12px; font-weight: 700; color: var(--ion-text-color); }
+      p { margin: 4px 0 0; font-size: 10px; color: var(--outline); }
+    }
+  }
+}
+
+main {
+  padding-bottom: 100px;
+}
+
+.bottom-nav {
+  @extend .shared-bottom-nav;
+}

@@ -40,11 +40,15 @@ export class AuthService {
   logout() {
     return this.api.post('logout', {}).pipe(
       tap(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        this.userSubject.next(null);
+        this.logoutDirect();
       })
     );
+  }
+
+  logoutDirect() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.userSubject.next(null);
   }
 
   isAuthenticated() {

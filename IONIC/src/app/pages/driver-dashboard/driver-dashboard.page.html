@@ -1,0 +1,130 @@
+<ion-content class="driver-dashboard-page">
+  <div class="top-bar">
+    <div class="brand">
+      <span class="material-symbols-outlined">directions_bus</span>
+      <span>Ambatu Bus</span>
+    </div>
+    <div class="actions">
+      <button class="nav-btn" (click)="showPending()">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button class="nav-btn" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+      </button>
+    </div>
+  </div>
+
+  <main *ngIf="user$ | async as user">
+    <!-- Hero Section -->
+    <section class="hero-section hero-gradient">
+      <div class="decorative-blob"></div>
+      <div class="greeting-content">
+        <p class="greeting">Selamat Siang,</p>
+        <h2 class="user-name">{{ user.name | uppercase }}</h2>
+      </div>
+
+      <!-- Quick Metrics Card -->
+      <div class="metrics-card glass-panel">
+        <div class="metric-top">
+          <div class="status-info">
+            <div class="label">
+              <span class="material-symbols-outlined text-[16px]">account_circle</span>
+              Status Driver
+            </div>
+            <div class="status-val flex items-center gap-2">
+              <span class="dot active"></span>
+              On Duty
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="shift-info">
+            <div class="label">Shift Berakhir</div>
+            <div class="time">03:24:15</div>
+          </div>
+        </div>
+        <div class="metric-bottom">
+          <div class="stat">
+            <span class="material-symbols-outlined text-secondary">stars</span>
+            <span class="count">4.9</span>
+            <span class="label">Rating</span>
+          </div>
+          <div class="badge premium">
+            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+            Verified
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Access Actions -->
+    <section class="quick-actions">
+      <button class="action-btn" routerLink="/driver-trips">
+        <div class="icon-box">
+          <span class="material-symbols-outlined">calendar_today</span>
+        </div>
+        <span>Jadwal</span>
+      </button>
+      <button class="action-btn" routerLink="/driver-vehicle">
+        <div class="icon-box secondary">
+          <span class="material-symbols-outlined">directions_bus</span>
+        </div>
+        <span>Kendaraan</span>
+      </button>
+      <button class="action-btn" routerLink="/driver-history">
+        <div class="icon-box tertiary">
+          <span class="material-symbols-outlined">history</span>
+        </div>
+        <span>History</span>
+      </button>
+      <button class="action-btn" routerLink="/driver-status">
+        <div class="icon-box error">
+          <span class="material-symbols-outlined">route</span>
+        </div>
+        <span>Status</span>
+      </button>
+    </section>
+
+    <!-- Operational Info Section -->
+    <section class="info-section">
+      <h3 class="section-title">Informasi Operasional</h3>
+      <div class="info-grid">
+        <div class="info-banner primary-fixed" (click)="showPending()">
+          <div class="content">
+            <span class="label">PENGUMUMAN</span>
+            <p>Perbaikan jalan di KM 42 Tol Cipularang. Harap gunakan rute alternatif.</p>
+          </div>
+          <span class="material-symbols-outlined icon">notification_important</span>
+        </div>
+        <div class="info-item surface-high" (click)="showPending()">
+          <span class="material-symbols-outlined secondary">support_agent</span>
+          <span class="title">Help Desk</span>
+          <p>Bantuan teknis 24/7.</p>
+        </div>
+        <div class="info-item surface-high" (click)="showPending()">
+          <span class="material-symbols-outlined primary">description</span>
+          <span class="title">Manual</span>
+          <p>Panduan SOP Driver.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</ion-content>
+
+<nav class="bottom-nav">
+  <button class="nav-item active">
+    <span class="material-symbols-outlined">home</span>
+    <span>Home</span>
+  </button>
+  <button class="nav-item" routerLink="/driver-trips">
+    <span class="material-symbols-outlined">analytics</span>
+    <span>Monitoring</span>
+  </button>
+  <button class="nav-item" routerLink="/driver-status">
+    <span class="material-symbols-outlined">route</span>
+    <span>Status</span>
+  </button>
+  <button class="nav-item" routerLink="/profile">
+    <span class="material-symbols-outlined">person</span>
+    <span>Profile</span>
+  </button>
+</nav>

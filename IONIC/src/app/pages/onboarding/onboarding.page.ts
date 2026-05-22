@@ -14,7 +14,12 @@ export class OnboardingPage implements OnInit {
   ngOnInit() {
     const token = localStorage.getItem('token');
     if (token) {
-      this.router.navigate(['/dashboard'], { replaceUrl: true });
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.role === 'driver') {
+        this.router.navigate(['/driver-dashboard'], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      }
     }
   }
 
@@ -22,7 +27,7 @@ export class OnboardingPage implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  continueAsGuest() {
-    this.router.navigate(['/dashboard']);
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 }

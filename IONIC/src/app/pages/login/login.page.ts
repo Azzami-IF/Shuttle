@@ -31,6 +31,14 @@ export class LoginPage {
     this.auth.login(this.loginData).subscribe({
       next: (res) => {
         this.isLoading = false;
+
+        // Role check: Only customers can login through this page
+        if (res.user.role !== 'customer') {
+          alert('Akses Ditolak: Gunakan portal Driver untuk akun pengemudi.');
+          this.auth.logoutDirect(); // Method to clear local storage without API call
+          return;
+        }
+
         console.log('Login success', res);
         this.router.navigate(['/dashboard'], { replaceUrl: true });
       },
@@ -44,11 +52,14 @@ export class LoginPage {
   }
 
   goBack() {
-    // In a real app, use Location or NavController
-    window.history.back();
+    this.router.navigate(['/onboarding'], { replaceUrl: true });
+  }
+
+  goToDriverLogin() {
+    this.router.navigate(['/driver-login']);
   }
 
   continueAsGuest() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/dashboard']);
   }
 }

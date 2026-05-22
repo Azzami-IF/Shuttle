@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   standalone: false,
@@ -8,19 +9,38 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./driver-trips.page.scss'],
 })
 export class DriverTripsPage {
+  user$ = this.auth.user$;
   trips: any[] = [];
+  nextTrip: any = null;
+  laterTrips: any[] = [];
   activeTrip: any = null;
+  today = new Date();
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private auth: AuthService
+  ) {}
 
   ionViewWillEnter() {
     this.loadTrips();
   }
 
   loadTrips() {
-    this.api.get('trips').subscribe(res => {
+    this.api.get('trips').subscribe((res: any[]) => {
       this.trips = res;
       this.activeTrip = this.trips.find(t => t.status === 'on-going');
+
+      const scheduledTrips = this.trips
+        .filter(t => t.status === 'scheduled')
+        .sort((a, b) => new Date(a.schedule.departure_time).getTime() - new Date(b.schedule.departure_time).getTime());
+
+      if (scheduledTrips.length > 0) {
+        this.nextTrip = scheduledTrips[0];
+        this.laterTrips = scheduledTrips.slice(1);
+      } else {
+        this.nextTrip = null;
+        this.laterTrips = [];
+      }
     });
   }
 

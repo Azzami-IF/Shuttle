@@ -13,7 +13,7 @@ class ScheduleController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Schedule::with(['vehicle', 'driver']);
+        $query = Schedule::with(['vehicle', 'driver', 'seats']);
 
         if ($request->has('origin')) {
             $query->where('origin', 'like', "%{$request->get('origin')}%");

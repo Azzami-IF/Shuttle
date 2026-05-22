@@ -1,3 +1,5 @@
+@import "../../components/shared/design-system.scss";
+
 .dashboard-page {
   --background: var(--ion-background-color);
 }
@@ -411,57 +413,10 @@
   }
 }
 
+main {
+  padding-bottom: 100px;
+}
+
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 50;
-  height: 80px;
-  background: var(--surface-container-lowest);
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0 16px 8px;
-  box-shadow: 0 -4px 12px rgba(24, 40, 30, 0.08);
-
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    color: var(--on-surface-variant);
-    gap: 4px;
-    transition: all 0.2s ease-in-out;
-    min-width: 64px;
-
-    &.active {
-      background: var(--primary-container) !important;
-      color: white !important;
-      padding: 6px 20px;
-      border-radius: 9999px;
-
-      .material-symbols-outlined {
-        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        color: white !important;
-      }
-
-      span {
-        color: white !important;
-        font-weight: 700;
-      }
-    }
-
-    .material-symbols-outlined {
-      font-size: 24px;
-    }
-
-    span {
-      font-size: 12px;
-      font-weight: 500;
-    }
-  }
+  @extend .shared-bottom-nav;
 }

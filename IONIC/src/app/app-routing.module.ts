@@ -57,6 +57,45 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'driver-history',
+    loadChildren: () => import('./pages/driver-history/driver-history.module').then( m => m.DriverHistoryPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'driver-dashboard',
+    loadChildren: () => import('./pages/driver-dashboard/driver-dashboard.module').then( m => m.DriverDashboardPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'driver-tracking',
+    loadChildren: () => import('./pages/driver-tracking/driver-tracking.module').then( m => m.DriverTrackingPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'driver-status',
+    loadChildren: () => import('./pages/driver-status/driver-status.module').then( m => m.DriverStatusPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'driver-vehicle',
+    loadChildren: () => import('./pages/driver-vehicle/driver-vehicle.module').then( m => m.DriverVehiclePageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'driver-profile',
+    loadChildren: () => import('./pages/driver-profile/driver-profile.module').then( m => m.DriverProfilePageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'profile',
+    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'driver-login',
+    loadChildren: () => import('./pages/driver-login/driver-login.module').then( m => m.DriverLoginPageModule)
+  },
+  {
     path: '',
     redirectTo: 'onboarding',
     pathMatch: 'full'

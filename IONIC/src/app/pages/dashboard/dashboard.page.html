@@ -18,7 +18,7 @@
     <!-- Hero Section -->
     <section class="hero-section hero-gradient">
       <p class="greeting">Selamat Siang,</p>
-      <h2 class="user-name">{{ user.name | uppercase }}</h2>
+      <h2 class="user-name">{{ user.name }}</h2>
     </section>
 
     <!-- Wallet Card -->
@@ -132,7 +132,13 @@
         </div>
         <span>Monitoring</span>
       </button>
-      <button class="menu-item" routerLink="/booking-detail">
+      <button class="menu-item" routerLink="/booking-detail" *ngIf="user.role === 'customer'">
+        <div class="icon-box tertiary">
+          <span class="material-symbols-outlined">history</span>
+        </div>
+        <span>Riwayat</span>
+      </button>
+      <button class="menu-item" routerLink="/driver-history" *ngIf="user.role === 'driver'">
         <div class="icon-box tertiary">
           <span class="material-symbols-outlined">history</span>
         </div>
@@ -207,11 +213,15 @@
     <span class="material-symbols-outlined">directions_bus</span>
     <span>Schedule</span>
   </button>
-  <button class="nav-item" routerLink="/booking-detail">
+  <button class="nav-item" routerLink="/booking-detail" *ngIf="(user$ | async)?.role === 'customer'">
     <span class="material-symbols-outlined">confirmation_number</span>
     <span>Bookings</span>
   </button>
-  <button class="nav-item" (click)="showPending()">
+  <button class="nav-item" routerLink="/driver-history" *ngIf="(user$ | async)?.role === 'driver'">
+    <span class="material-symbols-outlined">history</span>
+    <span>History</span>
+  </button>
+  <button class="nav-item" routerLink="/profile">
     <span class="material-symbols-outlined">person</span>
     <span>Profile</span>
   </button>

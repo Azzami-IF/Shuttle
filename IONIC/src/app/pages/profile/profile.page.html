@@ -1,0 +1,146 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profil Saya</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-page">
+  <main class="p-4" *ngIf="user$ | async as user">
+    <!-- Profile Header Card -->
+    <div class="profile-hero-card glass-panel">
+      <div class="avatar-container">
+        <div class="avatar">
+          <span class="material-symbols-outlined text-[48px]">person</span>
+        </div>
+        <div class="role-badge" [class]="user.role">
+          {{ user.role | uppercase }}
+        </div>
+      </div>
+      <div class="user-info">
+        <h2>{{ user.name }}</h2>
+        <p>{{ user.email }}</p>
+        <p class="phone" *ngIf="user.phone">{{ user.phone }}</p>
+      </div>
+    </div>
+
+    <!-- Account Sections -->
+    <div class="menu-container mt-8">
+      <h3 class="section-title">Informasi Akun</h3>
+      <div class="menu-list">
+        <button class="menu-item" (click)="showPending()">
+          <span class="material-symbols-outlined icon">badge</span>
+          <div class="label-box">
+            <span class="title">Data Pribadi</span>
+            <span class="sub">Kelola nama dan info kontak</span>
+          </div>
+          <span class="material-symbols-outlined arrow">chevron_right</span>
+        </button>
+
+        <button class="menu-item" (click)="showPending()" *ngIf="user.role === 'customer'">
+          <span class="material-symbols-outlined icon">account_balance_wallet</span>
+          <div class="label-box">
+            <span class="title">AmbatuPay</span>
+            <span class="sub">Saldo & riwayat transaksi</span>
+          </div>
+          <span class="material-symbols-outlined arrow">chevron_right</span>
+        </button>
+
+        <button class="menu-item" (click)="showPending()" *ngIf="user.role === 'driver'">
+          <span class="material-symbols-outlined icon">assignment_ind</span>
+          <div class="label-box">
+            <span class="title">Sertifikasi Driver</span>
+            <span class="sub">Lisensi & dokumen operasional</span>
+          </div>
+          <span class="material-symbols-outlined arrow">chevron_right</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="menu-container mt-6">
+      <h3 class="section-title">Aplikasi</h3>
+      <div class="menu-list">
+        <button class="menu-item" (click)="showPending()">
+          <span class="material-symbols-outlined icon">notifications</span>
+          <div class="label-box">
+            <span class="title">Notifikasi</span>
+            <span class="sub">Atur peringatan & pesan</span>
+          </div>
+          <span class="material-symbols-outlined arrow">chevron_right</span>
+        </button>
+
+        <button class="menu-item" (click)="showPending()">
+          <span class="material-symbols-outlined icon">security</span>
+          <div class="label-box">
+            <span class="title">Keamanan</span>
+            <span class="sub">Ganti kata sandi & verifikasi</span>
+          </div>
+          <span class="material-symbols-outlined arrow">chevron_right</span>
+        </button>
+
+        <button class="menu-item" (click)="showPending()">
+          <span class="material-symbols-outlined icon">help</span>
+          <div class="label-box">
+            <span class="title">Pusat Bantuan</span>
+            <span class="sub">Bantuan & FAQ</span>
+          </div>
+          <span class="material-symbols-outlined arrow">chevron_right</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Logout Action -->
+    <div class="mt-10 mb-12">
+      <button class="logout-btn" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+        Keluar Aplikasi
+      </button>
+      <p class="version-text text-center mt-4">Versi 1.0.4-serene</p>
+    </div>
+  </main>
+</ion-content>
+
+<!-- Dynamic Footer Based on Role -->
+<ng-container *ngIf="user$ | async as user">
+  <!-- Passenger Footer -->
+  <nav class="bottom-nav" *ngIf="user.role === 'customer'">
+    <button class="nav-item" routerLink="/dashboard">
+      <span class="material-symbols-outlined">home</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" routerLink="/schedule-list">
+      <span class="material-symbols-outlined">directions_bus</span>
+      <span>Schedule</span>
+    </button>
+    <button class="nav-item" routerLink="/booking-detail">
+      <span class="material-symbols-outlined">confirmation_number</span>
+      <span>Bookings</span>
+    </button>
+    <button class="nav-item active">
+      <span class="material-symbols-outlined">person</span>
+      <span>Profile</span>
+    </button>
+  </nav>
+
+  <!-- Driver Footer -->
+  <nav class="bottom-nav" *ngIf="user.role === 'driver'">
+    <button class="nav-item" routerLink="/driver-dashboard">
+      <span class="material-symbols-outlined">home</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" routerLink="/driver-trips">
+      <span class="material-symbols-outlined">analytics</span>
+      <span>Monitoring</span>
+    </button>
+    <button class="nav-item" routerLink="/driver-status">
+      <span class="material-symbols-outlined">route</span>
+      <span>Status</span>
+    </button>
+    <button class="nav-item active">
+      <span class="material-symbols-outlined">person</span>
+      <span>Profile</span>
+    </button>
+  </nav>
+</ng-container>

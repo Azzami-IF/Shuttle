@@ -1,9 +1,9 @@
 <ion-content class="login-page">
-  <div class="relative w-full min-h-screen bg-surface-container-lowest overflow-hidden flex flex-col">
+  <div class="relative w-full max-w-[480px] min-h-screen md:min-h-[844px] mx-auto md:my-8 bg-surface-container-lowest md:rounded-[40px] md:shadow-2xl overflow-hidden flex flex-col">
     <!-- Hero Illustration Section -->
     <div class="hero-section">
       <div class="hero-img-container">
-        <img alt="Modern bus" class="hero-img" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000">
+        <img class="hero-img" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000" alt="Modern bus illustration">
         <div class="hero-overlay"></div>
       </div>
 
@@ -12,16 +12,16 @@
         <button class="back-btn" (click)="goBack()">
           <span class="material-symbols-outlined">arrow_back</span>
         </button>
-        <div class="lang-selector">
-          <span class="text-[18px]">🇮🇩</span>
-          <span>ID</span>
-          <span class="material-symbols-outlined text-[16px]">expand_more</span>
-        </div>
       </div>
 
       <!-- Logo -->
       <div class="logo-container">
         <img alt="Ambatu Bus Logo" class="logo-img animate-float" src="assets/icon/favicon.png">
+      </div>
+
+      <!-- Driver Login Link (Added as per requirement to switch) -->
+      <div class="driver-switch-container">
+        <a (click)="goToDriverLogin()" class="driver-link">Masuk sebagai Driver</a>
       </div>
     </div>
 
@@ -38,7 +38,7 @@
           <label>Email / No. Telp</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined icon">person</span>
-            <input type="text" [(ngModel)]="loginData.email" name="email" placeholder="Masukkan Email atau No. Telp" autocomplete="off" required>
+            <input class="custom-input" placeholder="Masukkan Email atau No. Telp" type="text" [(ngModel)]="loginData.email" name="email" required autocomplete="off">
           </div>
         </div>
 
@@ -47,8 +47,8 @@
           <label>Kata Sandi</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined icon">lock</span>
-            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" name="password" placeholder="Masukkan Kata Sandi" autocomplete="off" required>
-            <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+            <input class="custom-input" placeholder="Masukkan Kata Sandi" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" name="password" required autocomplete="off">
+            <button class="toggle-password" type="button" (click)="showPassword = !showPassword">
               <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Primary CTA -->
-        <button type="submit" class="submit-btn" [disabled]="isLoading">
+        <button class="submit-btn" type="submit" [disabled]="isLoading">
           <span *ngIf="!isLoading">Masuk</span>
           <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
         </button>
@@ -67,32 +67,6 @@
       <!-- Registration Prompt -->
       <div class="register-prompt">
         <p>Belum punya akun? <a [routerLink]="['/register']">Daftar Sekarang</a></p>
-      </div>
-
-      <!-- Separator -->
-      <div class="separator">
-        <div class="line"></div>
-        <span>Atau gunakan akun</span>
-        <div class="line"></div>
-      </div>
-
-      <!-- Social Logins -->
-      <div class="social-logins">
-        <button class="social-btn">
-          <img alt="Google" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png">
-          Google
-        </button>
-        <button class="social-btn">
-          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">phone_iphone</span>
-          Apple
-        </button>
-      </div>
-
-      <!-- Guest Access -->
-      <div class="guest-access">
-        <button class="guest-btn" (click)="continueAsGuest()">
-          Masuk Tanpa Daftar
-        </button>
       </div>
     </div>
   </div>
