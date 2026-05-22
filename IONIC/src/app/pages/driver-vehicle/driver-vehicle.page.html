@@ -1,0 +1,79 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/driver-dashboard" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detail Kendaraan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="driver-vehicle-page">
+  <main class="p-4">
+    <div class="vehicle-hero glass-panel">
+      <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000" alt="Bus Unit">
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>{{ vehicle.name }}</h2>
+        <p>{{ vehicle.license_plate }}</p>
+      </div>
+    </div>
+
+    <div class="stats-grid mt-6">
+      <div class="stat-card">
+        <span class="material-symbols-outlined text-blue-500">oil_barrel</span>
+        <div class="info">
+          <span class="label">Bahan Bakar</span>
+          <span class="val">{{ vehicle.fuel }}%</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="material-symbols-outlined text-green-500">tire_repair</span>
+        <div class="info">
+          <span class="label">Status</span>
+          <span class="val">{{ vehicle.maintenance }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="specs-list mt-8">
+      <h3 class="font-bold text-primary mb-4">Spesifikasi & Riwayat</h3>
+
+      <div class="spec-item">
+        <span class="label">Kapasitas Kursi</span>
+        <span class="val">{{ vehicle.capacity }} Penumpang</span>
+      </div>
+      <div class="spec-item">
+        <span class="label">Servis Terakhir</span>
+        <span class="val">{{ vehicle.last_service | date:'d MMM y' }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="label">Odometer</span>
+        <span class="val">12,450 km</span>
+      </div>
+    </div>
+
+    <button class="report-btn mt-8" (click)="showPending()">
+      <span class="material-symbols-outlined">report_problem</span>
+      Laporkan Kendala
+    </button>
+  </main>
+</ion-content>
+
+<nav class="bottom-nav">
+  <button class="nav-item" routerLink="/driver-dashboard">
+    <span class="material-symbols-outlined">home</span>
+    <span>Home</span>
+  </button>
+  <button class="nav-item active">
+    <span class="material-symbols-outlined">directions_bus</span>
+    <span>Kendaraan</span>
+  </button>
+  <button class="nav-item" routerLink="/driver-history">
+    <span class="material-symbols-outlined">history</span>
+    <span>History</span>
+  </button>
+  <button class="nav-item" routerLink="/driver-profile">
+    <span class="material-symbols-outlined">person</span>
+    <span>Profile</span>
+  </button>
+</nav>

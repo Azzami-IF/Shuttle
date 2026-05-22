@@ -1,0 +1,94 @@
+<ion-content class="driver-login-page">
+  <header class="top-bar">
+    <div class="brand">
+      <span class="material-symbols-outlined text-3xl">directions_bus</span>
+      <span class="title">Ambatu Bus</span>
+    </div>
+    <div class="version">Fleet Operations v1.0.4</div>
+  </header>
+
+  <main class="main-container">
+    <!-- Left Side: Atmospheric Brand Visual (Hidden on mobile) -->
+    <div class="brand-visual lg:flex hidden">
+      <div class="image-wrapper">
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000" alt="Modern Transit">
+        <div class="overlay"></div>
+        <div class="text-overlay">
+          <h2>Professional Excellence</h2>
+          <p>Driving the future of sustainable and stress-free urban mobility, one journey at a time.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Login Form -->
+    <div class="form-side">
+      <div class="glass-card">
+        <div class="form-header">
+          <h1>Driver Login</h1>
+          <p>Enter your credentials to access the operational dashboard and routes.</p>
+        </div>
+
+        <form (submit)="onLogin($event)">
+          <div class="input-group">
+            <label for="driver_id">Driver ID or Email</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined icon">badge</span>
+              <input type="text" id="driver_id" name="email" [(ngModel)]="loginData.email" placeholder="e.g. DRV-8829 or email@ambatu.com" autocomplete="off" required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="label-row">
+              <label for="password">Password</label>
+              <a href="javascript:void(0)" class="forgot">Forgot?</a>
+            </div>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined icon">lock</span>
+              <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="loginData.password" placeholder="••••••••" autocomplete="off" required>
+              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="remember-me">
+            <input type="checkbox" id="remember">
+            <label for="remember">Keep me logged in on this device</label>
+          </div>
+
+          <button type="submit" class="primary-btn" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Login as Driver</span>
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span class="material-symbols-outlined" *ngIf="!isLoading">arrow_forward</span>
+          </button>
+        </form>
+
+        <div class="operational-support">
+          <p>Operational Support</p>
+          <div class="support-grid">
+            <button class="support-btn">
+              <span class="material-symbols-outlined">support_agent</span>
+              Help Desk
+            </button>
+            <button class="support-btn">
+              <span class="material-symbols-outlined">description</span>
+              Manual
+            </button>
+          </div>
+        </div>
+
+        <div class="back-link">
+          <a (click)="goToPassengerLogin()">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Back to Passenger Login
+          </a>
+        </div>
+      </div>
+
+      <p class="copyright">© 2024 Ambatu Transit Systems. All rights reserved.</p>
+    </div>
+  </main>
+
+  <div class="bg-decorative-1"></div>
+  <div class="bg-decorative-2"></div>
+</ion-content>
