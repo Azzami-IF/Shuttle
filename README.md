@@ -89,4 +89,3 @@ Gunakan akun berikut untuk menjelajahi sistem (Kata sandi: `password`):
 - **Driver:** `driver1@shuttle.com`
 
 ---
-Dibuat dengan ❤️ untuk pengalaman transit yang lebih baik.
