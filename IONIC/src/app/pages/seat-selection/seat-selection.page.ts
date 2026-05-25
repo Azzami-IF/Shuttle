@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { UiService } from '../../services/ui.service';
 
 @Component({
   standalone: false,
@@ -12,13 +13,15 @@ export class SeatSelectionPage implements OnInit {
   scheduleId: any;
   schedule: any;
   rows: any[] = [];
+  loading: boolean = false;
   selectedSeatId: any = null;
   price: number = 0;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private ui: UiService
   ) {}
 
   ngOnInit() {
@@ -27,11 +30,13 @@ export class SeatSelectionPage implements OnInit {
   }
 
   loadSchedule() {
+    this.loading = true;
     this.api.get(`schedules/${this.scheduleId}`).subscribe((res: any) => {
       this.schedule = res;
       this.price = res.price || 85000; // Fallback price
       this.organizeSeats(res.seats || []);
-    });
+      this.loading = false;
+    }, () => { this.loading = false; });
   }
 
   organizeSeats(seats: any[]) {
@@ -69,19 +74,30 @@ export class SeatSelectionPage implements OnInit {
     this.selectedSeatId = this.selectedSeatId === seatId ? null : seatId;
   }
 
+  getSelectedSeatLabel() {
+    if (!this.selectedSeatId) return 'Belum dipilih';
+    for (let row of this.rows) {
+      const found = row.left.find((s: any) => s.id === this.selectedSeatId) || row.right.find((s: any) => s.id === this.selectedSeatId);
+      if (found) return found.label;
+    }
+    return 'Belum dipilih';
+  }
+
   confirmBooking() {
     if (!this.selectedSeatId) return;
-
+    this.loading = true;
     this.api.post('bookings', {
       schedule_id: this.scheduleId,
       seat_id: this.selectedSeatId // This is now the actual DB ID
     }).subscribe({
       next: (res: any) => {
+        this.loading = false;
         // Navigate to payment page with the new booking ID
         this.router.navigate(['/payment', { id: res.id }]);
       },
       error: (err: any) => {
-        alert('Booking failed: ' + (err.error?.message || 'Unknown error'));
+        this.loading = false;
+        void this.ui.showAlert('Booking Gagal', this.ui.getErrorMessage(err, 'Unknown error'));
       }
     });
   }

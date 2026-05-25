@@ -21,7 +21,24 @@ export class DriverVehiclePage {
   constructor(private api: ApiService, private ui: UiService) {}
 
   ionViewWillEnter() {
-    // In a real app, fetch assigned vehicle from API
+    this.api.get('vehicles').subscribe({
+      next: (res: any) => {
+        if (res && res.length > 0) {
+          const v = res[0];
+          this.vehicle = {
+            name: v.name,
+            license_plate: v.license_plate,
+            capacity: v.capacity,
+            fuel: 92,
+            maintenance: 'Siap Beroperasi',
+            last_service: '2026-05-10'
+          };
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching vehicles', err);
+      }
+    });
   }
 
   showPending() {

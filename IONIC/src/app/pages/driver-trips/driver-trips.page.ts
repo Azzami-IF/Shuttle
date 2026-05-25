@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -13,12 +14,15 @@ export class DriverTripsPage {
   trips: any[] = [];
   nextTrip: any = null;
   laterTrips: any[] = [];
+  filteredLaterTrips: any[] = [];
   activeTrip: any = null;
   today = new Date();
+  searchTerm: string = '';
 
   constructor(
     private api: ApiService,
-    private auth: AuthService
+    private auth: AuthService,
+    private router: Router
   ) {}
 
   ionViewWillEnter() {
@@ -37,10 +41,27 @@ export class DriverTripsPage {
       if (scheduledTrips.length > 0) {
         this.nextTrip = scheduledTrips[0];
         this.laterTrips = scheduledTrips.slice(1);
+        this.applySearch();
       } else {
         this.nextTrip = null;
         this.laterTrips = [];
+        this.filteredLaterTrips = [];
       }
+    });
+  }
+
+  applySearch() {
+    const term = (this.searchTerm || '').toLowerCase().trim();
+    if (!term) {
+      this.filteredLaterTrips = [...this.laterTrips];
+      return;
+    }
+
+    this.filteredLaterTrips = this.laterTrips.filter(t => {
+      const o = (t.schedule?.origin || '').toLowerCase();
+      const d = (t.schedule?.destination || '').toLowerCase();
+      const v = (t.schedule?.vehicle?.license_plate || '').toLowerCase();
+      return o.includes(term) || d.includes(term) || v.includes(term);
     });
   }
 
@@ -55,7 +76,7 @@ export class DriverTripsPage {
 
   startTrip(trip: any) {
     this.api.post(`trips/${trip.id}/start`, {}).subscribe(() => {
-      this.loadTrips();
+      this.router.navigate(['/driver-tracking', { id: trip.id }]);
     });
   }
 

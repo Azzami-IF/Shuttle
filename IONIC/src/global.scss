@@ -34,4 +34,32 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* Disabled: system dark palette can cause inconsistent colors in embedded browser
+	(some embedded webviews report dark preference). Keep light theme consistent. */
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+/* Mobile touch / Android improvements */
+:root {
+	--app-touch-target: 48px;
+}
+
+/* Ensure bottom nav respects safe area and is tappable */
+.bottom-nav, nav.bottom-nav {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: env(safe-area-inset-bottom, 0);
+	display: flex;
+	justify-content: space-around;
+	padding: 8px calc(var(--container-margin, 16px));
+	gap: 8px;
+	z-index: 60;
+}
+
+/* De-emphasize decorative icons and keep action icons full opacity */
+ion-icon { opacity: 0.85; transition: opacity 120ms ease; }
+ion-button ion-icon, a ion-icon, button ion-icon { opacity: 1; }
+
+/* Increase tap target defaults on mobile */
+button, ion-button, a.button-like { min-height: var(--app-touch-target); min-width: var(--app-touch-target); }
+

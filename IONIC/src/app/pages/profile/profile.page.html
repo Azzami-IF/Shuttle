@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+      <ion-back-button [defaultHref]="homeRoute" text=""></ion-back-button>
     </ion-buttons>
     <ion-title>Profil Saya</ion-title>
   </ion-toolbar>
@@ -30,7 +30,7 @@
     <div class="menu-container mt-8">
       <h3 class="section-title">Informasi Akun</h3>
       <div class="menu-list">
-        <button class="menu-item" (click)="showPending()">
+        <button class="menu-item" (click)="openEditProfile(user)">
           <span class="material-symbols-outlined icon">badge</span>
           <div class="label-box">
             <span class="title">Data Pribadi</span>
@@ -39,52 +39,11 @@
           <span class="material-symbols-outlined arrow">chevron_right</span>
         </button>
 
-        <button class="menu-item" (click)="showPending()" *ngIf="user.role === 'customer'">
-          <span class="material-symbols-outlined icon">account_balance_wallet</span>
-          <div class="label-box">
-            <span class="title">AmbatuPay</span>
-            <span class="sub">Saldo & riwayat transaksi</span>
-          </div>
-          <span class="material-symbols-outlined arrow">chevron_right</span>
-        </button>
-
-        <button class="menu-item" (click)="showPending()" *ngIf="user.role === 'driver'">
-          <span class="material-symbols-outlined icon">assignment_ind</span>
-          <div class="label-box">
-            <span class="title">Sertifikasi Driver</span>
-            <span class="sub">Lisensi & dokumen operasional</span>
-          </div>
-          <span class="material-symbols-outlined arrow">chevron_right</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="menu-container mt-6">
-      <h3 class="section-title">Aplikasi</h3>
-      <div class="menu-list">
-        <button class="menu-item" (click)="showPending()">
-          <span class="material-symbols-outlined icon">notifications</span>
-          <div class="label-box">
-            <span class="title">Notifikasi</span>
-            <span class="sub">Atur peringatan & pesan</span>
-          </div>
-          <span class="material-symbols-outlined arrow">chevron_right</span>
-        </button>
-
-        <button class="menu-item" (click)="showPending()">
+        <button class="menu-item" (click)="openChangePassword()">
           <span class="material-symbols-outlined icon">security</span>
           <div class="label-box">
             <span class="title">Keamanan</span>
             <span class="sub">Ganti kata sandi & verifikasi</span>
-          </div>
-          <span class="material-symbols-outlined arrow">chevron_right</span>
-        </button>
-
-        <button class="menu-item" (click)="showPending()">
-          <span class="material-symbols-outlined icon">help</span>
-          <div class="label-box">
-            <span class="title">Pusat Bantuan</span>
-            <span class="sub">Bantuan & FAQ</span>
           </div>
           <span class="material-symbols-outlined arrow">chevron_right</span>
         </button>
@@ -93,11 +52,52 @@
 
     <!-- Logout Action -->
     <div class="mt-10 mb-12">
-      <button class="logout-btn" (click)="logout()">
+      <button class="logout-btn" type="button" (click)="confirmLogout()">
         <span class="material-symbols-outlined">logout</span>
-        Keluar Aplikasi
+        Logout
       </button>
       <p class="version-text text-center mt-4">Versi 1.0.4-serene</p>
+    </div>
+    <!-- Edit Profile Modal Overlay -->
+    <div class="custom-modal-overlay" *ngIf="isEditingProfile">
+      <div class="custom-modal-content glass-panel">
+        <h3 class="modal-title">Ubah Data Pribadi</h3>
+        <form (submit)="saveProfile()">
+          <div class="input-group">
+            <label>Nama Lengkap</label>
+            <input type="text" [(ngModel)]="profileData.name" name="name" required class="custom-input" />
+          </div>
+          <div class="input-group">
+            <label>Nomor Telepon</label>
+            <input type="tel" [(ngModel)]="profileData.phone" name="phone" class="custom-input" />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="isEditingProfile = false">Batal</button>
+            <button type="submit" class="btn-submit" [disabled]="isLoading">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Change Password Modal Overlay -->
+    <div class="custom-modal-overlay" *ngIf="isChangingPassword">
+      <div class="custom-modal-content glass-panel">
+        <h3 class="modal-title">Ganti Kata Sandi</h3>
+        <form (submit)="savePassword()">
+          <div class="input-group">
+            <label>Kata Sandi Lama</label>
+            <input type="password" [(ngModel)]="passwordData.old_password" name="old_password" required class="custom-input" />
+          </div>
+          <div class="input-group">
+            <label>Kata Sandi Baru</label>
+            <input type="password" [(ngModel)]="passwordData.new_password" name="new_password" required class="custom-input" />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="isChangingPassword = false">Batal</button>
+            <button type="submit" class="btn-submit" [disabled]="isLoading">Simpan</button>
+          </div>
+        </form>
+      </div>
     </div>
   </main>
 </ion-content>

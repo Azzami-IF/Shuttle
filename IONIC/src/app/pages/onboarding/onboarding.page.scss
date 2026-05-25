@@ -1,5 +1,5 @@
 .onboarding-page {
-  --background: var(--ion-background-color);
+  --background: #faf8f3;
 }
 
 .main-content {
@@ -8,7 +8,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 48px 24px 24px;
-  min-height: calc(100vh - 220px);
+  padding: 36px 20px 20px;
+  min-height: calc(100vh - 180px);
 
   .utility-bar {
     width: 100%;
@@ -37,18 +38,46 @@
   }
 
   .illustration-container {
-    width: 100%;
-    max-width: 384px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 0;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
 
-    img {
+    .illustration-art {
       width: 100%;
-      height: auto;
+      aspect-ratio: 1;
       border-radius: 24px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.45) 0 10%, transparent 11%),
+        radial-gradient(circle at 78% 34%, rgba(255, 255, 255, 0.22) 0 9%, transparent 10%),
+        linear-gradient(135deg, #18281e 0%, #2d3e33 52%, #536349 100%);
+      position: relative;
+      overflow: hidden;
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      &::before {
+        width: 220px;
+        height: 220px;
+        left: -40px;
+        bottom: -60px;
+      }
+
+      &::after {
+        width: 120px;
+        height: 120px;
+        right: 32px;
+        top: 28px;
+      }
     }
   }
 
@@ -59,14 +88,14 @@
     h1 {
       font-size: 24px;
       font-weight: 700;
-      color: var(--primary-container);
+      color: #1a1a1a;
       line-height: 1.2;
       margin-bottom: 16px;
     }
 
     p {
       font-size: 16px;
-      color: var(--ion-color-step-600);
+      color: #64748b;
       line-height: 1.5;
     }
   }
@@ -92,26 +121,46 @@
 }
 
 .bottom-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  margin: 0;
   background: linear-gradient(180deg, #3d5445 0%, #2d3e33 100%);
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  padding: 32px;
+  padding: 14px 18px calc(14px + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1);
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(16, 40, 33, 0.12);
+  transition: transform 240ms cubic-bezier(.2,.9,.2,1);
+  will-change: transform;
+  z-index: 90;
 
-  .handle {
+  /* support both handle class names */
+  .handle,
+  .sheet-handle {
     width: 48px;
     height: 4px;
     background: rgba(255, 255, 255, 0.2);
     border-radius: 2px;
-    margin: 0 auto 24px;
+    margin: 0 auto 12px;
+    cursor: pointer;
   }
 
-  button {
+  .sheet-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* generic button rules (applies to .btn and button) */
+  button,
+  .btn {
     width: 100%;
-    padding: 16px;
+    padding: 14px;
     border-radius: 8px;
     font-weight: 700;
     font-size: 16px;
@@ -121,24 +170,33 @@
     &:active {
       transform: scale(0.98);
     }
-
-    &.primary-btn {
-      background: white;
-      color: var(--primary-container);
-    }
-
-    &.secondary-btn {
-      background: transparent;
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      color: white;
-    }
   }
 
-  .home-indicator {
-    width: 128px;
+  /* primary CTA */
+  button.primary-btn,
+  .btn.btn-primary {
+    background: white;
+    color: #1a1a1a;
+  }
+
+  /* secondary CTA */
+  button.secondary-btn,
+  .btn.btn-secondary {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: white;
+  }
+
+.home-indicator {
+    width: 96px;
     height: 4px;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.28);
     border-radius: 2px;
-    margin: 24px auto 0;
+    margin: 6px auto 0;
   }
+}
+
+/* helper to collapse the sheet (used by component via transform inline) */
+.bottom-sheet.collapsed {
+  transform: translateY(140px);
 }

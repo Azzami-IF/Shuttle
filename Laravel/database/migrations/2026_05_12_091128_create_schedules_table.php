@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
+            // vehicle FK added in a later migration to avoid ordering issues
+            $table->unsignedBigInteger('vehicle_id');
             $table->foreignId('driver_id')->constrained('users')->onDelete('cascade');
             $table->string('origin');
             $table->string('destination');

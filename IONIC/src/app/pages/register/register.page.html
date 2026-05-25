@@ -2,10 +2,6 @@
   <div class="relative w-full min-h-screen bg-surface-container-lowest overflow-hidden flex flex-col">
     <!-- Hero Illustration Section -->
     <div class="hero-section">
-      <div class="hero-img-container">
-        <img alt="Modern bus" class="hero-img" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000">
-        <div class="hero-overlay"></div>
-      </div>
 
       <!-- Header UI -->
       <div class="header-ui">
@@ -33,16 +29,17 @@
           <label>Nama Lengkap</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined icon">badge</span>
-            <input type="text" [(ngModel)]="registerData.name" name="name" placeholder="Masukkan Nama Lengkap" autocomplete="off" required>
+            <input class="custom-input" type="text" [(ngModel)]="registerData.name" name="name" placeholder="Masukkan Nama Lengkap" autocomplete="off" required>
           </div>
         </div>
 
         <!-- Input Group: Email -->
+
         <div class="input-group">
           <label>Email</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined icon">mail</span>
-            <input type="email" [(ngModel)]="registerData.email" name="email" placeholder="Masukkan Email" autocomplete="off" required>
+            <input class="custom-input" type="email" [(ngModel)]="registerData.email" name="email" placeholder="Masukkan Email" autocomplete="off" required>
           </div>
         </div>
 
@@ -51,7 +48,7 @@
           <label>No. Telp</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined icon">phone</span>
-            <input type="tel" [(ngModel)]="registerData.phone" name="phone" placeholder="Masukkan No. Telp" autocomplete="off" required>
+            <input class="custom-input" type="tel" [(ngModel)]="registerData.phone" name="phone" placeholder="Masukkan No. Telp" autocomplete="off" required>
           </div>
         </div>
 
@@ -60,7 +57,7 @@
           <label>Kata Sandi</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined icon">lock</span>
-            <input type="password" [(ngModel)]="registerData.password" name="password" placeholder="Masukkan Kata Sandi" autocomplete="off" required>
+            <input class="custom-input" type="password" [(ngModel)]="registerData.password" name="password" placeholder="Masukkan Kata Sandi" autocomplete="off" required>
           </div>
         </div>
 

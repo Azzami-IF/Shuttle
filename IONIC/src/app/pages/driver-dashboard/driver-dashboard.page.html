@@ -8,7 +8,7 @@
       <button class="nav-btn" (click)="showPending()">
         <span class="material-symbols-outlined">notifications</span>
       </button>
-      <button class="nav-btn" (click)="logout()">
+      <button class="nav-btn" type="button" aria-label="Logout" (click)="confirmLogout()">
         <span class="material-symbols-outlined">logout</span>
       </button>
     </div>
@@ -38,8 +38,8 @@
           </div>
           <div class="divider"></div>
           <div class="shift-info">
-            <div class="label">Shift Berakhir</div>
-            <div class="time">03:24:15</div>
+            <div class="label">Perjalanan Hari Ini</div>
+            <div class="time">Aktif</div>
           </div>
         </div>
         <div class="metric-bottom">
@@ -105,6 +105,56 @@
           <span class="title">Manual</span>
           <p>Panduan SOP Driver.</p>
         </div>
+      </div>
+    </section>
+
+    <section class="next-trip-card">
+      <div class="card-head">
+        <div>
+          <span class="eyebrow">Trip Terjadwal</span>
+          <h3>Perjalanan Berikutnya</h3>
+        </div>
+        <button class="refresh-btn" (click)="refreshTripSummary()">
+          <span class="material-symbols-outlined">refresh</span>
+        </button>
+      </div>
+
+      <ng-container *ngIf="!tripSummaryLoading; else loadingTrip">
+        <div class="featured-trip" *ngIf="featuredTrip; else emptyTrip">
+          <div class="trip-main">
+            <div>
+              <p class="trip-route">{{ featuredTrip.schedule?.origin }} → {{ featuredTrip.schedule?.destination }}</p>
+              <p class="trip-time">{{ formatTime(featuredTrip.schedule?.departure_time) }}</p>
+            </div>
+            <div class="trip-status">{{ getCountdownLabel(featuredTrip.schedule?.departure_time) }}</div>
+          </div>
+          <div class="trip-meta">
+            <span>Armada: {{ featuredTrip.schedule?.vehicle?.name || 'Belum ditetapkan' }}</span>
+            <span>Driver: {{ featuredTrip.schedule?.driver?.name || 'Belum ditetapkan' }}</span>
+          </div>
+          <button class="launch-trip-btn" routerLink="/driver-trips">
+            <span class="material-symbols-outlined">route</span>
+            Buka Monitoring Trip
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #loadingTrip>
+        <div class="preview-state">Memuat trip terjadwal...</div>
+      </ng-template>
+
+      <ng-template #emptyTrip>
+        <div class="preview-state">Belum ada trip yang ditugaskan untuk driver ini.</div>
+      </ng-template>
+
+      <div class="preview-list" *ngIf="upcomingTrips.length">
+        <button class="preview-item" *ngFor="let trip of upcomingTrips" routerLink="/driver-trips">
+          <div>
+            <span class="preview-route">{{ trip.schedule?.origin }} → {{ trip.schedule?.destination }}</span>
+            <span class="preview-time">{{ formatTime(trip.schedule?.departure_time) }}</span>
+          </div>
+          <span class="preview-seat">{{ getCountdownLabel(trip.schedule?.departure_time) }}</span>
+        </button>
       </div>
     </section>
   </main>

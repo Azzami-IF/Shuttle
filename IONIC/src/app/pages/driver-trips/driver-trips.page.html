@@ -4,11 +4,6 @@
       <ion-back-button defaultHref="/driver-dashboard" text=""></ion-back-button>
     </ion-buttons>
     <ion-title>Jadwal Tugas</ion-title>
-    <ion-buttons slot="end">
-      <ion-button>
-        <span class="material-symbols-outlined">admin_panel_settings</span>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -26,10 +21,42 @@
     <span>{{ trips.length }} Perjalanan ditugaskan hari ini</span>
   </div>
 
+  <div class="p-4">
+    <ion-searchbar placeholder="Cari origin, tujuan, atau unit" [(ngModel)]="searchTerm" (ionInput)="applySearch()" showCancelButton="focus"></ion-searchbar>
+  </div>
+
+  <!-- Active Trip Hero Card -->
+  <section class="hero-trip-card" *ngIf="activeTrip" style="border: 2px solid var(--ion-color-success, #2dd36f); margin-bottom: 16px;">
+    <div class="image-box">
+      <div class="trip-art" aria-hidden="true"></div>
+      <div class="overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(45, 211, 111, 0.2) 100%);"></div>
+      <div class="content">
+        <span class="badge" style="background: var(--ion-color-success, #2dd36f); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SEDANG BERJALAN</span>
+        <h3>{{ activeTrip.schedule?.origin }} → {{ activeTrip.schedule?.destination }}</h3>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="info-grid">
+        <div class="item">
+          <span class="label">Waktu</span>
+          <span class="val">{{ activeTrip.schedule?.departure_time | date:'HH:mm' }}</span>
+        </div>
+        <div class="item">
+          <span class="label">Unit</span>
+          <span class="val">{{ activeTrip.schedule?.vehicle?.license_plate }}</span>
+        </div>
+      </div>
+      <button class="start-btn" style="background: var(--ion-color-success, #2dd36f);" [routerLink]="['/driver-tracking', { id: activeTrip.id }]">
+        <span class="material-symbols-outlined">near_me</span>
+        Lacak
+      </button>
+    </div>
+  </section>
+
   <!-- Next Trip Hero Card -->
   <section class="hero-trip-card" *ngIf="nextTrip">
     <div class="image-box">
-      <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000" alt="Bus Unit">
+      <div class="trip-art" aria-hidden="true"></div>
       <div class="overlay"></div>
       <div class="content">
         <div class="badge">Keberangkatan Selanjutnya</div>
@@ -54,33 +81,28 @@
     </div>
   </section>
 
-  <!-- Metrics and System Message -->
+  <!-- Trip Summary Metrics -->
   <section class="metrics-row">
     <div class="metric-card">
       <div class="label">
-        <span class="material-symbols-outlined">oil_barrel</span>
-        Bahan Bakar
+        <span class="material-symbols-outlined">check_circle</span>
+        Terjadwal
       </div>
-      <div class="val">88%</div>
+      <div class="val">{{ (nextTrip ? 1 : 0) + laterTrips.length }}</div>
     </div>
     <div class="metric-card">
       <div class="label">
-        <span class="material-symbols-outlined">tire_repair</span>
-        Pemeliharaan
+        <span class="material-symbols-outlined">directions_bus</span>
+        Aktif
       </div>
-      <div class="val">Siap</div>
+      <div class="val">{{ activeTrip ? 1 : 0 }}</div>
     </div>
   </section>
 
-  <div class="system-message">
-    <span class="material-symbols-outlined">notification_important</span>
-    <p>Pekerjaan jalan di Cipularang KM 72. Harap antisipasi keterlambatan 15 menit.</p>
-  </div>
-
   <!-- Later Today List -->
-  <section class="later-today" *ngIf="laterTrips.length > 0">
+  <section class="later-today" *ngIf="filteredLaterTrips.length > 0">
     <h4>Nanti Hari Ini</h4>
-    <div class="trip-item" *ngFor="let trip of laterTrips">
+    <div class="trip-item" *ngFor="let trip of filteredLaterTrips">
       <div class="item-header">
         <div class="status">SCHEDULED</div>
         <div class="time">{{ trip.schedule?.departure_time | date:'HH:mm' }}</div>

@@ -1,5 +1,11 @@
 @import "../driver-dashboard/driver-dashboard.page.scss";
 
+.driver-profile-page {
+  ion-content::part(scroll) {
+    padding-bottom: 144px;
+  }
+}
+
 .profile-card {
   display: flex;
   align-items: center;

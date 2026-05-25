@@ -47,7 +47,7 @@ export class DriverLoginPage {
       error: (err) => {
         this.isLoading = false;
         console.error('Driver login failed', err);
-        const msg = err.error?.message || 'Login gagal. Cek kembali akun Driver Anda.';
+        const msg = this.ui.getErrorMessage(err, 'Login gagal. Cek kembali akun Driver Anda.');
         this.ui.showAlert('Gagal', msg);
       }
     });

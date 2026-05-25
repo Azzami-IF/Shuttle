@@ -24,6 +24,7 @@
   </section>
 
   <main>
+    <ion-spinner *ngIf="loading" name="crescent" class="center-spinner"></ion-spinner>
     <div class="bus-layout">
       <div class="steering-wheel">
         <span class="material-symbols-outlined text-[32px]">motion_photos_auto</span>
@@ -58,11 +59,12 @@
 
   <footer class="selection-footer">
     <div class="price-info">
-      <div class="label">Kursi: <strong>{{ selectedSeatId || 'Belum dipilih' }}</strong></div>
+      <div class="label">Kursi: <strong>{{ getSelectedSeatLabel() }}</strong></div>
       <div class="amount">Rp {{ price | number:'1.0-0' }}</div>
     </div>
-    <button class="confirm-btn" [disabled]="!selectedSeatId" (click)="confirmBooking()">
-      Konfirmasi
+    <button class="confirm-btn" [disabled]="!selectedSeatId || loading" (click)="confirmBooking()">
+      <span *ngIf="loading">Memproses...</span>
+      <span *ngIf="!loading">Konfirmasi</span>
     </button>
   </footer>
 </ion-content>

@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'ShuttleApp',
+  appId: 'id.shuttle.ambatu',
+  appName: 'AmbatuBus',
   webDir: 'www'
 };
 

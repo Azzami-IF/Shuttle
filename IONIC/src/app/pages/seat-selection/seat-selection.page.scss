@@ -6,7 +6,8 @@
   display: flex;
   justify-content: center;
   gap: 24px;
-  margin: 24px 0;
+  margin: 16px 0 24px;
+  padding: 0 16px;
 
   .legend-item {
     display: flex;
@@ -19,6 +20,7 @@
       height: 24px;
       border-radius: 4px;
       border: 1px solid var(--outline-variant);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
 
       &.available { background: var(--surface-container-high); }
       &.selected { background: var(--ion-color-secondary); border-color: transparent; }
@@ -30,12 +32,14 @@
 }
 
 .bus-layout {
-  background: var(--surface-container-low);
-  border-radius: 16px;
-  padding: 32px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 28px 20px 32px;
   margin: 0 auto;
-  max-width: 320px;
+  max-width: 340px;
   border: 1px solid rgba(var(--ion-color-step-200-rgb), 0.2);
+  box-shadow: 0 12px 32px rgba(24, 40, 30, 0.08);
 
   .steering-wheel {
     display: flex;
@@ -48,7 +52,7 @@
   .seat-rows {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 
     .seat-row {
       display: flex;
@@ -66,7 +70,7 @@
   width: 48px;
   height: 48px;
   border-radius: 8px;
-  background: white;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f8f5 100%);
   border: 1px solid var(--outline-variant);
   font-size: 14px;
   font-weight: 700;
@@ -77,9 +81,10 @@
   transition: all 0.2s;
 
   &.selected {
-    background: var(--ion-color-secondary);
+    background: linear-gradient(135deg, #2d3e33 0%, #536349 100%);
     color: white;
     border-color: transparent;
+    box-shadow: 0 6px 18px rgba(45, 62, 51, 0.25);
   }
 
   &.occupied {
@@ -94,11 +99,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
   border-top: 1px solid var(--outline-variant);
   padding: 20px;
   z-index: 100;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -8px 24px rgba(24, 40, 30, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -112,7 +118,7 @@
   }
 
   .confirm-btn {
-    background: var(--ion-color-primary);
+    background: linear-gradient(135deg, #18281e 0%, #2d3e33 100%);
     color: white;
     padding: 12px 32px;
     border-radius: 8px;

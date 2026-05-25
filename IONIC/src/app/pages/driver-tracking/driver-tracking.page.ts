@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { UiService } from '../../services/ui.service';
 
 @Component({
   standalone: false,
@@ -12,72 +13,140 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
   tripId: any;
   trip: any;
   passengers: any[] = [];
+  locationInterval: any = null;
+  gpsStatus: string = 'Menunggu...';
+  lastUpdateTime: string = '';
   metrics = {
-    fuel: 82,
+    fuel: 88,
     temp: 'Normal'
   };
-  shiftTimer = '03:24:15';
-  timerInterval: any;
+  shiftTimer: string = '03:24:15';
+  passengerCount = 0;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private ui: UiService
   ) {}
 
   ngOnInit() {
     this.tripId = this.route.snapshot.paramMap.get('id');
     this.loadTrip();
-    this.startTimer();
   }
 
   ngOnDestroy() {
-    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.stopLocationUpdates();
   }
 
   loadTrip() {
     this.api.get(`trips/${this.tripId}`).subscribe((res: any) => {
       this.trip = res;
-      // In a real app, passengers would be linked to the schedule
+      if (res && res.status === 'on-going') {
+        this.startLocationUpdates();
+      } else {
+        this.stopLocationUpdates();
+      }
       this.loadPassengers();
+    });
+  }
+
+  startLocationUpdates() {
+    if (this.locationInterval) return;
+    this.gpsStatus = 'Aktif (setiap 10 detik)';
+    this.autoUpdateLocation(); // Send one immediately
+    this.locationInterval = setInterval(() => {
+      this.autoUpdateLocation();
+    }, 10000);
+  }
+
+  stopLocationUpdates() {
+    if (this.locationInterval) {
+      clearInterval(this.locationInterval);
+      this.locationInterval = null;
+    }
+    this.gpsStatus = 'Tidak aktif';
+  }
+
+  updateLocation() {
+    this.autoUpdateLocation();
+  }
+
+  autoUpdateLocation() {
+    if (!this.trip) return;
+
+    // Default start from Bandung if no coordinates exist yet
+    if (!this.trip.latitude || this.trip.latitude == 0) {
+      this.trip.latitude = -6.9452;
+      this.trip.longitude = 107.5937;
+    }
+
+    // Target is Kampung Rambutan Jakarta: -6.3090, 106.8824
+    const targetLat = -6.3090;
+    const targetLng = 106.8824;
+
+    const latDiff = targetLat - this.trip.latitude;
+    const lngDiff = targetLng - this.trip.longitude;
+
+    // If we are already extremely close, stop moving, just add tiny noise
+    if (Math.abs(latDiff) < 0.001 && Math.abs(lngDiff) < 0.001) {
+      this.trip.latitude += (Math.random() - 0.5) * 0.0001;
+      this.trip.longitude += (Math.random() - 0.5) * 0.0001;
+    } else {
+      // Step size is 5% towards target + random jitter
+      this.trip.latitude += latDiff * 0.05 + (Math.random() - 0.5) * 0.001;
+      this.trip.longitude += lngDiff * 0.05 + (Math.random() - 0.5) * 0.001;
+    }
+
+    this.api.post(`trips/${this.tripId}/location`, {
+      latitude: this.trip.latitude,
+      longitude: this.trip.longitude
+    }).subscribe({
+      next: () => {
+        this.lastUpdateTime = new Date().toLocaleTimeString('id-ID');
+        console.log('Driver location auto-updated to', this.trip.latitude, this.trip.longitude);
+      },
+      error: (err) => console.error('Driver location auto-update failed', err)
     });
   }
 
   loadPassengers() {
     if (!this.trip?.schedule_id) return;
     this.api.get(`bookings?schedule_id=${this.trip.schedule_id}`).subscribe((res: any[]) => {
-      this.passengers = res;
+      this.passengers = res || [];
+      this.passengerCount = this.passengers.length;
     });
   }
 
   updateStatus(status: string) {
-    let endpoint = '';
-    if (status === 'ongoing') endpoint = 'start';
-    if (status === 'completed') endpoint = 'complete';
+    const endpoint = status === 'completed' ? 'complete' : 'status';
+    const payload = status === 'completed' ? {} : { status };
 
-    if (endpoint) {
-      this.api.post(`trips/${this.tripId}/${endpoint}`, {}).subscribe(() => {
+    this.api.post(`trips/${this.tripId}/${endpoint}`, payload).subscribe({
+      next: () => {
+        void this.ui.showToast(`Status perjalanan diperbarui ke ${status}`, 'success');
+        if (status === 'completed') {
+          this.stopLocationUpdates();
+        }
         this.loadTrip();
-      });
-    }
-  }
-
-  updateLocation() {
-    const lat = -6.2088 + (Math.random() - 0.5) * 0.01;
-    const lng = 106.8456 + (Math.random() - 0.5) * 0.01;
-
-    this.api.post(`trips/${this.tripId}/location`, {
-      latitude: lat,
-      longitude: lng
-    }).subscribe(() => {
-      alert('Lokasi berhasil diperbarui');
+      },
+      error: () => {
+        void this.ui.showToast('Gagal memperbarui status perjalanan', 'danger');
+      }
     });
   }
 
-  startTimer() {
-    // Simulated decrement
-    this.timerInterval = setInterval(() => {
-      // Simple logic to keep it looking active
-    }, 1000);
+  isStatus(status: string) {
+    return this.trip?.status === status;
+  }
+
+  getSeatLabel(seat: any): string {
+    if (!seat || !seat.seat_number) return '-';
+    const index = parseInt(seat.seat_number, 10) - 1;
+    if (isNaN(index)) return seat.seat_number;
+    const rowNum = Math.floor(index / 4) + 1;
+    const colIndex = index % 4;
+    const letters = ['A', 'B', 'C', 'D'];
+    return `${rowNum}${letters[colIndex]}`;
   }
 }

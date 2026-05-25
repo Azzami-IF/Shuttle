@@ -9,10 +9,13 @@ use App\Models\Trip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Controllers\BookingController;
+
 class ScheduleController extends Controller
 {
     public function index(Request $request)
     {
+        BookingController::releaseExpiredBookings();
         $query = Schedule::with(['vehicle', 'driver', 'seats']);
 
         if ($request->has('origin')) {
@@ -65,6 +68,7 @@ class ScheduleController extends Controller
 
     public function show(Schedule $schedule)
     {
+        BookingController::releaseExpiredBookings();
         return response()->json($schedule->load(['vehicle', 'driver', 'seats', 'trip']));
     }
 

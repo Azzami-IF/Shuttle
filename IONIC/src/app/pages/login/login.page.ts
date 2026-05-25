@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UiService } from '../../services/ui.service';
 
 @Component({
   standalone: false,
@@ -18,13 +19,14 @@ export class LoginPage {
 
   constructor(
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private ui: UiService
   ) {}
 
   onLogin(event: Event) {
     event.preventDefault();
     if (!this.loginData.email || !this.loginData.password) {
-      alert('Mohon isi email dan kata sandi');
+      void this.ui.showToast('Mohon isi email dan kata sandi', 'warning');
       return;
     }
     this.isLoading = true;
@@ -32,10 +34,16 @@ export class LoginPage {
       next: (res) => {
         this.isLoading = false;
 
-        // Role check: Only customers can login through this page
-        if (res.user.role !== 'customer') {
-          alert('Akses Ditolak: Gunakan portal Driver untuk akun pengemudi.');
+        // Role check: Driver must use driver portal
+        if (res.user.role === 'driver') {
+          void this.ui.showToast('Akses Ditolak: Gunakan portal Driver untuk akun pengemudi.', 'warning');
           this.auth.logoutDirect(); // Method to clear local storage without API call
+          return;
+        }
+
+        // Admin can continue to admin dashboard from this portal
+        if (res.user.role === 'admin') {
+          this.router.navigate(['/admin/dashboard'], { replaceUrl: true });
           return;
         }
 
@@ -45,8 +53,8 @@ export class LoginPage {
       error: (err) => {
         this.isLoading = false;
         console.error('Login failed', err);
-        const msg = err.error?.message || 'Login gagal. Cek kembali akun Anda.';
-        alert(msg);
+        const msg = this.ui.getErrorMessage(err, 'Login gagal. Cek kembali akun Anda.');
+        void this.ui.showToast(msg, 'danger');
       }
     });
   }

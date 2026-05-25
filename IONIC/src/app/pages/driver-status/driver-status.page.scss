@@ -2,6 +2,10 @@
 
 .driver-status-page {
   --background: var(--ion-background-color);
+
+  ion-content::part(scroll) {
+    padding-bottom: 144px;
+  }
 }
 
 .summary-section {

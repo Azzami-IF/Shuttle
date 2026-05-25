@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Pilih Kursi - Ambatu Transit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .seat-selected {
+            background-color: #2d3e33 !important;
+            color: #96a99b !important;
+            border-color: #2d3e33 !important;
+        }
+        .seat-occupied {
+            background-color: #e1e3df !important;
+            color: #737873 !important;
+            border-color: #e1e3df !important;
+            cursor: not-allowed;
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="bg-surface shadow-sm docked full-width top-0 z-50 flex justify-between items-center w-full px-margin-mobile h-16">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:opacity-80 active:scale-95">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Detail Pesanan</h1>
+</div>
+<div class="bg-error-container text-on-error-container px-3 py-1 rounded-full font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+<span class="">05:42</span>
+</div>
+</header>
+<!-- Progress Indicator -->
+<div class="bg-surface px-margin-mobile py-4 flex items-center justify-center gap-4 border-b border-outline-variant"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-sm text-label-sm">1</div><span class="text-primary font-label-md text-label-md font-bold">Data</span></div><div class="h-[1px] w-8 bg-outline-variant"></div><div class="flex items-center gap-2 opacity-40"><div class="w-6 h-6 rounded-full bg-outline flex items-center justify-center text-on-surface font-label-sm text-label-sm">2</div><span class="text-on-surface-variant font-label-md text-label-md">Kursi</span></div><div class="h-[1px] w-8 bg-outline-variant"></div><div class="flex items-center gap-2 opacity-40"><div class="w-6 h-6 rounded-full bg-outline flex items-center justify-center text-on-surface font-label-sm text-label-sm">3</div><span class="text-on-surface-variant font-label-md text-label-md">Bayar</span></div></div>
+<!-- Content Area -->
+<main class="flex-1 overflow-y-auto px-margin-mobile pt-6 pb-40 scroll-hide"><div class="space-y-6"><div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4"><div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-on-primary"><span class="material-symbols-outlined">directions_bus</span></div><div><p class="font-label-sm text-label-sm text-on-surface-variant">Jakarta → Bandung</p><p class="font-label-md text-label-md font-bold text-primary">Minggu, 24 Nov • 08:30</p></div></div><div class="space-y-4"><div><h2 class="font-label-md text-label-md font-bold text-primary mb-2">Detail Pemesanan</h2><div class="bg-surface-container-low p-4 rounded-xl space-y-3"><div class="flex justify-between items-center"><span class="text-on-surface-variant font-label-md">Nama Lengkap</span><span class="text-primary font-label-md font-bold">ALMA</span></div><div class="flex justify-between items-center"><span class="text-on-surface-variant font-label-md">Email</span><span class="text-primary font-label-md font-bold">alma@example.com</span></div><div class="flex justify-between items-center"><span class="text-on-surface-variant font-label-md">No. Telepon</span><span class="text-primary font-label-md font-bold">+62 812 3456 7890</span></div></div></div><div><h2 class="font-label-md text-label-md font-bold text-primary mb-2">Detail Penumpang</h2><div class="bg-surface-container-low p-4 rounded-xl space-y-4"><div><p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Penumpang 1</p><div class="flex flex-col gap-2"><div><p class="font-label-md text-label-md font-bold text-primary">ALMA</p><p class="font-label-sm text-label-sm text-on-surface-variant">NIK: 3275012345678901</p></div><button class="w-full flex items-center justify-between p-3 border border-outline-variant rounded-lg text-primary font-label-md"><span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">event_seat</span> Pilih Kursi</span><span class="material-symbols-outlined">chevron_right</span></button><div class="flex items-center gap-2 p-3 bg-error-container/20 rounded-lg"><span class="material-symbols-outlined text-error text-[18px]">error</span><p class="text-error font-label-sm">Kursi belum dipilih. Harap pilih kursi terlebih dahulu.</p></div></div></div></div></div></div></div></main>
+<!-- Bottom Action Sheet -->
+<section class="fixed bottom-0 w-full bg-surface-container-lowest shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-[32px] px-margin-mobile pt-6 pb-8 z-50 transition-transform transform translate-y-0" id="selection-summary"><div class="flex justify-between items-center mb-6"><div><p class="font-label-sm text-label-sm text-on-surface-variant">Total Pembayaran</p><p class="font-headline-md text-headline-md text-primary font-bold">Rp125.000</p></div><button class="text-primary font-label-md font-bold flex items-center">Detail <span class="material-symbols-outlined">expand_more</span></button></div><button class="w-full h-14 bg-primary text-on-primary font-label-md text-label-md font-bold rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]"><span class="">LANJUTKAN</span><span class="material-symbols-outlined">arrow_forward</span></button></section>
+
+
+</body></html>

@@ -1,0 +1,206 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Manage Drivers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="loadDrivers(1); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="drivers-container">
+    <!-- Error Message -->
+    <ion-card *ngIf="error" class="error-card">
+      <ion-card-content>{{ error }}</ion-card-content>
+    </ion-card>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <ion-spinner></ion-spinner>
+      <p>Loading drivers...</p>
+    </div>
+
+    <!-- Drivers List -->
+    <ion-card *ngIf="!loading && drivers.length > 0" class="drivers-card">
+      <ion-card-header>
+        <ion-card-title>Drivers ({{ pagination.total }})</ion-card-title>
+      </ion-card-header>
+      <ion-list>
+        <ion-item *ngFor="let driver of drivers" class="driver-item">
+          <ion-label>
+            <div class="driver-name">{{ driver.name }}</div>
+            <div class="driver-meta">
+              <span>License: {{ driver.license_number }}</span>
+              <span class="dot">·</span>
+              <span>Trips: {{ driver.completed_trips }}/{{ driver.total_trips }}</span>
+              <span class="dot">·</span>
+              <span class="rating">★ {{ driver.rating.toFixed(1) }}</span>
+            </div>
+            <div class="driver-contact">
+              {{ driver.email }} | {{ driver.phone }}
+            </div>
+          </ion-label>
+          <ion-badge [color]="getStatusColor(driver.status)" slot="start">
+            {{ driver.status }}
+          </ion-badge>
+          <ion-badge [color]="getApprovalBadgeColor(driver.is_approved)" slot="start">
+            {{ driver.is_approved ? 'Approved' : 'Pending' }}
+          </ion-badge>
+          <ion-button
+            slot="end"
+            fill="clear"
+            size="small"
+            (click)="viewDetails(driver)"
+            color="primary">
+            <ion-icon name="eye"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <!-- Empty State -->
+    <ion-card *ngIf="!loading && drivers.length === 0" class="empty-card">
+      <ion-card-content class="empty-content">
+        <ion-icon name="person-outline"></ion-icon>
+        <h2>No Drivers Found</h2>
+        <p>No drivers in the system yet</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Pagination -->
+    <ion-card *ngIf="!loading && pagination.last_page > 1" class="pagination-card">
+      <ion-card-content>
+        <div class="pagination-controls">
+          <ion-button
+            (click)="prevPage()"
+            [disabled]="pagination.current_page === 1"
+            fill="outline">
+            <ion-icon name="chevron-back" slot="start"></ion-icon>
+            Previous
+          </ion-button>
+          <span class="page-info">
+            Page {{ pagination.current_page }} of {{ pagination.last_page }}
+          </span>
+          <ion-button
+            (click)="nextPage()"
+            [disabled]="pagination.current_page === pagination.last_page"
+            fill="outline">
+            Next
+            <ion-icon name="chevron-forward" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Driver Details Modal -->
+  <ion-modal [isOpen]="showDetails" (didDismiss)="closeDetails()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Driver Details</ion-title>
+          <ion-buttons slot="start">
+            <ion-button (click)="closeDetails()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding" *ngIf="selectedDriver">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ selectedDriver.name }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="detail-row">
+              <span class="label">Email:</span>
+              <span>{{ selectedDriver.email }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Phone:</span>
+              <span>{{ selectedDriver.phone }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">License Number:</span>
+              <span>{{ selectedDriver.license_number }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <ion-badge [color]="getStatusColor(selectedDriver.status)">
+                {{ selectedDriver.status | titlecase }}
+              </ion-badge>
+            </div>
+            <div class="detail-row">
+              <span class="label">Approval Status:</span>
+              <ion-badge [color]="getApprovalBadgeColor(selectedDriver.is_approved)">
+                {{ selectedDriver.is_approved ? 'Approved' : 'Pending' }}
+              </ion-badge>
+            </div>
+            <div class="detail-row">
+              <span class="label">Total Trips:</span>
+              <span>{{ selectedDriver.total_trips }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Completed Trips:</span>
+              <span>{{ selectedDriver.completed_trips }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Completion Rate:</span>
+              <span>{{ getCompletionRate(selectedDriver) }}%</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Rating:</span>
+              <span class="rating">★ {{ selectedDriver.rating.toFixed(1) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Member Since:</span>
+              <span>{{ selectedDriver.created_at | date: 'MMM dd, yyyy' }}</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Progress Bars -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Statistics</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="stat-bar">
+              <div class="stat-label">Completion Rate</div>
+              <ion-progress-bar
+                [value]="getCompletionRate(selectedDriver) / 100"
+                color="success">
+              </ion-progress-bar>
+              <div class="stat-value">{{ getCompletionRate(selectedDriver) }}%</div>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-label">Rating</div>
+              <ion-progress-bar
+                [value]="selectedDriver.rating / 5"
+                color="warning">
+              </ion-progress-bar>
+              <div class="stat-value">{{ selectedDriver.rating.toFixed(1) }}/5.0</div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Actions -->
+        <ion-button
+          *ngIf="!selectedDriver.is_approved"
+          expand="block"
+          color="success"
+          (click)="approveDriver(selectedDriver)">
+          <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+          Approve Driver
+        </ion-button>
+        <ion-button
+          *ngIf="selectedDriver.is_approved"
+          expand="block"
+          color="medium"
+          disabled>
+          <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+          Driver Approved
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

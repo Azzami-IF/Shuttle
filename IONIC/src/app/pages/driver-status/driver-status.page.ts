@@ -22,8 +22,10 @@ export class DriverStatusPage {
 
   loadHistory() {
     this.api.get('trips').subscribe((res: any[]) => {
-      this.trips = res.filter(t => t.status === 'completed')
-        .sort((a, b) => new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime());
+      this.trips = (res || []).filter(t => t.status === 'completed')
+        .sort((a, b) => new Date(b.completed_at || b.updated_at).getTime() - new Date(a.completed_at || a.updated_at).getTime());
+      this.summary.totalTrips = this.trips.length;
+      this.summary.totalDistance = this.trips.length * 150; // Bandung to Jakarta is approx 150km
     });
   }
 }

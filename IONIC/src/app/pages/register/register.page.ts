@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UiService } from '../../services/ui.service';
 
 @Component({
   standalone: false,
@@ -17,10 +18,12 @@ export class RegisterPage {
     role: 'customer'
   };
   isLoading = false;
+  showPassword = false;
 
   constructor(
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private ui: UiService
   ) {}
 
   onRegister(event: Event) {
@@ -30,12 +33,13 @@ export class RegisterPage {
       next: (res) => {
         this.isLoading = false;
         console.log('Registration success', res);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate([this.auth.getHomeRoute()], { replaceUrl: true });
       },
       error: (err) => {
         this.isLoading = false;
         console.error('Registration failed', err);
-        alert('Registration failed: ' + (err.error?.message || 'Unknown error'));
+        const msg = err?.error?.message || err?.error?.errors?.email?.[0] || 'Pendaftaran gagal';
+        void this.ui.showToast(msg, 'danger');
       }
     });
   }

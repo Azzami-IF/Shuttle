@@ -169,4 +169,112 @@ class AdminController extends Controller
         $users = $query->get();
         return view('admin.users.index', compact('users'));
     }
+
+    // User CRUD (web)
+    public function createUser()
+    {
+        return view('admin.users.create');
+    }
+
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'role' => 'required|in:customer,driver,admin',
+            'phone' => 'nullable',
+            'driver_code' => 'nullable|unique:users,driver_code',
+            'password' => 'required|min:8',
+        ]);
+
+        $data = $request->only(['name','email','role','phone','driver_code']);
+        $data['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+
+        if ($data['role'] === 'driver' && empty($data['driver_code'])) {
+            $data['driver_code'] = 'DRV'.strtoupper(substr(bin2hex(random_bytes(3)),0,6));
+        }
+
+        \App\Models\User::create($data);
+        return redirect()->route('admin.users')->with('success','User created');
+    }
+
+    public function editUser(\App\Models\User $user)
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
+    public function updateUser(Request $request, \App\Models\User $user)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'role' => 'required|in:customer,driver,admin',
+            'phone' => 'nullable',
+            'driver_code' => 'nullable|unique:users,driver_code,'.$user->id,
+            'password' => 'nullable|min:8',
+        ]);
+
+        $data = $request->only(['name','email','role','phone','driver_code']);
+        if ($request->filled('password')) {
+            $data['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+
+        $user->update($data);
+        return redirect()->route('admin.users')->with('success','User updated');
+    }
+
+    public function deleteUser(\App\Models\User $user)
+    {
+        $user->delete();
+        return redirect()->route('admin.users')->with('success','User deleted');
+    }
+
+    // Booking Monitoring
+    public function bookings(Request $request)
+    {
+        \App\Http\Controllers\BookingController::releaseExpiredBookings();
+
+        $query = Booking::with(['user', 'schedule', 'seat']);
+
+        if ($request->has('status') && $request->get('status') != '') {
+            $query->where('status', $request->get('status'));
+        }
+
+        if ($request->has('search') && $request->get('search') != '') {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%");
+                })->orWhereHas('schedule', function ($sq) use ($search) {
+                    $sq->where('origin', 'like', "%{$search}%")
+                       ->orWhere('destination', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $bookings = $query->latest()->get();
+        return view('admin.bookings.index', compact('bookings'));
+    }
+
+    public function confirmBookingPayment(Booking $booking)
+    {
+        if ($booking->status === 'pending_payment') {
+            $booking->update(['status' => 'booked']);
+            return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi secara manual.');
+        }
+        return redirect()->back()->with('error', 'Status pemesanan tidak valid untuk dikonfirmasi.');
+    }
+
+    // Trip Monitoring
+    public function trips(Request $request)
+    {
+        $query = Trip::with(['schedule.vehicle', 'schedule.driver', 'locations']);
+
+        if ($request->has('status') && $request->get('status') != '') {
+            $query->where('status', $request->get('status'));
+        }
+
+        $trips = $query->latest()->get();
+        return view('admin.trips.index', compact('trips'));
+    }
 }

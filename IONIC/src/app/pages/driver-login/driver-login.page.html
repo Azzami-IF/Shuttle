@@ -8,8 +8,17 @@
   </header>
 
   <main class="main-container">
+    <div class="brand-visual">
+      <div class="image-wrapper">
+        <div class="hero-art" aria-hidden="true"></div>
+        <div class="overlay"></div>
+        <div class="text-overlay">
+          <h2>Professional Excellence</h2>
+          <p>Driving the future of sustainable and stress-free urban mobility, one journey at a time.</p>
+        </div>
+      </div>
+    </div>
 
-    <!-- Right Side: Login Form -->
     <div class="form-side">
       <div class="glass-card">
         <div class="form-header">
@@ -22,19 +31,19 @@
             <label for="driver_id">Driver ID or Email</label>
             <div class="input-wrapper">
               <span class="material-symbols-outlined icon">badge</span>
-              <input type="text" id="driver_id" name="email" [(ngModel)]="loginData.email" placeholder="e.g. DRV-8829 or email@ambatu.com" autocomplete="off" required>
+              <input type="text" id="driver_id" name="email" [(ngModel)]="loginData.email" placeholder="e.g. DRV-8829 or email@ambatu.com" autocomplete="username" inputmode="email" enterkeyhint="next" required>
             </div>
           </div>
 
           <div class="input-group">
             <div class="label-row">
               <label for="password">Password</label>
-              <a href="javascript:void(0)" class="forgot">Forgot?</a>
+              <a [routerLink]="['/forgot-password']" [queryParams]="{ source: 'driver' }" class="forgot">Forgot?</a>
             </div>
             <div class="input-wrapper">
               <span class="material-symbols-outlined icon">lock</span>
-              <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="loginData.password" placeholder="••••••••" autocomplete="off" required>
-              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+              <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="loginData.password" placeholder="••••••••" autocomplete="current-password" required>
+              <button type="button" class="toggle-password" (click)="showPassword = !showPassword" aria-label="Tampilkan atau sembunyikan kata sandi">
                 <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
@@ -45,7 +54,7 @@
             <label for="remember">Keep me logged in on this device</label>
           </div>
 
-          <button type="submit" class="primary-btn" [disabled]="isLoading">
+            <button type="submit" class="primary-btn" [disabled]="isLoading">
             <span *ngIf="!isLoading">Login as Driver</span>
             <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
             <span class="material-symbols-outlined" *ngIf="!isLoading">arrow_forward</span>
@@ -53,10 +62,10 @@
         </form>
 
         <div class="back-link">
-          <a (click)="goToPassengerLogin()">
+          <button type="button" (click)="goToPassengerLogin()">
             <span class="material-symbols-outlined">arrow_back</span>
             Back to Passenger Login
-          </a>
+          </button>
         </div>
       </div>
     </div>

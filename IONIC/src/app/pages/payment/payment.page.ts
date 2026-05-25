@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import { UiService } from '../../services/ui.service';
 
 @Component({
   standalone: false,
@@ -17,7 +19,9 @@ export class PaymentPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private auth: AuthService,
+    private ui: UiService
   ) { }
 
   ngOnInit() {
@@ -43,6 +47,8 @@ export class PaymentPage implements OnInit {
       if (--timer < 0) {
         clearInterval(this.timer);
         this.countdown = '00:00';
+        void this.ui.showAlert('Waktu Habis', 'Waktu pembayaran Anda telah habis. Pemesanan ini dibatalkan.');
+        this.router.navigate([this.auth.getHomeRoute()], { replaceUrl: true });
       }
     }, 1000);
   }
@@ -51,13 +57,23 @@ export class PaymentPage implements OnInit {
     this.api.post(`bookings/${this.bookingId}/confirm-payment`, {}).subscribe({
       next: () => {
         // Use toast or similar in production, alert for now
-        alert('Pembayaran berhasil dikonfirmasi!');
+        void this.ui.showToast('Pembayaran berhasil dikonfirmasi!', 'success');
         this.router.navigate(['/booking-detail'], { replaceUrl: true });
       },
       error: (err) => {
-        alert('Gagal konfirmasi: ' + (err.error?.message || 'Error server'));
+        void this.ui.showAlert('Gagal konfirmasi', this.ui.getErrorMessage(err, 'Error server'));
       }
     });
+  }
+
+  getSeatLabel(seat: any): string {
+    if (!seat || !seat.seat_number) return '';
+    const index = parseInt(seat.seat_number, 10) - 1;
+    if (isNaN(index)) return seat.seat_number;
+    const rowNum = Math.floor(index / 4) + 1;
+    const colIndex = index % 4;
+    const letters = ['A', 'B', 'C', 'D'];
+    return `${rowNum}${letters[colIndex]}`;
   }
 
   goBack() {

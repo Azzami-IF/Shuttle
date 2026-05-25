@@ -17,13 +17,18 @@
       </div>
 
       <div class="status-controls">
-        <button class="status-btn" [class.active]="trip.status === 'scheduled'" (click)="updateStatus('scheduled')">Scheduled</button>
-        <button class="status-btn" [class.active]="trip.status === 'on-going'" (click)="updateStatus('ongoing')">On-going</button>
-        <button class="status-btn" [class.active]="trip.status === 'completed'" (click)="updateStatus('completed')">Completed</button>
+        <button class="status-btn" [class.active]="trip.status === 'boarding'" (click)="updateStatus('boarding')">Boarding</button>
+        <button class="status-btn" [class.active]="trip.status === 'on-going'" (click)="updateStatus('on-going')">On-going</button>
+        <button class="status-btn" [class.active]="trip.status === 'arrived'" (click)="updateStatus('arrived')">Arrived</button>
       </div>
 
-      <div class="info-box" *ngIf="trip.status === 'on-going'">
-        <p>Status saat ini: <strong>On-going</strong>. Penumpang dapat melihat posisi bus Anda di peta publik.</p>
+      <div class="status-actions">
+        <button class="status-action warn" (click)="updateStatus('delayed')">Tunda</button>
+        <button class="status-action success" (click)="updateStatus('completed')">Selesaikan</button>
+      </div>
+
+      <div class="info-box" *ngIf="trip.status === 'on-going' || trip.status === 'boarding'">
+        <p>Status saat ini: <strong>{{ trip.status | titlecase }}</strong>. Penumpang dapat melihat posisi bus Anda di peta publik.</p>
       </div>
     </section>
 

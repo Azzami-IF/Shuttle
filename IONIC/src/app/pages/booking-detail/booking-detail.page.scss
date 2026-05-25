@@ -6,10 +6,15 @@
   display: flex;
   gap: 12px;
   margin-bottom: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding-top: 4px;
 
   .search-box {
     flex: 1;
-    background: var(--surface-container-low);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
     border-radius: 12px;
     padding: 8px 16px;
     display: flex;
@@ -31,7 +36,7 @@
   .filter-btn {
     width: 48px;
     height: 48px;
-    background: var(--surface-container-low);
+    background: rgba(255, 255, 255, 0.94);
     border: 1px solid rgba(var(--ion-color-step-200-rgb), 0.3);
     border-radius: 12px;
     display: flex;
@@ -42,11 +47,11 @@
 }
 
 .history-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
   padding: 20px;
   border-radius: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(24, 40, 30, 0.05);
+  box-shadow: 0 8px 24px rgba(24, 40, 30, 0.06);
   border: 1px solid rgba(var(--ion-color-step-200-rgb), 0.2);
   transition: border-color 0.2s;
 
@@ -64,7 +69,7 @@
     .route { font-size: 18px; font-weight: 700; color: var(--ion-color-primary); margin-top: 4px; }
 
     .status-badge {
-      background: var(--ion-color-primary);
+      background: linear-gradient(135deg, #18281e 0%, #2d3e33 100%);
       color: white;
       padding: 4px 8px;
       border-radius: 6px;
@@ -108,8 +113,10 @@
       align-items: center;
       gap: 4px;
       font-size: 14px;
-      background: none;
+      background: rgba(24, 40, 30, 0.06);
       border: none;
+      padding: 8px 12px;
+      border-radius: 999px;
     }
   }
 }

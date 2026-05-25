@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,22 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  constructor(private platform: Platform, private router: Router) {
+    this.initializeBackButton();
+  }
+
+  private initializeBackButton() {
+    this.platform.backButton.subscribeWithPriority(10, () => {
+      const currentUrl = this.router.url;
+      if (currentUrl === '/login') {
+        this.router.navigate(['/onboarding'], { replaceUrl: true });
+        return;
+      }
+      if (currentUrl === '/onboarding') {
+        return;
+      }
+
+      window.history.back();
+    });
+  }
 }

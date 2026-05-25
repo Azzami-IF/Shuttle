@@ -49,11 +49,39 @@
             <a href="{{ route('admin.dashboard') }}" class="font-bold text-xl text-primary">Ambatu Bus</a>
         </div>
         <div class="flex items-center gap-2">
-            <button class="material-symbols-outlined text-primary p-2 hover:bg-gray-100 rounded-full">admin_panel_settings</button>
+            @auth
+                <form method="POST" action="{{ route('admin.logout') }}">@csrf
+                    <button type="submit" class="material-symbols-outlined text-primary p-2 hover:bg-gray-100 rounded-full">logout</button>
+                </form>
+            @else
+                <a href="{{ route('admin.login') }}" class="text-primary p-2 hover:bg-gray-100 rounded">Masuk</a>
+            @endauth
         </div>
     </header>
 
-    <aside class="h-full w-72 fixed left-0 top-0 z-40 bg-white shadow-xl hidden lg:flex flex-col py-6 px-2 pt-20">
+    <script>
+        // Toggle side menu on mobile
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.querySelector('header button');
+            const aside = document.querySelector('aside');
+            if (!btn || !aside) return;
+            btn.addEventListener('click', function () {
+                aside.classList.toggle('open');
+            });
+        });
+    </script>
+    <style>
+        aside.open { transform: translateX(0); }
+        aside { transition: transform .18s ease; }
+        @media (max-width: 1024px) {
+            aside { transform: translateX(-110%); position: fixed; z-index:60; }
+        }
+        @media (min-width: 1025px) {
+            aside { transform: none; }
+        }
+    </style>
+
+    <aside class="h-full w-72 fixed left-0 top-0 z-40 bg-white shadow-xl flex flex-col py-6 px-2 pt-20">
         <nav class="flex flex-col gap-1">
             <a class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.dashboard') ? 'bg-secondary-container text-secondary font-bold' : 'text-on-surface-variant' }} rounded-r-full" href="{{ route('admin.dashboard') }}">
                 <span class="material-symbols-outlined">dashboard</span>
@@ -70,6 +98,14 @@
             <a class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.users*') ? 'bg-secondary-container text-secondary font-bold' : 'text-on-surface-variant' }} rounded-r-full" href="{{ route('admin.users') }}">
                 <span class="material-symbols-outlined">group</span>
                 <span class="text-sm">Manajemen Pengguna</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.bookings*') ? 'bg-secondary-container text-secondary font-bold' : 'text-on-surface-variant' }} rounded-r-full" href="{{ route('admin.bookings') }}">
+                <span class="material-symbols-outlined">confirmation_number</span>
+                <span class="text-sm">Monitoring Booking</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.trips*') ? 'bg-secondary-container text-secondary font-bold' : 'text-on-surface-variant' }} rounded-r-full" href="{{ route('admin.trips') }}">
+                <span class="material-symbols-outlined">route</span>
+                <span class="text-sm">Monitoring Perjalanan</span>
             </a>
         </nav>
     </aside>

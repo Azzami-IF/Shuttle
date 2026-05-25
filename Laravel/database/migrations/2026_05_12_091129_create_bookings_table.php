@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('schedule_id')->constrained()->onDelete('cascade');
-            $table->foreignId('seat_id')->constrained()->onDelete('cascade');
+            // seat FK deferred until `seats` table is available
+            $table->unsignedBigInteger('seat_id');
             $table->enum('status', ['booked', 'cancelled', 'completed'])->default('booked');
             $table->timestamps();
         });

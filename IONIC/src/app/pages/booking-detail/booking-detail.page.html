@@ -1,9 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard" text=""></ion-back-button>
+      <ion-back-button [defaultHref]="homeRoute" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Riwayat Perjalanan</ion-title>
+    <ion-title>Riwayat Pemesanan</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -35,17 +35,17 @@
         </div>
         <div class="item">
           <span class="material-symbols-outlined text-[20px]">payments</span>
-          Rp 85.000
+          Rp {{ (item.schedule?.price || 85000) | number:'1.0-0' }}
         </div>
         <div class="item" *ngIf="item.seat">
           <span class="material-symbols-outlined text-[20px]">event_seat</span>
-          {{ item.seat?.label }}
+          Kursi {{ getSeatLabel(item.seat) }}
         </div>
       </div>
 
       <div class="card-footer">
         <div class="ticket-id">Tiket #TCK{{ item.id }}</div>
-        <button class="view-btn" (click)="viewTracking(item)" *ngIf="item.schedule?.trip?.status === 'on-the-way'">
+        <button class="view-btn" (click)="viewTracking(item)" *ngIf="isTrackable(item)">
           Lacak Bus <span class="material-symbols-outlined text-[16px]">near_me</span>
         </button>
       </div>

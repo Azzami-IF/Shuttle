@@ -22,7 +22,12 @@ export class DriverProfilePage {
     this.ui.showFeaturePending();
   }
 
-  logout() {
+  async confirmLogout() {
+    const confirmed = await this.ui.showConfirm('Logout', 'Anda akan keluar dari akun driver ini. Lanjutkan?');
+    if (!confirmed) {
+      return;
+    }
+
     this.auth.logout().subscribe({
       next: () => {
         this.router.navigate(['/driver-login'], { replaceUrl: true });
