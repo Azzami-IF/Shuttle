@@ -1,0 +1,234 @@
+  TECHNICAL BLUEPRINT 
+FINAL PROJECT — SHUTTLE SYSTEM (BOOKING & TRACKING) 
+ 
+1. TUJUAN DOKUMEN 
+Dokumen ini menjelaskan arah teknis implementasi sistem Shuttle System yang WAJIB 
+kalian pahami sebelum mulai coding. 
+Dokumen ini menjawab: 
+• 
+bagaimana sistem shuttle harus dibangun,  
+• 
+bagaimana mobile customer dan driver bekerja,  
+• 
+bagaimana web admin mengelola jadwal dan perjalanan,  
+• 
+bagaimana booking kursi harus dikontrol,  
+• 
+bagaimana tracking kendaraan harus berjalan,  
+• 
+bagaimana status perjalanan harus berubah,  
+• 
+bagaimana histori perjalanan harus tersimpan,  
+• 
+bagaimana seluruh sistem saling terintegrasi.  
+Dokumen ini adalah pedoman implementasi nyata, bukan teori. 
+ 
+2. ARSITEKTUR SISTEM YANG WAJIB DIGUNAKAN 
+Kalian WAJIB menggunakan arsitektur berikut: 
+Mobile App (Customer & Driver - Ionic + Angular) 
+        ↓ 
+Backend API (Laravel) 
+        ↓ 
+Web Admin Dashboard (Laravel) 
+ 
+2.1 Penjelasan Arsitektur 
+A. Mobile App 
+
+
+Digunakan oleh: 
+• 
+Customer  
+• 
+Driver  
+Fungsi: 
+• 
+melihat jadwal shuttle,  
+• 
+memilih rute,  
+• 
+memilih kursi,  
+• 
+melakukan booking,  
+• 
+melihat status booking,  
+• 
+melihat tracking perjalanan,  
+• 
+memulai dan menyelesaikan perjalanan bagi driver,  
+• 
+mengupdate lokasi shuttle secara berkala.  
+Mobile hanya bertindak sebagai client. 
+Logika bisnis utama wajib berada di backend. 
+ 
+B. Backend Laravel 
+Backend Laravel adalah pusat logika bisnis sistem. 
+Laravel bertugas untuk: 
+• 
+autentikasi dan otorisasi,  
+• 
+pengelolaan jadwal shuttle,  
+• 
+pengelolaan kendaraan,  
+• 
+pengelolaan booking,  
+• 
+pengelolaan kursi,  
+• 
+pengelolaan trip,  
+• 
+pengelolaan tracking lokasi,  
+• 
+pengelolaan histori perjalanan,  
+
+
+• 
+penyedia data untuk mobile dan web.  
+ 
+C. Web Admin Dashboard 
+Digunakan oleh: 
+• 
+Admin  
+Fungsi: 
+• 
+membuat jadwal,  
+• 
+mengelola kendaraan,  
+• 
+memonitor booking,  
+• 
+memonitor trip,  
+• 
+memonitor driver,  
+• 
+melihat histori perjalanan,  
+• 
+melihat statistik sistem.  
+ 
+3. PEMBAGIAN PLATFORM 
+ 
+Mobile 
+Digunakan untuk: 
+• 
+Customer  
+• 
+Driver  
+Web 
+Digunakan untuk: 
+• 
+Admin  
+Kalian tidak boleh mencampur semua fungsi ke dalam satu tampilan tanpa pemisahan role 
+yang jelas. 
+ 
+
+
+4. TECHNOLOGY STACK WAJIB 
+ 
+Mobile 
+• 
+Ionic  
+• 
+Angular  
+Backend 
+• 
+Laravel  
+Web 
+• 
+Laravel / Blade / Web UI  
+Database 
+• 
+MySQL atau PostgreSQL  
+ 
+5. STRUKTUR TEKNIS SISTEM 
+Kalian WAJIB membangun 3 bagian utama: 
+1. Mobile App (Customer & Driver)  
+2. Backend Laravel  
+3. Web Admin Dashboard  
+Ketiga bagian ini HARUS saling terhubung dan berjalan sebagai satu sistem utuh. 
+ 
+6. MOBILE APP YANG WAJIB DIBANGUN 
+ 
+6.1 Authentication 
+Mobile HARUS mampu: 
+• 
+login,  
+• 
+logout,  
+• 
+membedakan role customer dan driver,  
+
+
+• 
+mengelola profile dasar.  
+ 
+6.2 Customer Feature 
+ 
+6.2.1 Schedule Browsing 
+Customer harus bisa: 
+• 
+melihat daftar jadwal shuttle,  
+• 
+melihat asal dan tujuan,  
+• 
+melihat waktu keberangkatan,  
+• 
+melihat ketersediaan kursi,  
+• 
+melihat kendaraan yang digunakan.  
+ 
+6.2.2 Route Selection 
+Customer harus bisa: 
+• 
+memilih rute perjalanan,  
+• 
+memilih jadwal yang sesuai.  
+ 
+6.2.3 Seat Selection (KRITIS) 
+Customer harus bisa: 
+• 
+melihat seat layout,  
+• 
+melihat seat yang available,  
+• 
+melihat seat yang booked,  
+• 
+memilih kursi yang masih tersedia.  
+Seat harus ditampilkan dengan kondisi yang jelas. 
+ 
+6.2.4 Booking 
+
+
+Customer harus bisa: 
+• 
+melakukan booking,  
+• 
+melihat detail booking,  
+• 
+melihat status booking,  
+• 
+membatalkan booking jika logic pembatalan diterapkan.  
+ 
+6.2.5 Tracking Shuttle 
+Customer harus bisa: 
+• 
+melihat posisi kendaraan,  
+• 
+melihat status perjalanan,  
+• 
+melihat progres perjalanan,  
+• 
+melihat titik asal dan tujuan.  
+Tracking wajib terlihat selama perjalanan sedang berlangsung. 
+ 
+6.2.6 Trip History 
+Customer harus bisa: 
+• 
+melihat histori perjalanan,  
+• 
+melihat detail histori seperti rute, waktu, dan status.  
+ 
+6.3 Driver Feature 
+ 
+6.3.1 Assigned Schedule 
+Driver harus bisa: 
+• 
+melihat j

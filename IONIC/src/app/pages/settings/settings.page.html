@@ -1,0 +1,234 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pengaturan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="settings-page">
+  <!-- Theme Section -->
+  <div class="settings-section">
+    <div class="section-title">Tampilan & Tema</div>
+    
+    <div class="settings-item">
+      <div class="item-header">
+        <span class="material-symbols-outlined">dark_mode</span>
+        <span>Mode Gelap</span>
+      </div>
+      <div class="item-value">
+        <ion-toggle 
+          [(ngModel)]="themeMode" 
+          (ionChange)="toggleTheme()"
+          color="success">
+        </ion-toggle>
+      </div>
+    </div>
+
+    <div class="settings-item">
+      <div class="item-header">
+        <span class="material-symbols-outlined">settings_brightness</span>
+        <span>Ikuti Preferensi Sistem</span>
+      </div>
+      <div class="item-value">
+        <ion-toggle 
+          [(ngModel)]="useSystemPreference" 
+          (ionChange)="toggleSystemPreference()"
+          color="success">
+        </ion-toggle>
+      </div>
+    </div>
+
+    <div class="theme-preview">
+      <div class="theme-buttons">
+        <button 
+          class="theme-btn light-btn"
+          [class.active]="themeMode === 'light'"
+          (click)="setTheme('light')">
+          <span class="material-symbols-outlined">light_mode</span>
+          Terang
+        </button>
+        <button 
+          class="theme-btn dark-btn"
+          [class.active]="themeMode === 'dark'"
+          (click)="setTheme('dark')">
+          <span class="material-symbols-outlined">dark_mode</span>
+          Gelap
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Section -->
+  <div class="settings-section">
+    <div class="section-title">Profil Pengguna</div>
+
+    <!-- Display Profile -->
+    <div *ngIf="!editingProfile && user" class="profile-display">
+      <div class="profile-avatar">
+        <span class="material-symbols-outlined">account_circle</span>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">{{ user.name }}</div>
+        <div class="profile-email">{{ user.email }}</div>
+        <div class="profile-phone" *ngIf="user.phone">{{ user.phone }}</div>
+      </div>
+      <ion-button 
+        size="small" 
+        fill="outline"
+        (click)="startEditingProfile()">
+        Edit
+      </ion-button>
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div *ngIf="editingProfile" class="profile-edit-form">
+      <div class="form-group">
+        <label>Nama</label>
+        <input 
+          type="text" 
+          [(ngModel)]="editName"
+          placeholder="Masukkan nama lengkap"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input 
+          type="email" 
+          [(ngModel)]="editEmail"
+          placeholder="Masukkan email"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label>Nomor Telepon</label>
+        <input 
+          type="tel" 
+          [(ngModel)]="editPhone"
+          placeholder="Masukkan nomor telepon"
+          class="form-input">
+      </div>
+
+      <div class="button-group">
+        <ion-button 
+          expand="block" 
+          color="primary"
+          (click)="saveProfile()"
+          [disabled]="loading">
+          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+          <span *ngIf="!loading">Simpan Perubahan</span>
+        </ion-button>
+        <ion-button 
+          expand="block" 
+          fill="outline"
+          color="medium"
+          (click)="cancelEditProfile()"
+          [disabled]="loading">
+          Batal
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Section -->
+  <div class="settings-section">
+    <div class="section-title">Keamanan</div>
+
+    <!-- Display Password Status -->
+    <div *ngIf="!editingPassword" class="settings-item">
+      <div class="item-header">
+        <span class="material-symbols-outlined">lock</span>
+        <span>Ubah Password</span>
+      </div>
+      <ion-button 
+        size="small" 
+        fill="outline"
+        (click)="startEditingPassword()">
+        Ubah Password
+      </ion-button>
+    </div>
+
+    <!-- Change Password Form -->
+    <div *ngIf="editingPassword" class="password-edit-form">
+      <div class="form-group">
+        <label>Password Saat Ini</label>
+        <input 
+          type="password" 
+          [(ngModel)]="currentPassword"
+          placeholder="Masukkan password saat ini"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label>Password Baru</label>
+        <input 
+          type="password" 
+          [(ngModel)]="newPassword"
+          placeholder="Masukkan password baru (minimal 8 karakter)"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label>Konfirmasi Password Baru</label>
+        <input 
+          type="password" 
+          [(ngModel)]="confirmPassword"
+          placeholder="Konfirmasi password baru"
+          class="form-input">
+      </div>
+
+      <div class="button-group">
+        <ion-button 
+          expand="block" 
+          color="primary"
+          (click)="savePassword()"
+          [disabled]="loading">
+          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+          <span *ngIf="!loading">Ubah Password</span>
+        </ion-button>
+        <ion-button 
+          expand="block" 
+          fill="outline"
+          color="medium"
+          (click)="cancelEditPassword()"
+          [disabled]="loading">
+          Batal
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Support Section -->
+  <div class="settings-section">
+    <div class="section-title">Dukungan & Informasi</div>
+
+    <button class="settings-item-btn" (click)="openContactUs()">
+      <div class="item-header">
+        <span class="material-symbols-outlined">phone</span>
+        <span>Hubungi Kami</span>
+      </div>
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+
+    <button class="settings-item-btn" (click)="openAbout()">
+      <div class="item-header">
+        <span class="material-symbols-outlined">info</span>
+        <span>Tentang Aplikasi</span>
+      </div>
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </div>
+
+  <!-- Logout Section -->
+  <div class="settings-section danger-section">
+    <ion-button 
+      expand="block" 
+      color="danger"
+      (click)="logout()">
+      <span class="material-symbols-outlined">logout</span>
+      Logout
+    </ion-button>
+  </div>
+</ion-content>

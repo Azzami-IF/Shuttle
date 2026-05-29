@@ -33,7 +33,8 @@ export class BookingDetailPage {
 
     this.api.get(path).subscribe({
       next: (res: any) => {
-        this.bookings = res.sort((a: any, b: any) =>
+        const items = Array.isArray(res) ? res : (res?.data || res?.value || []);
+        this.bookings = (items || []).sort((a: any, b: any) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
       },

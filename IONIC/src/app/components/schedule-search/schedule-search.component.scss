@@ -1,0 +1,148 @@
+.schedule-search-container {
+  background: white;
+  border-radius: 0;
+}
+
+.search-bar {
+  ion-searchbar {
+    --background: rgba(255, 255, 255, 0.2);
+    --border-radius: 8px;
+    --color: white;
+    --placeholder-color: rgba(255, 255, 255, 0.7);
+    --icon-color: white;
+    --clear-button-color: white;
+
+    ::part(input) {
+      background: rgba(255, 255, 255, 0.2) !important;
+      color: white !important;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+      }
+    }
+  }
+}
+
+.quick-filters {
+  .filter-group {
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.4rem 0.8rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        border-color: #10b981;
+        color: #10b981;
+      }
+
+      &.active {
+        background: #10b981;
+        color: white;
+        border-color: #10b981;
+      }
+    }
+  }
+}
+
+.advanced-toggle {
+  button {
+    outline: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+
+    .material-symbols-outlined {
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      color: #10b981 !important;
+    }
+  }
+}
+
+.advanced-filters {
+  animation: slideDown 0.3s ease-out;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      display: block;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    select {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+      }
+    }
+
+    input[type="checkbox"] {
+      cursor: pointer;
+    }
+  }
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+ion-badge {
+  margin-left: 0.5rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+// Mobile responsive
+@media (max-width: 640px) {
+  .quick-filters .filter-group .filter-buttons {
+    justify-content: space-between;
+  }
+
+  .advanced-filters {
+    .form-group {
+      input {
+        font-size: 16px; // Prevent auto-zoom on iOS
+      }
+    }
+  }
+}

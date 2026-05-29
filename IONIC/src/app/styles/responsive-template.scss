@@ -1,0 +1,680 @@
+/**
+ * RESPONSIVE SCSS TEMPLATE
+ * 
+ * Use this template for all pages to ensure consistent responsive design
+ * Copy this to any new page and customize the selectors
+ */
+
+// ============================================
+// VARIABLES & MIXINS
+// ============================================
+
+// Breakpoints
+$breakpoint-xs: 0px;
+$breakpoint-sm: 480px;
+$breakpoint-md: 640px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// Spacing scale
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 2.5rem;
+$spacing-3xl: 3rem;
+
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+// Z-indexes
+$z-tooltip: 1000;
+$z-modal: 1100;
+$z-notification: 2000;
+
+// MIXINS
+
+@mixin responsive-font-size($mobile, $tablet: $mobile * 1.1, $desktop: $mobile * 1.2) {
+  font-size: $mobile;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $tablet;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    font-size: $desktop;
+  }
+}
+
+@mixin responsive-padding($mobile, $tablet: $mobile * 1.5, $desktop: $mobile * 2) {
+  padding: $mobile;
+
+  @media (min-width: $breakpoint-md) {
+    padding: $tablet;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    padding: $desktop;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  @media (max-width: $breakpoint-md) {
+    backdrop-filter: blur(5px);
+  }
+
+  @supports not (backdrop-filter: blur(10px)) {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+@mixin touch-target {
+  min-width: 44px;
+  min-height: 44px;
+
+  @media (max-width: $breakpoint-sm) {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+// ============================================
+// GLOBAL STYLES
+// ============================================
+
+:host {
+  --page-margin: #{$spacing-lg};
+  --page-margin-mobile: #{$spacing-md};
+
+  @media (max-width: $breakpoint-md) {
+    --page-margin: var(--page-margin-mobile);
+  }
+}
+
+// ============================================
+// LAYOUT COMPONENTS
+// ============================================
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+.page-header {
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+  color: white;
+  border-bottom: 1px solid var(--ion-color-step-200);
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+
+  h1 {
+    @include responsive-font-size(1.75rem, 2rem, 2.5rem);
+    font-weight: 700;
+    margin: 0 0 $spacing-sm 0;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+}
+
+.page-content {
+  flex: 1;
+  padding: var(--page-margin);
+  overflow-y: auto;
+}
+
+.page-footer {
+  padding: $spacing-lg;
+  border-top: 1px solid var(--ion-color-step-200);
+  background: var(--ion-background-color);
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+}
+
+// ============================================
+// GRID LAYOUTS
+// ============================================
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+}
+
+.grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+.grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================
+// FLEX LAYOUTS
+// ============================================
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.flex-center {
+  @include flex-center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+// ============================================
+// CARDS
+// ============================================
+
+.card {
+  background: var(--ion-color-step-50);
+  border: 1px solid var(--ion-color-step-200);
+  border-radius: 0.75rem;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+  transition: all $transition-base;
+  break-inside: avoid;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+    border-radius: 0.5rem;
+  }
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .card-header {
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid var(--ion-color-step-200);
+
+    h3 {
+      margin: 0 0 $spacing-xs 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--ion-color-secondary);
+    }
+  }
+
+  .card-body {
+    margin-bottom: $spacing-md;
+
+    p {
+      margin: $spacing-sm 0;
+      line-height: 1.6;
+    }
+  }
+
+  .card-footer {
+    padding-top: $spacing-md;
+    border-top: 1px solid var(--ion-color-step-200);
+    display: flex;
+    gap: $spacing-md;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+    }
+  }
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  margin-bottom: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    height: 150px;
+  }
+}
+
+// ============================================
+// BUTTONS
+// ============================================
+
+.btn {
+  @include touch-target;
+  padding: $spacing-md $spacing-lg;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-base;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  white-space: nowrap;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-md $spacing-xl;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: 2px solid var(--ion-color-primary);
+    outline-offset: 2px;
+  }
+}
+
+.btn-primary {
+  background: var(--ion-color-primary);
+  color: white;
+
+  &:hover {
+    background: var(--ion-color-primary-shade);
+  }
+}
+
+.btn-secondary {
+  background: var(--ion-color-step-200);
+  color: var(--ion-text-color);
+
+  &:hover {
+    background: var(--ion-color-step-300);
+  }
+}
+
+.btn-link {
+  background: transparent;
+  color: var(--ion-color-primary);
+  text-decoration: none;
+  padding: $spacing-sm;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.btn-block {
+  width: 100%;
+}
+
+// ============================================
+// FORMS
+// ============================================
+
+.form-group {
+  margin-bottom: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  @media (max-width: $breakpoint-md) {
+    margin-bottom: $spacing-md;
+  }
+
+  label {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .help-text {
+    font-size: 0.8rem;
+    color: var(--ion-color-secondary);
+    margin-top: $spacing-xs;
+  }
+
+  &.error {
+    .help-text {
+      color: var(--ion-color-danger);
+    }
+
+    input,
+    select,
+    textarea {
+      border-color: var(--ion-color-danger);
+    }
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: $spacing-md;
+  border: 1px solid var(--ion-color-step-300);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+  transition: border-color $transition-base;
+  min-height: 44px;
+
+  @media (max-width: $breakpoint-sm) {
+    min-height: 48px;
+    font-size: 1.05rem; // Prevent zoom on iOS
+  }
+
+  &:focus {
+    outline: 2px solid var(--ion-color-primary);
+    outline-offset: 0;
+    border-color: var(--ion-color-primary);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+// ============================================
+// TYPOGRAPHY
+// ============================================
+
+h1, h2, h3, h4, h5, h6 {
+  margin: $spacing-md 0 $spacing-sm 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  @include responsive-font-size(2rem, 2.25rem, 2.5rem);
+}
+
+h2 {
+  @include responsive-font-size(1.5rem, 1.75rem, 2rem);
+}
+
+h3 {
+  @include responsive-font-size(1.25rem, 1.4rem, 1.5rem);
+}
+
+p {
+  margin: 0 0 $spacing-md 0;
+  line-height: 1.6;
+}
+
+small {
+  font-size: 0.875rem;
+  color: var(--ion-color-secondary);
+}
+
+// ============================================
+// UTILITIES
+// ============================================
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+
+  @media (max-width: $breakpoint-sm) {
+    text-align: left;
+  }
+}
+
+.text-muted {
+  color: var(--ion-color-secondary);
+}
+
+.text-danger {
+  color: var(--ion-color-danger);
+}
+
+.text-success {
+  color: var(--ion-color-success);
+}
+
+.mt {
+  &-xs { margin-top: $spacing-xs; }
+  &-sm { margin-top: $spacing-sm; }
+  &-md { margin-top: $spacing-md; }
+  &-lg { margin-top: $spacing-lg; }
+  &-xl { margin-top: $spacing-xl; }
+}
+
+.mb {
+  &-xs { margin-bottom: $spacing-xs; }
+  &-sm { margin-bottom: $spacing-sm; }
+  &-md { margin-bottom: $spacing-md; }
+  &-lg { margin-bottom: $spacing-lg; }
+  &-xl { margin-bottom: $spacing-xl; }
+}
+
+.p {
+  &-xs { padding: $spacing-xs; }
+  &-sm { padding: $spacing-sm; }
+  &-md { padding: $spacing-md; }
+  &-lg { padding: $spacing-lg; }
+  &-xl { padding: $spacing-xl; }
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+
+  &-inline {
+    display: inline;
+  }
+
+  &-flex {
+    display: flex;
+  }
+
+  &-grid {
+    display: grid;
+  }
+}
+
+// Show only on mobile
+.mobile-only {
+  display: block;
+
+  @media (min-width: $breakpoint-lg) {
+    display: none;
+  }
+}
+
+// Show only on desktop
+.desktop-only {
+  display: none;
+
+  @media (min-width: $breakpoint-lg) {
+    display: block;
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn $transition-base ease;
+}
+
+.animate-slide-up {
+  animation: slideUp $transition-base ease;
+}
+
+// ============================================
+// DARK MODE
+// ============================================
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  @supports (backdrop-filter: blur(10px)) {
+    .glass-effect {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+// ============================================
+// ACCESSIBILITY
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: more) {
+  button,
+  input,
+  select,
+  textarea {
+    border-width: 2px;
+  }
+}

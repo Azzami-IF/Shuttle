@@ -1,0 +1,260 @@
+PS C:\Program1\Projects\Shuttle\IONIC> npm start
+
+> ShuttleApp@0.0.1 start
+> ng serve
+
+✔ Browser application bundle generation complete.
+
+Initial chunk files                                                                                     | Names                                          |  Raw size
+vendor.js                                                                                               | vendor                                         |   4.49 MB | 
+polyfills.js                                                                                            | polyfills                                      | 242.15 kB | 
+styles.css, styles.js                                                                                   | styles                                         | 179.49 kB | 
+main.js                                                                                                 | main                                           |  38.15 kB | 
+runtime.js                                                                                              | runtime                                        |  13.12 kB | 
+
+                                                                                                        | Initial total                                  |   4.96 MB
+
+Lazy chunk files                                                                                        | Names                                          |  Raw size
+node_modules_ionic_core_dist_esm_ion-datetime_3_entry_js.js                                             | -                                              | 160.61 kB | 
+node_modules_ionic_core_dist_esm_ion-modal_entry_js.js                                                  | -                                              | 141.74 kB | 
+src_app_pages_schedule-list_schedule-list_module_ts.js                                                  | pages-schedule-list-schedule-list-module       |  99.06 kB | 
+src_app_pages_dashboard_dashboard_module_ts.js                                                          | pages-dashboard-dashboard-module               |  99.05 kB | 
+src_app_pages_driver-trips_driver-trips_module_ts.js                                                    | pages-driver-trips-driver-trips-module         |  95.54 kB | 
+common.js                                                                                               | common                                         |  91.12 kB | 
+node_modules_ionic_core_dist_esm_ion-app_8_entry_js.js                                                  | -                                              |  88.32 kB | 
+node_modules_ionic_core_dist_esm_ion-select_3_entry_js.js                                               | -                                              |  82.91 kB | 
+src_app_pages_driver-dashboard_driver-dashboard_module_ts.js                                            | pages-driver-dashboard-driver-dashboard-module |  80.77 kB | 
+src_app_pages_settings_settings_module_ts.js                                                            | pages-settings-settings-module                 |  75.95 kB | 
+node_modules_ionic_core_dist_esm_ion-popover_entry_js.js                                                | -                                              |  71.85 kB | 
+node_modules_ionic_core_dist_esm_ion-item_8_entry_js.js                                                 | -                                              |  70.95 kB | 
+src_app_pages_driver-vehicle_driver-vehicle_module_ts.js                                                | pages-driver-vehicle-driver-vehicle-module     |  69.10 kB | 
+src_app_pages_profile_profile_module_ts.js                                                              | pages-profile-profile-module                   |  67.41 kB | 
+node_modules_ionic_core_dist_esm_ion-textarea_entry_js.js                                               | -                                              |  64.11 kB | 
+node_modules_ionic_core_dist_esm_ion-refresher_2_entry_js.js                                            | -                                              |  61.05 kB | 
+node_modules_ionic_core_dist_esm_ion-input_entry_js.js                                                  | -                                              |  60.66 kB | 
+default-node_modules_ionic_core_dist_esm_data-B9iGR5YO_js.js                                            | -                                              |  60.12 kB | 
+src_app_pages_admin-bookings_admin-bookings_module_ts.js                                                | pages-admin-bookings-admin-bookings-module     |  57.00 kB | 
+node_modules_ionic_core_dist_esm_ion-range_entry_js.js                                                  | -                                              |  56.24 kB | 
+node_modules_ionic_core_dist_esm_ion-alert_entry_js.js                                                  | -                                              |  55.98 kB | 
+src_app_pages_admin-system_admin-system_module_ts.js                                                    | pages-admin-system-admin-system-module         |  52.90 kB | 
+src_app_pages_admin-drivers_admin-drivers_module_ts.js                                                  | pages-admin-drivers-admin-drivers-module       |  50.95 kB | 
+node_modules_ionic_core_dist_esm_ion-menu_3_entry_js.js                                                 | -                                              |  49.86 kB | 
+src_app_pages_admin-dashboard_admin-dashboard_module_ts.js                                              | pages-admin-dashboard-admin-dashboard-module   |  49.79 kB | 
+src_app_pages_admin-schedules_admin-schedules_module_ts.js                                              | pages-admin-schedules-admin-schedules-module   |  49.47 kB | 
+node_modules_ionic_core_dist_esm_ion-segment_2_entry_js.js                                              | -                                              |  49.45 kB | 
+node_modules_ionic_core_dist_esm_ion-toast_entry_js.js                                                  | -                                              |  49.15 kB | 
+src_app_pages_register_register_module_ts.js                                                            | pages-register-register-module                 |  49.07 kB | 
+src_app_pages_admin-users_admin-users_module_ts.js                                                      | pages-admin-users-admin-users-module           |  48.79 kB | 
+src_app_pages_trip-tracking_trip-tracking_module_ts.js                                                  | pages-trip-tracking-trip-tracking-module       |  48.35 kB | 
+src_app_pages_driver-login_driver-login_module_ts.js                                                    | pages-driver-login-driver-login-module         |  48.01 kB | 
+src_app_pages_driver-tracking_driver-tracking_module_ts.js                                              | pages-driver-tracking-driver-tracking-module   |  48.00 kB | 
+src_app_pages_admin-vehicles_admin-vehicles_module_ts.js                                                | pages-admin-vehicles-admin-vehicles-module     |  47.86 kB | 
+src_app_pages_reset-password_reset-password_module_ts.js                                                | pages-reset-password-reset-password-module     |  47.15 kB | 
+node_modules_ionic_core_dist_esm_ion-button_2_entry_js.js                                               | -                                              |  45.02 kB | 
+src_app_pages_login_login_module_ts.js                                                                  | pages-login-login-module                       |  43.48 kB | 
+node_modules_ionic_core_dist_esm_ion-action-sheet_entry_js.js                                           | -                                              |  42.79 kB | 
+src_app_pages_admin-reports_admin-reports_module_ts.js                                                  | pages-admin-reports-admin-reports-module       |  42.62 kB | 
+node_modules_ionic_core_dist_esm_ion-input-otp_entry_js.js                                              | -                                              |  42.58 kB | 
+src_app_pages_driver-status_driver-status_module_ts.js                                                  | pages-driver-status-driver-status-module       |  41.29 kB | 
+src_app_pages_payment_payment_module_ts.js                                                              | pages-payment-payment-module                   |  41.11 kB | 
+src_app_pages_forgot-password_forgot-password_module_ts.js                                              | pages-forgot-password-forgot-password-module   |  39.68 kB | 
+node_modules_ionic_core_dist_esm_ion-searchbar_entry_js.js                                              | -                                              |  39.09 kB | 
+node_modules_ionic_core_dist_esm_ion-nav_2_entry_js.js                                                  | -                                              |  38.55 kB | 
+node_modules_ionic_core_dist_esm_ion-item-option_3_entry_js.js                                          | -                                              |  36.03 kB | 
+node_modules_ionic_core_dist_esm_ion-toggle_entry_js.js                                                 | -                                              |  35.13 kB | 
+node_modules_ionic_core_dist_esm_ion-route_4_entry_js.js                                                | -                                              |  34.65 kB | 
+node_modules_ionic_core_dist_esm_ion-radio_2_entry_js.js                                                | -                                              |  34.46 kB | 
+node_modules_ionic_core_dist_esm_ion-accordion_2_entry_js.js                                            | -                                              |  32.60 kB | 
+src_app_pages_seat-selection_seat-selection_module_ts.js                                                | pages-seat-selection-seat-selection-module     |  31.74 kB | 
+src_app_pages_booking-detail_booking-detail_module_ts.js                                                | pages-booking-detail-booking-detail-module     |  30.21 kB | 
+node_modules_ionic_core_dist_esm_input-shims-AaDhOpKN_js.js                                             | input-shims-AaDhOpKN-js                        |  30.18 kB | 
+node_modules_ionic_core_dist_esm_ion-picker-column_entry_js.js                                          | -                                              |  29.16 kB | 
+src_app_pages_driver-history_driver-history_module_ts.js                                                | pages-driver-history-driver-history-module     |  28.74 kB | 
+node_modules_ionic_core_dist_esm_ion-fab_3_entry_js.js                                                  | -                                              |  28.69 kB | 
+node_modules_ionic_core_dist_esm_ion-checkbox_entry_js.js                                               | -                                              |  27.34 kB | 
+src_app_pages_onboarding_onboarding_module_ts.js                                                        | pages-onboarding-onboarding-module             |  26.94 kB | 
+node_modules_ionic_core_dist_esm_ion-tab-bar_2_entry_js.js                                              | -                                              |  25.46 kB | 
+node_modules_ionic_core_dist_esm_ion-picker_entry_js.js                                                 | -                                              |  24.69 kB | 
+node_modules_ionic_core_dist_esm_ion-breadcrumb_2_entry_js.js                                           | -                                              |  23.02 kB | 
+node_modules_ionic_core_dist_esm_ion-progress-bar_entry_js.js                                           | -                                              |  22.89 kB | 
+node_modules_ionic_core_dist_esm_ion-datetime-button_entry_js.js                                        | -                                              |  20.88 kB | 
+node_modules_ionic_core_dist_esm_ion-loading_entry_js.js                                                | -                                              |  20.30 kB | 
+node_modules_ionic_core_components_p-CBzELu-H_js.js                                                     | p-CBzELu-H-js                                  |  16.86 kB | 
+node_modules_ionic_core_dist_esm_ion-card_5_entry_js.js                                                 | -                                              |  16.34 kB | 
+node_modules_ionic_core_dist_esm_ion-back-button_entry_js.js                                            | -                                              |  16.06 kB | 
+node_modules_ionic_core_dist_esm_ion-infinite-scroll_2_entry_js.js                                      | -                                              |  15.19 kB | 
+node_modules_ionic_core_dist_esm_ion-reorder_2_entry_js.js                                              | -                                              |  15.03 kB | 
+default-node_modules_ionic_core_dist_esm_input_utils-Bxa_DQ7-_js-node_modules_ionic_core_dist-66891c.js | -                                              |  13.33 kB | 
+node_modules_ionic_core_dist_esm_ion-col_3_entry_js.js                                                  | -                                              |  13.31 kB | 
+node_modules_ionic_core_dist_esm_ion-tab_2_entry_js.js                                                  | -                                              |  11.72 kB | 
+node_modules_ionic_core_dist_esm_ion-select-modal_entry_js.js                                           | -                                              |  10.45 kB | 
+src_app_home_home_module_ts.js                                                                          | home-home-module                               |  10.06 kB | 
+node_modules_ionic_core_dist_esm_ion-spinner_entry_js.js                                                | -                                              |   8.72 kB | 
+node_modules_ionic_core_dist_esm_ion-chip_entry_js.js                                                   | -                                              |   8.34 kB | 
+node_modules_ionic_core_dist_esm_ion-split-pane_entry_js.js                                             | -                                              |   7.71 kB | 
+node_modules_ionic_core_dist_esm_ion-segment-view_entry_js.js                                           | -                                              |   6.94 kB | 
+node_modules_ionic_core_dist_esm_ion-ripple-effect_entry_js.js                                          | -                                              |   6.83 kB | 
+node_modules_ionic_core_dist_esm_ion-picker-column-option_entry_js.js                                   | -                                              |   6.42 kB | 
+node_modules_ionic_core_dist_esm_index-BtUdxPjv_js.js                                                   | index-BtUdxPjv-js                              |   6.10 kB | 
+node_modules_ionic_core_dist_esm_ion-avatar_3_entry_js.js                                               | -                                              |   5.96 kB | 
+node_modules_ionic_core_dist_esm_ion-input-password-toggle_entry_js.js                                  | -                                              |   5.34 kB | 
+node_modules_ionic_core_dist_esm_ion-img_entry_js.js                                                    | -                                              |   4.98 kB | 
+node_modules_ionic_core_dist_esm_ion-backdrop_entry_js.js                                               | -                                              |   3.16 kB | 
+node_modules_ionic_core_dist_esm_status-tap-BfJqFSLF_js.js                                              | status-tap-BfJqFSLF-js                         |   2.81 kB | 
+node_modules_ionic_core_components_p-CU1SSH8__js.js                                                     | p-CU1SSH8_-js                                  |   2.32 kB | 
+node_modules_ionic_core_dist_esm_ion-text_entry_js.js                                                   | -                                              |   1.91 kB | 
+node_modules_ionic_core_dist_esm_ion-segment-content_entry_js.js                                        | -                                              |   1.73 kB | 
+
+Build at: 2026-05-28T18:37:06.367Z - Hash: b48e7a92e0e82260 - Time: 3822ms
+
+./src/app/pages/dashboard/dashboard.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/dashboard/dashboard.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../../components/shared/design-system.scss";
+
+
+src\app\pages\dashboard\dashboard.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/driver-dashboard/driver-dashboard.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/driver-dashboard/driver-dashboard.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../../components/shared/design-system.scss";
+
+
+src\app\pages\driver-dashboard\driver-dashboard.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/driver-status/driver-status.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/driver-status/driver-status.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../../components/shared/design-system.scss";
+
+
+src\app\pages\driver-status\driver-status.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/driver-trips/driver-trips.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/driver-dashboard/driver-dashboard.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../../components/shared/design-system.scss";
+
+
+src\app\pages\driver-dashboard\driver-dashboard.page.scss 1:9  @import
+src\app\pages\driver-trips\driver-trips.page.scss 1:9          root stylesheet
+
+
+./src/app/pages/driver-trips/driver-trips.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/driver-trips/driver-trips.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../driver-dashboard/driver-dashboard.page.scss";
+
+
+src\app\pages\driver-trips\driver-trips.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/driver-vehicle/driver-vehicle.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/driver-dashboard/driver-dashboard.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../../components/shared/design-system.scss";
+
+
+src\app\pages\driver-dashboard\driver-dashboard.page.scss 1:9  @import
+src\app\pages\driver-vehicle\driver-vehicle.page.scss 1:9      root stylesheet
+
+
+./src/app/pages/driver-vehicle/driver-vehicle.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/driver-vehicle/driver-vehicle.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../driver-dashboard/driver-dashboard.page.scss";
+
+
+src\app\pages\driver-vehicle\driver-vehicle.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/forgot-password/forgot-password.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/forgot-password/forgot-password.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../login/login.page.scss";
+
+
+src\app\pages\forgot-password\forgot-password.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/profile/profile.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/profile/profile.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../../components/shared/design-system.scss";
+
+
+src\app\pages\profile\profile.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/register/register.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/register/register.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../login/login.page.scss";
+
+
+src\app\pages\register\register.page.scss 1:9  root stylesheet
+
+
+./src/app/pages/reset-password/reset-password.page.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 0, column 8 of file:///C:/Program1/Projects/Shuttle/IONIC/src/app/pages/reset-password/reset-password.page.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../login/login.page.scss";
+
+
+src\app\pages\reset-password\reset-password.page.scss 1:9  root stylesheet
+
+
+Warning: C:\Program1\Projects\Shuttle\IONIC\node_modules\@ionic\storage\dist\esm\index.js depends on 'localforage'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+
+Error: src/app/pages/schedule-list/schedule-list.module.ts:16:36 - error NG6008: Component ScheduleSearchComponent is standalone, and cannot be declared in an NgModule. Did you mean to import it instead?
+
+16   declarations: [ScheduleListPage, ScheduleSearchComponent]
+                                      ~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+
+
+× Failed to compile.

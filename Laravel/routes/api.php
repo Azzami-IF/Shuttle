@@ -25,6 +25,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('schedules', [\App\Http\Controllers\ScheduleController::class, 'index']);
         Route::get('schedules/{schedule}', [\App\Http\Controllers\ScheduleController::class, 'show']);
         Route::get('schedules/{schedule}/seats', [\App\Http\Controllers\ScheduleController::class, 'seats']);
+        
+        // Search & Filter endpoints
+        Route::get('search/schedules', [\App\Http\Controllers\SearchController::class, 'schedules']);
+        Route::get('search/suggestions', [\App\Http\Controllers\SearchController::class, 'suggestions']);
+        Route::get('search/popular-routes', [\App\Http\Controllers\SearchController::class, 'popularRoutes']);
+        Route::get('search/categories', [\App\Http\Controllers\SearchController::class, 'categories']);
+        
+        // Notification endpoints
+        Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+        Route::get('notifications/unread', [\App\Http\Controllers\NotificationController::class, 'unread']);
+        Route::get('notifications/count', [\App\Http\Controllers\NotificationController::class, 'count']);
+        Route::get('notifications/{notification}', [\App\Http\Controllers\NotificationController::class, 'show']);
+        
         Route::get('bookings', [\App\Http\Controllers\BookingController::class, 'index']);
         Route::get('bookings/{booking}', [\App\Http\Controllers\BookingController::class, 'show']);
         Route::get('trips', [\App\Http\Controllers\TripController::class, 'index']);
@@ -42,12 +55,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('trips/{trip}/status', [\App\Http\Controllers\TripController::class, 'updateStatus']);
         Route::post('trips/{trip}/complete', [\App\Http\Controllers\TripController::class, 'complete']);
 
+        // Notification endpoints (write operations)
+        Route::post('notifications/{notification}/mark-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
+        Route::post('notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+        Route::delete('notifications/{notification}', [\App\Http\Controllers\NotificationController::class, 'destroy']);
+        Route::delete('notifications/read', [\App\Http\Controllers\NotificationController::class, 'deleteRead']);
+
         // ============================================
         // PAYMENT ROUTES (Phase 3)
         // ============================================
         Route::post('payments/create-intent/{bookingId}', [\App\Http\Controllers\PaymentController::class, 'createPaymentIntent']);
         Route::post('payments/confirm/{bookingId}', [\App\Http\Controllers\PaymentController::class, 'confirmPayment']);
         Route::get('payments/status/{bookingId}', [\App\Http\Controllers\PaymentController::class, 'getPaymentStatus']);
+        Route::post('payments/simulate/success/{bookingId}', [\App\Http\Controllers\PaymentController::class, 'simulatePaymentSuccess']);
+        Route::post('payments/simulate/failed/{bookingId}', [\App\Http\Controllers\PaymentController::class, 'simulatePaymentFailed']);
         Route::post('refunds/request/{bookingId}', [\App\Http\Controllers\RefundController::class, 'requestRefund']);
         Route::get('refunds/status/{bookingId}', [\App\Http\Controllers\RefundController::class, 'getRefundStatus']);
         Route::get('invoices/{invoiceId}', [\App\Http\Controllers\InvoiceController::class, 'show']);
@@ -92,6 +113,11 @@ Route::middleware('auth:sanctum')->group(function () {
             // Schedule Management - Read
             Route::get('/schedules', [\App\Http\Controllers\AdminApiController::class, 'listSchedules']);
 
+            // Recurring Schedule Management - Read
+            Route::get('/recurring-schedules', [\App\Http\Controllers\RecurringScheduleController::class, 'index']);
+            Route::get('/recurring-schedules/{recurringSchedule}', [\App\Http\Controllers\RecurringScheduleController::class, 'show']);
+            Route::get('/recurring-schedules/{recurringSchedule}/preview', [\App\Http\Controllers\RecurringScheduleController::class, 'preview']);
+
             // Booking Management - Read
             Route::get('/bookings', [\App\Http\Controllers\AdminApiController::class, 'listBookings']);
             Route::get('/bookings/{bookingId}', [\App\Http\Controllers\AdminApiController::class, 'getBooking']);
@@ -132,6 +158,14 @@ Route::middleware('auth:sanctum')->group(function () {
             // Schedule Management - Write
             Route::post('/schedules', [\App\Http\Controllers\AdminApiController::class, 'createSchedule']);
             Route::delete('/schedules/{scheduleId}', [\App\Http\Controllers\AdminApiController::class, 'deleteSchedule']);
+
+            // Recurring Schedule Management - Write
+            Route::post('/recurring-schedules', [\App\Http\Controllers\RecurringScheduleController::class, 'store']);
+            Route::put('/recurring-schedules/{recurringSchedule}', [\App\Http\Controllers\RecurringScheduleController::class, 'update']);
+            Route::delete('/recurring-schedules/{recurringSchedule}', [\App\Http\Controllers\RecurringScheduleController::class, 'destroy']);
+            Route::post('/recurring-schedules/{recurringSchedule}/pause', [\App\Http\Controllers\RecurringScheduleController::class, 'pause']);
+            Route::post('/recurring-schedules/{recurringSchedule}/resume', [\App\Http\Controllers\RecurringScheduleController::class, 'resume']);
+            Route::post('/recurring-schedules/{recurringSchedule}/generate-now', [\App\Http\Controllers\RecurringScheduleController::class, 'generateNow']);
 
             // Booking Management - Write
             Route::post('/bookings/{bookingId}/approve', [\App\Http\Controllers\AdminApiController::class, 'approveBooking']);

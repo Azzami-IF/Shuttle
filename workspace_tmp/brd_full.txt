@@ -1,0 +1,407 @@
+  BUSINESS REQUIREMENT DOCUMENT (BRD) 
+FINAL PROJECT — SHUTTLE SYSTEM (BOOKING & TRACKING) 
+ 
+1. TUJUAN PROJECT 
+Kalian WAJIB membangun sebuah sistem Shuttle System berbasis Mobile + Web + 
+Backend yang mampu: 
+• 
+mengelola perjalanan shuttle (mobil/bus),  
+• 
+menyediakan jadwal keberangkatan,  
+• 
+mengelola pemesanan kursi,  
+• 
+memastikan kapasitas kendaraan tidak melebihi batas,  
+• 
+menampilkan posisi kendaraan selama perjalanan,  
+• 
+menampilkan rute perjalanan,  
+• 
+mencatat histori perjalanan,  
+• 
+menyediakan dashboard monitoring untuk admin.  
+Sistem ini HARUS menyerupai: 
+sistem booking travel / shuttle antar kota + tracking perjalanan seperti ojek online. 
+Project ini bukan sekadar aplikasi booking tiket. 
+Project ini adalah simulasi sistem transportasi terjadwal + tracking real-time. 
+ 
+2. MASALAH YANG HARUS KALIAN SELESAIKAN 
+Dalam sistem shuttle manual: 
+• 
+sulit mengetahui jadwal yang tersedia,  
+• 
+sulit mengetahui sisa kursi,  
+• 
+terjadi overbooking,  
+• 
+tidak ada sistem pemesanan yang terstruktur,  
+• 
+tidak ada tracking kendaraan,  
+
+
+• 
+penumpang tidak tahu posisi shuttle,  
+• 
+admin sulit memonitor perjalanan.  
+  Kalian HARUS menyelesaikan masalah tersebut dengan membangun sistem yang: 
+• 
+menyediakan jadwal shuttle,  
+• 
+mengatur kapasitas dan kursi,  
+• 
+memastikan tidak terjadi double booking,  
+• 
+memungkinkan user melakukan booking,  
+• 
+memungkinkan driver menjalankan perjalanan,  
+• 
+menampilkan posisi shuttle secara real-time,  
+• 
+menyediakan histori perjalanan.  
+ 
+3. TUJUAN BISNIS SISTEM 
+ 
+3.1 Untuk Customer (Penumpang) 
+Customer harus bisa: 
+• 
+melihat jadwal shuttle,  
+• 
+memilih rute perjalanan,  
+• 
+melihat ketersediaan kursi,  
+• 
+memesan kursi,  
+• 
+melihat status booking,  
+• 
+melihat posisi shuttle saat perjalanan,  
+• 
+melihat histori perjalanan.  
+ 
+3.2 Untuk Driver 
+Driver harus bisa: 
+• 
+melihat jadwal perjalanan,  
+
+
+• 
+memulai perjalanan,  
+• 
+mengupdate lokasi secara berkala,  
+• 
+menjalankan perjalanan,  
+• 
+menyelesaikan perjalanan.  
+ 
+3.3 Untuk Admin 
+Admin harus bisa: 
+• 
+membuat jadwal shuttle,  
+• 
+menentukan rute,  
+• 
+menentukan kapasitas kursi,  
+• 
+mengelola kendaraan,  
+• 
+memonitor booking,  
+• 
+memonitor perjalanan,  
+• 
+melihat histori perjalanan.  
+ 
+3.4 Untuk Sistem 
+Sistem harus mampu: 
+• 
+mengelola jadwal perjalanan,  
+• 
+mengelola booking kursi,  
+• 
+mengontrol kapasitas,  
+• 
+menampilkan tracking kendaraan,  
+• 
+mencatat histori perjalanan,  
+• 
+menyediakan monitoring.  
+ 
+4. TARGET USER 
+Kalian WAJIB mengimplementasikan 3 role: 
+
+
+ 
+4.1 Customer (Mobile) 
+Digunakan untuk: 
+• 
+booking shuttle  
+• 
+melihat tracking  
+ 
+4.2 Driver (Mobile) 
+Digunakan untuk: 
+• 
+menjalankan perjalanan  
+• 
+update lokasi  
+ 
+4.3 Admin (Web) 
+Digunakan untuk: 
+• 
+monitoring dan manajemen sistem  
+ 
+5. RUANG LINGKUP PROJECT 
+ 
+5.1 Mobile Application 
+Digunakan oleh: 
+• 
+Customer  
+• 
+Driver  
+Fungsi utama: 
+• 
+booking kursi  
+• 
+melihat jadwal  
+• 
+tracking perjalanan  
+ 
+
+
+5.2 Web Application 
+Digunakan oleh: 
+• 
+Admin  
+Fungsi utama: 
+• 
+membuat jadwal  
+• 
+mengelola kendaraan  
+• 
+monitoring booking  
+• 
+monitoring perjalanan  
+ 
+5.3 Backend API 
+Digunakan sebagai: 
+• 
+pusat logika bisnis  
+• 
+pengelola jadwal  
+• 
+pengelola booking  
+• 
+pengelola tracking  
+ 
+6. FITUR BISNIS UTAMA (HIGH LEVEL) 
+ 
+6.1 Customer Journey 
+Customer HARUS bisa: 
+1. login  
+2. melihat jadwal shuttle  
+3. memilih rute (asal & tujuan)  
+4. memilih jadwal  
+5. melihat ketersediaan kursi  
+6. memilih kursi  
+
+
+7. melakukan booking  
+8. melihat status booking  
+9. melihat posisi shuttle saat perjalanan  
+10. melihat histori perjalanan  
+ 
+6.2 Driver Journey 
+Driver HARUS bisa: 
+1. login  
+2. melihat jadwal yang ditugaskan  
+3. memulai perjalanan  
+4. mengupdate lokasi secara berkala  
+5. menjalankan perjalanan  
+6. menyelesaikan perjalanan  
+ 
+6.3 Admin Journey 
+Admin HARUS bisa: 
+1. login ke web  
+2. membuat jadwal shuttle  
+3. menentukan rute  
+4. menentukan jumlah kursi  
+5. mengelola kendaraan  
+6. melihat booking  
+7. memonitor perjalanan  
+8. melihat histori perjalanan  
+ 
+7. FITUR KUNCI YANG WAJIB ADA 
+
+
+ 
+7.1 Schedule Management 
+Sistem HARUS: 
+• 
+memungkinkan admin membuat jadwal,  
+• 
+menyimpan:  
+o asal  
+o tujuan  
+o waktu keberangkatan  
+o kendaraan  
+o kapasitas kursi  
+ 
+7.2 Seat Management (WAJIB) 
+Sistem HARUS: 
+• 
+menampilkan kursi yang tersedia,  
+• 
+memastikan kursi tidak double booking,  
+• 
+mengurangi jumlah kursi saat booking berhasil.  
+ 
+7.3 Booking System (WAJIB) 
+Sistem HARUS: 
+• 
+memungkinkan customer booking kursi,  
+• 
+mencatat booking,  
+• 
+menolak jika kursi penuh.  
+ 
+7.4 Tracking System (WAJIB) 
+Sistem HARUS: 
+• 
+mengambil lokasi driver,  
+
+
+• 
+menampilkan posisi shuttle,  
+• 
+mengupdate posisi secara berkala.  
+ 
+7.5 Trip Status 
+Sistem HARUS memiliki status perjalanan: 
+• 
+scheduled  
+• 
+on-going  
+• 
+completed  
+ 
+7.6 Route Visualization 
+Sistem HARUS: 
+• 
+menampilkan asal dan tujuan,  
+• 
+menampilkan jalur perjalanan (boleh sederhana).  
+ 
+7.7 Trip History 
+Sistem HARUS: 
+• 
+menyimpan histori perjalanan,  
+• 
+menampilkan detail perjalanan.  
+ 
+8. NILAI UTAMA YANG HARUS DITUNJUKKAN SISTEM 
+Sistem kalian HARUS menunjukkan bahwa: 
+• 
+booking berjalan,  
+• 
+kursi tidak bentrok,  
+• 
+kapasitas terkontrol,  
+• 
+perjalanan berjalan,  
+• 
+posisi shuttle bisa dilihat,  
+
+
+• 
+histori tersimpan.  
+Jika sistem hanya: 
+• 
+jadwal + booking tanpa tracking,  
+maka project dianggap tidak memenuhi standar. 
+ 
+9. BATASAN PROJECT 
+ 
+9.1 Wajib Ada 
+• 
+jadwal shuttle  
+• 
+booking kursi  
+• 
+seat management  
+• 
+tracking kendaraan  
+• 
+histori perjalanan  
+• 
+sistem terintegrasi  
+• 
+demo online  
+ 
+9.2 Tidak Boleh 
+• 
+tidak ada seat control  
+• 
+tidak ada tracking  
+• 
+hanya booking sederhana  
+• 
+tidak deploy  
+ 
+10. OUTPUT YANG HARUS DIHASILKAN 
+ 
+10.1 Mobile App 
+• 
+customer & driver app  
+
+
+ 
+10.2 Web Dashboard 
+• 
+admin panel  
+ 
+10.3 Backend API 
+• 
+pusat sistem  
+ 
+10.4 Sistem Terintegrasi 
+• 
+customer ↔ backend ↔ driver ↔ admin  
+ 
+10.5 Demo Sistem 
+• 
+end-to-end:  
+o pilih jadwal  
+o booking kursi  
+o perjalanan dimulai  
+o tracking berjalan  
+o perjalanan selesai  
+ 
+11. STANDAR PROJECT 
+Project dianggap PROFESIONAL jika: 
+• 
+booking berjalan,  
+• 
+kursi tidak bentrok,  
+• 
+tracking terlihat,  
+• 
+perjalanan berjalan,  
+• 
+histori tersedia,  
+• 
+sistem usable seperti shuttle system nyata.  
+
+
+ 
+  PENEGASAN 
+Kalian tidak membuat aplikasi booking tiket biasa. 
+Kalian membuat: 
+sistem transportasi terjadwal + seat management + tracking perjalanan 
+Jika tidak ada: 
+• 
+seat control,  
+• 
+tracking,  
+• 
+trip flow,  
+maka project dianggap gagal. 
+ 

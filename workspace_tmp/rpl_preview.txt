@@ -1,0 +1,101 @@
+Anggota Kelompok 13 : 
+● Muhamad Bagas Nur Al Farid (24416255201102) 
+● Habiburrahman Azzami (24416255201207) 
+● Jesen Louis Agustian (24416255201084) 
+● Nirmala Fitria (24416255201092) 
+● Raga Satria Putra Sofian  (24416255201063) 
+ 
+PENGEMBANGAN APLIKASI SHUTTLE SYSTEM  
+Deskripsi Sistem 
+Aplikasi ini bertujuan dari untuk menyediakan layanan yang dapat digunakan oleh customer, 
+driver, dan admin. Sistem ini dirancang agar mampu mengelola jadwal perjalanan shuttle, 
+mengatur pemesanan kursi, serta mengontrol kapasitas kendaraan. Selain itu, sistem juga dapat 
+menampilkan posisi shuttle secara real-time dan menunjukkan rute perjalanan yang ditempuh. 
+Tidak hanya itu, sistem ini juga mampu menyimpan histori perjalanan serta berjalan secara 
+terintegrasi antara aplikasi mobile, backend, dan web dashboard. 
+Model Proses yang Digunakan 
+Model yang digunakan adalah Scrum, karena project ini memungkinkan adanya perubahan 
+fitur selama proses pengembangan dan dikerjakan secara bertahap. karena tim bisa fokus 
+selama sprint berjalan sesuai dengan daftar kebutuhan yang ingin dibuat pada backlog. 
+Tahapan Pengembangan Sistem (SDLC) 
+1.     Product Backlog 
+Pada tahap ini, tim menyusun daftar seluruh kebutuhan sistem berdasarkan fitur yang akan 
+dikembangkan. Contoh backlog pada sistem shuttle: 
+● Login pengguna (customer, driver, admin) 
+● Melihat jadwal shuttle 
+● Booking kursi 
+● Pemilihan kursi 
+● Tracking posisi shuttle 
+● Manajemen jadwal (admin) 
+● Monitoring perjalanan 
+● Histori perjalanan 
+2.     Sprint Planning 
+
+
+Tim memilih beberapa fitur dari backlog untuk dikerjakan dalam satu sprint (biasanya 1–2 
+minggu). 
+Contoh Sprint 1: 
+● Sistem login 
+● Melihat jadwal shuttle 
+● Tampilan dashboard 
+Contoh Sprint 2: 
+● Booking kursi 
+● Pemilihan kursi 
+● Manajemen kapasitas kendaraan 
+3.     Development 
+Tim mulai mengembangkan sistem sesuai fitur yang dipilih pada sprint. 
+● Pada project ini menggunakan: 
+● Android Studio untuk mobile app 
+● Laravel untuk backend 
+● MySQL untuk database 
+Setiap fitur dikembangkan secara bertahap dan terintegrasi antara mobile, backend, dan 
+database. 
+4.     Daily Meeting 
+Setiap hari tim melakukan pertemuan singkat untuk membahas: 
+● Progress pekerjaan 
+● Kendala yang dihadapi 
+● Rencana pekerjaan selanjutnya 
+5.     Testing dan Demo 
+Setelah sprint selesai: 
+● Fitur diuji (testing) untuk memastikan berjalan dengan baik 
+● Sistem didemonstrasikan kepada pengguna atau dosen 
+● Tim menerima feedback untuk perbaikan atau penambahan fitur 
+ Fitur Utama Sistem 
+1. Login 
+2. Melihat jadwal shuttle 
+
+
+3. Melihat ketersediaan kursi 
+4. Memonitor perjalanan 
+5. Melihat histori perjalanan 
+6. Booking kursi shuttle 
+7. Pemilihan rute perjalanan (asal & tujuan) 
+8. Pemilihan kursi (seat selection) 
+9. Tracking posisi shuttle secara real-time 
+10. Manajemen profil pengguna 
+11. Manajemen jadwal shuttle (admin) 
+12. Manajemen kendaraan & kapasitas kursi (admin) 
+13. Monitoring booking (admin) 
+14. Update lokasi driver (driver) 
+15. Manajemen status perjalanan (scheduled, on-going, completed) 
+Teknologi yang Digunakan 
+Mobile App : IONIC,  Android Studio 
+Backend : Laravel 
+Database : MySQL 
+Kebutuhan Fungsional 
+1. Kebutuhan Pengguna (Customer / Penumpang) 
+● User dapat melakukan login ke sistem. 
+● User dapat melihat jadwal shuttle berdasarkan rute dan waktu. 
+● User dapat memilih rute perjalanan (asal dan tujuan). 
+● User dapat melihat ketersediaan kursi secara real-time. 
+● User dapat memilih kursi yang masih tersedia. 
+● User dapat melakukan booking kursi. 
+● User dapat melihat status booking (booked, cancelled, completed). 
+● User dapat melihat posisi shuttle selama perjalanan (tracking). 
+● User dapat melihat histori perjalanan. 
+● User dapat mengelola profil (update data dan password). 
+2. Kebutuhan Pengguna (Driver) 
+● Driver dapat login ke sistem. 
+● Driver dapat melihat jadwal perjalanan yang ditugaskan. 
+● Driver dapat memulai perjalanan (trip). 
+● Driver dapat mengupdate lokasi secara berkala (latitu

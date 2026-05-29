@@ -1,0 +1,62 @@
+<div class="notification-center">
+  <div class="notification-header">
+    <div class="header-title">
+      <span>Notifikasi</span>
+      <ion-badge *ngIf="unreadCount > 0" color="danger">
+        {{ unreadCount }}
+      </ion-badge>
+    </div>
+    <button class="close-btn" (click)="closePopover()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- Notifications List -->
+  <div *ngIf="!loading && notifications.length > 0" class="notifications-list">
+    <div class="mark-all-read" *ngIf="unreadCount > 0">
+      <button (click)="markAllAsRead()" class="link-btn">
+        Tandai semua sebagai sudah dibaca
+      </button>
+    </div>
+
+    <div class="notification-item" *ngFor="let notification of notifications" [ngClass]="'type-' + notification.type">
+      <div class="notification-icon">
+        <span class="material-symbols-outlined">{{ getNotificationIcon(notification.type) }}</span>
+      </div>
+
+      <div class="notification-content">
+        <div class="notification-title">{{ notification.title }}</div>
+        <div class="notification-message">{{ notification.message }}</div>
+        <div class="notification-time">{{ formatTime(notification.created_at) }}</div>
+      </div>
+
+      <div class="notification-actions">
+        <button class="action-btn" (click)="markAsRead(notification)" title="Tandai sebagai sudah dibaca">
+          <span class="material-symbols-outlined">done</span>
+        </button>
+        <button class="action-btn delete" (click)="deleteNotification(notification)" title="Hapus">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state">
+    <span class="material-symbols-outlined">notifications_none</span>
+    <p>Tidak ada notifikasi</p>
+  </div>
+
+  <!-- View All Link -->
+  <div class="view-all-link">
+    <button class="link-btn">
+      Lihat semua notifikasi
+      <span class="material-symbols-outlined">arrow_forward</span>
+    </button>
+  </div>
+</div>

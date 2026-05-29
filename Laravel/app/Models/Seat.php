@@ -27,10 +27,11 @@ class Seat extends Model
     // Helper attribute for design labels like 1A, 1B
     public function getLabelAttribute()
     {
-        $num = (int)$this->seat_number;
-        $row = Math.floor(($num - 1) / 4) + 1;
+        $num = (int) $this->seat_number;
+        $row = (int) floor(($num - 1) / 4) + 1;
         $col = ($num - 1) % 4;
         $letters = ['A', 'B', 'C', 'D'];
-        return $row . $letters[$col];
+        $colIndex = ($col >= 0 && $col < count($letters)) ? $col : 0;
+        return (string) $row . $letters[$colIndex];
     }
 }

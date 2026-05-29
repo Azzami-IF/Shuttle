@@ -84,7 +84,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Get payment status
+     * Get payment status for polling (mobile app)
      */
     public function getPaymentStatus(Request $request, $bookingId)
     {
@@ -95,21 +95,85 @@ class PaymentController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
 
-            $payment = $booking->payment;
-            
-            if (!$payment) {
-                return response()->json(['message' => 'No payment found'], 404);
-            }
+            $status = \App\Services\PaymentWebhookService::getPaymentStatus($bookingId);
 
-            $stripeStatus = PaymentService::getPaymentStatus($payment->stripe_payment_intent_id);
-
-            return response()->json([
-                'booking_id' => $booking->id,
-                'booking_status' => $booking->status,
-                'payment' => $stripeStatus,
-            ]);
+            return response()->json($status);
         } catch (\Exception $e) {
             Log::error('Get payment status failed: ' . $e->getMessage());
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Simulate payment success callback (for testing)
+     * Only available in development/testing
+     */
+    public function simulatePaymentSuccess(Request $request, $bookingId)
+    {
+        if (!config('app.debug')) {
+            return response()->json(['message' => 'Not available in production'], 403);
+        }
+
+        try {
+            $booking = Booking::findOrFail($bookingId);
+            
+            if ($booking->user_id !== $request->user()->id) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            $paymentIntentId = $request->get('payment_intent_id', 'pi_test_' . $bookingId);
+            
+            $success = \App\Services\PaymentWebhookService::handlePaymentSuccess($bookingId, $paymentIntentId);
+
+            if ($success) {
+                return response()->json([
+                    'message' => 'Payment simulated successfully',
+                    'booking' => $booking->fresh(),
+                ]);
+            }
+
+            return response()->json(['message' => 'Failed to simulate payment'], 400);
+        } catch (\Exception $e) {
+            Log::error('Simulate payment success failed: ' . $e->getMessage());
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Simulate payment failure callback (for testing)
+     */
+    public function simulatePaymentFailed(Request $request, $bookingId)
+    {
+        if (!config('app.debug')) {
+            return response()->json(['message' => 'Not available in production'], 403);
+        }
+
+        try {
+            $booking = Booking::findOrFail($bookingId);
+            
+            if ($booking->user_id !== $request->user()->id) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            $errorMessage = $request->get('error_message', 'Simulated payment failure');
+            $paymentIntentId = $request->get('payment_intent_id', 'pi_test_failed_' . $bookingId);
+
+            $success = \App\Services\PaymentWebhookService::handlePaymentFailed(
+                $bookingId, 
+                $paymentIntentId,
+                $errorMessage
+            );
+
+            if ($success) {
+                return response()->json([
+                    'message' => 'Payment failure simulated',
+                    'booking' => $booking->fresh(),
+                ]);
+            }
+
+            return response()->json(['message' => 'Failed to simulate payment failure'], 400);
+        } catch (\Exception $e) {
+            Log::error('Simulate payment failed error: ' . $e->getMessage());
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }

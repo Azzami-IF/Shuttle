@@ -1,0 +1,362 @@
+  SYSTEM REQUIREMENT SPECIFICATION (SRS) 
+FINAL PROJECT — SHUTTLE SYSTEM (BOOKING & TRACKING) 
+ 
+1. TUJUAN SISTEM 
+Kalian WAJIB membangun sistem Shuttle System yang: 
+• 
+dapat digunakan oleh customer, driver, dan admin,  
+• 
+mampu mengelola jadwal perjalanan shuttle,  
+• 
+mampu mengelola booking kursi,  
+• 
+mampu mengontrol kapasitas kendaraan,  
+• 
+mampu menampilkan posisi shuttle secara real-time,  
+• 
+mampu menampilkan rute perjalanan,  
+• 
+mampu menyimpan histori perjalanan,  
+• 
+berjalan terintegrasi antara mobile app, backend, dan web dashboard.  
+ 
+2. DEFINISI ROLE SISTEM 
+Kalian WAJIB mengimplementasikan 3 role: 
+ 
+2.1 Customer (Mobile) 
+Customer WAJIB bisa: 
+• 
+login  
+• 
+melihat jadwal shuttle  
+• 
+memilih rute perjalanan  
+• 
+memilih jadwal  
+• 
+melihat ketersediaan kursi  
+• 
+memilih kursi  
+• 
+melakukan booking  
+
+
+• 
+melihat status booking  
+• 
+melihat posisi shuttle  
+• 
+melihat histori perjalanan  
+ 
+2.2 Driver (Mobile) 
+Driver WAJIB bisa: 
+• 
+login  
+• 
+melihat jadwal perjalanan  
+• 
+memulai perjalanan  
+• 
+mengupdate lokasi secara berkala  
+• 
+menyelesaikan perjalanan  
+• 
+melihat histori perjalanan  
+ 
+2.3 Admin (Web) 
+Admin WAJIB bisa: 
+• 
+login  
+• 
+membuat jadwal shuttle  
+• 
+mengelola kendaraan  
+• 
+menentukan kapasitas kursi  
+• 
+melihat booking  
+• 
+memonitor perjalanan  
+• 
+melihat histori perjalanan  
+ 
+3. MODUL SISTEM DAN REQUIREMENT DETAIL 
+ 
+3.1 MODULE: AUTHENTICATION 
+
+
+Requirement WAJIB: 
+• 
+user dapat login  
+• 
+user dapat logout  
+• 
+sistem membedakan role:  
+o customer  
+o driver  
+o admin  
+• 
+user dapat update profile  
+• 
+user dapat mengganti password  
+ 
+3.2 MODULE: SCHEDULE MANAGEMENT 
+ 
+3.2.1 Create Schedule 
+Admin WAJIB bisa: 
+• 
+membuat jadwal  
+• 
+mengisi:  
+o asal  
+o tujuan  
+o waktu keberangkatan  
+o kendaraan  
+o kapasitas kursi  
+ 
+3.2.2 Schedule Listing 
+Customer WAJIB bisa: 
+• 
+melihat jadwal  
+• 
+melihat detail jadwal  
+
+
+ 
+3.3 MODULE: ROUTE SELECTION 
+ 
+Requirement WAJIB: 
+Customer HARUS bisa: 
+• 
+memilih rute:  
+o asal  
+o tujuan  
+ 
+3.4 MODULE: SEAT MANAGEMENT (WAJIB) 
+ 
+Requirement WAJIB: 
+Sistem HARUS: 
+• 
+menampilkan kursi  
+• 
+menampilkan status kursi:  
+o available  
+o booked  
+• 
+memastikan kursi tidak bisa dipilih lebih dari satu user  
+ 
+3.5 MODULE: BOOKING SYSTEM (WAJIB) 
+ 
+3.5.1 Create Booking 
+Customer WAJIB bisa: 
+• 
+memilih kursi  
+• 
+melakukan booking  
+ 
+
+
+3.5.2 Booking Validation 
+Sistem WAJIB: 
+• 
+menolak booking jika kursi sudah terisi  
+• 
+menolak jika kapasitas penuh  
+ 
+3.5.3 Booking Status 
+Booking HARUS memiliki status: 
+• 
+booked  
+• 
+cancelled  
+• 
+completed  
+ 
+3.6 MODULE: DRIVER TRIP MANAGEMENT 
+ 
+Requirement WAJIB: 
+Driver HARUS bisa: 
+• 
+melihat jadwal  
+• 
+memulai trip  
+• 
+menyelesaikan trip  
+ 
+Trip Status HARUS: 
+• 
+scheduled  
+• 
+on-going  
+• 
+completed  
+ 
+3.7 MODULE: LOCATION & TRACKING (WAJIB) 
+ 
+
+
+Requirement WAJIB: 
+Sistem HARUS: 
+• 
+mengambil lokasi driver  
+• 
+menyimpan latitude & longitude  
+• 
+mengupdate lokasi secara berkala  
+• 
+menampilkan posisi shuttle ke customer  
+ 
+3.8 MODULE: ROUTE VISUALIZATION 
+ 
+Requirement WAJIB: 
+Sistem HARUS: 
+• 
+menampilkan titik asal  
+• 
+menampilkan titik tujuan  
+• 
+menampilkan jalur perjalanan (boleh sederhana)  
+ 
+3.9 MODULE: TRIP HISTORY 
+ 
+Requirement WAJIB: 
+Customer dan Driver HARUS bisa: 
+• 
+melihat histori perjalanan  
+• 
+melihat detail:  
+o rute  
+o waktu  
+o status  
+ 
+3.10 MODULE: ADMIN DASHBOARD 
+
+
+ 
+Admin WAJIB bisa melihat: 
+• 
+jumlah jadwal  
+• 
+jumlah booking  
+• 
+jumlah kendaraan  
+• 
+jumlah trip  
+• 
+status trip  
+ 
+3.11 MODULE: MONITORING 
+ 
+Admin WAJIB bisa: 
+• 
+melihat semua booking  
+• 
+melihat trip berjalan  
+• 
+melihat histori perjalanan  
+• 
+melihat aktivitas driver  
+ 
+4. DATA REQUIREMENT 
+ 
+4.1 Data Utama 
+Kalian WAJIB menyimpan: 
+• 
+data user  
+• 
+data driver  
+• 
+data customer  
+• 
+data kendaraan  
+• 
+data jadwal  
+• 
+data kursi  
+
+
+• 
+data booking  
+• 
+data trip  
+• 
+data lokasi  
+• 
+data histori  
+ 
+4.2 Data Seat 
+Harus menyimpan: 
+• 
+nomor kursi  
+• 
+status kursi  
+• 
+jadwal terkait  
+ 
+4.3 Data Lokasi 
+Harus menyimpan: 
+• 
+latitude  
+• 
+longitude  
+• 
+timestamp  
+ 
+5. SYSTEM FLOW 
+ 
+5.1 Flow Booking 
+1. customer melihat jadwal  
+2. customer memilih kursi  
+3. sistem cek ketersediaan  
+4. booking disimpan  
+5. kursi dikunci  
+ 
+
+
+5.2 Flow Trip 
+1. driver memulai perjalanan  
+2. status = on-going  
+3. driver update lokasi  
+4. customer melihat tracking  
+5. driver menyelesaikan perjalanan  
+6. status = completed  
+ 
+5.3 Flow Tracking 
+1. driver kirim lokasi  
+2. backend simpan  
+3. customer request lokasi  
+4. posisi ditampilkan  
+ 
+5.4 Flow Admin 
+1. admin membuat jadwal  
+2. customer booking  
+3. admin monitor  
+4. driver menjalankan trip  
+ 
+6. NON-FUNCTIONAL REQUIREMENT 
+ 
+6.1 Performance 
+• 
+response API < 3 detik  
+• 
+update lokasi terlihat bergerak  
+ 
+
+
+6.2 Security 
+• 
+password di-hash  
+• 
+validasi input wajib  
+• 
+role-based access wajib  
+ 
+6.3 Usability 
+• 
+UI jelas  
+• 
+seat mudah dipahami  
+• 
+tracking mudah dipahami  
+ 
+6.4 Relia

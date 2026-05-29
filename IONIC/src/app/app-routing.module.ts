@@ -231,6 +231,15 @@ const routes: Routes = [
     }
   },
   {
+    path: 'settings',
+    loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule),
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['customer', 'driver'],
+      redirectTo: '/onboarding'
+    }
+  },
+  {
     path: '',
     redirectTo: 'onboarding',
     pathMatch: 'full'

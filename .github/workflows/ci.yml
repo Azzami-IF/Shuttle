@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Laravel
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+          php artisan config:clear
+
+      - name: Migrate and seed
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan migrate:fresh --seed --force
+
+      - name: Run tests
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan test --without-tty
+
+  booking-e2e-script:
+    runs-on: ubuntu-latest
+    needs: laravel-tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Laravel dependencies
+        working-directory: Laravel
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare environment
+        working-directory: Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+          php artisan config:clear
+
+      - name: Migrate and seed
+        working-directory: Laravel
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan migrate:fresh --seed --force
+
+      - name: Start Laravel server
+        working-directory: Laravel
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel.log 2>&1 &
+
+      - name: Wait for API
+        run: |
+          for i in {1..20}; do
+            if curl -s -o /dev/null http://127.0.0.1:8000; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Laravel API not ready"
+          cat /tmp/laravel.log || true
+          exit 1
+
+      - name: Run booking e2e script
+        shell: pwsh
+        run: ./scripts/e2e_booking_flow.ps1

@@ -3,78 +3,100 @@
     <ion-buttons slot="start">
       <ion-back-button [defaultHref]="homeRoute" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Pilih Jadwal</ion-title>
-    <!-- filter button removed (non-functional) -->
+    <ion-title>Cari Jadwal Shuttle</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="schedule-list-page">
-  <section class="search-summary p-4">
-    <div class="flex flex-col gap-3 bg-white/10 p-4 rounded-xl">
-      <ion-searchbar placeholder="Cari origin, tujuan, atau unit" [(ngModel)]="searchTerm" (ionInput)="applySearch()" showCancelButton="focus"></ion-searchbar>
-      <div class="flex items-center gap-2">
-        <ion-input placeholder="Asal" [(ngModel)]="filters.origin" (ionChange)="onFilterChange()" class="text-white border-b border-white/30"></ion-input>
-        <span class="material-symbols-outlined text-[16px] text-white">arrow_forward</span>
-        <ion-input placeholder="Tujuan" [(ngModel)]="filters.destination" (ionChange)="onFilterChange()" class="text-white border-b border-white/30"></ion-input>
-      </div>
-      <ion-input type="date" [(ngModel)]="filters.date" (ionChange)="onFilterChange()" class="text-white border-b border-white/30"></ion-input>
-    </div>
-  </section>
+  <!-- Schedule Search Component -->
+  <app-schedule-search 
+    [showAdvancedFilters]="false"
+    (filtersChanged)="onFiltersChanged()"
+    (search)="performSearch()">
+  </app-schedule-search>
 
-  <section class="filter-bar">
-    <div class="filter-item" [class.active]="sortBy === 'time'" (click)="setSort('time')">
-      <span class="material-symbols-outlined text-[16px]">sort</span>
-      Tercepat
-    </div>
-    <div class="filter-item" [class.active]="sortBy === 'price'" (click)="setSort('price')">
-      <span class="material-symbols-outlined text-[16px]">payments</span>
-      Termurah
-    </div>
-  </section>
-
-  <main>
+  <!-- Results Section -->
+  <div class="results-container">
     <ion-spinner *ngIf="loading" name="crescent" class="center-spinner"></ion-spinner>
-    <div class="schedule-card" *ngFor="let schedule of displaySchedules" (click)="viewSchedule(schedule.id)">
-      <div class="card-top">
-        <div class="time-info">
-          <div class="time">{{ schedule.departure_time | date:'HH:mm' }}</div>
-          <div class="date">{{ schedule.departure_time | date:'d MMM yyyy' }}</div>
+
+    <div class="schedule-cards" *ngIf="!loading && displaySchedules.length > 0">
+      <div class="schedule-card" *ngFor="let schedule of displaySchedules" (click)="viewSchedule(schedule.id)">
+        <div class="card-top">
+          <div class="time-info">
+            <div class="time">{{ formatTime(schedule.departure_time) }}</div>
+            <div class="date">{{ formatDate(schedule.departure_time) }}</div>
+          </div>
+          <div class="price-info">
+            <div class="price">{{ formatPrice(schedule.vehicle?.rate_per_seat || 85000) }}</div>
+            <div class="seats" [class.limited]="getAvailableSeats(schedule) <= 3">
+              {{ getAvailableSeats(schedule) }} Kursi Tersedia
+            </div>
+          </div>
         </div>
-        <div class="price-info">
-          <div class="price">Rp {{ (schedule.price || 85000) | number:'1.0-0' }}</div>
-          <div class="seats">{{ getAvailableSeats(schedule) }} Kursi Tersedia</div>
+
+        <div class="route-details">
+          <div class="visual">
+            <div class="dot"></div>
+            <div class="line"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="points">
+            <div class="origin">{{ schedule.origin }}</div>
+            <div class="destination">{{ schedule.destination }}</div>
+          </div>
+        </div>
+
+        <div class="vehicle-info">
+          <div class="vehicle-header">
+            <span class="material-symbols-outlined">directions_bus</span>
+            <div class="vehicle-details">
+              <div class="vehicle-name">{{ schedule.vehicle?.name }}</div>
+              <div class="vehicle-plate">{{ schedule.vehicle?.plate_number }}</div>
+            </div>
+          </div>
+          <div class="amenities">
+            <span class="material-symbols-outlined" title="WiFi">wifi</span>
+            <span class="material-symbols-outlined" title="AC">ac_unit</span>
+            <span class="material-symbols-outlined" title="Charging">electrical_services</span>
+          </div>
+          <div class="action">
+            <ion-button 
+              size="small" 
+              color="secondary" 
+              (click)="$event.stopPropagation(); viewSchedule(schedule.id)" 
+              [disabled]="!hasAvailableSeats(schedule)"
+              aria-label="Pilih jadwal">
+              {{ hasAvailableSeats(schedule) ? 'Pilih' : 'Penuh' }}
+            </ion-button>
+          </div>
         </div>
       </div>
 
-      <div class="route-details">
-        <div class="visual">
-          <div class="dot"></div>
-          <div class="line"></div>
-          <div class="dot"></div>
-        </div>
-        <div class="points">
-          <div>{{ schedule.origin }}</div>
-          <div>{{ schedule.destination }}</div>
-        </div>
-      </div>
-
-      <div class="vehicle-info">
-        <span class="material-symbols-outlined text-[16px]">directions_bus</span>
-        {{ schedule.vehicle?.name }} • {{ schedule.vehicle?.license_plate }}
-        <div class="amenities">
-          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">wifi</span>
-          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">ac_unit</span>
-          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">electrical_services</span>
-        </div>
-        <div class="action">
-          <ion-button size="small" color="secondary" (click)="$event.stopPropagation(); viewSchedule(schedule.id)" [disabled]="getAvailableSeats(schedule) === 0" aria-label="Pilih jadwal">Pilih</ion-button>
-        </div>
+      <!-- Pagination -->
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <ion-button 
+          [disabled]="currentPage === 1"
+          (click)="loadPreviousPage()"
+          size="small"
+          fill="outline">
+          Sebelumnya
+        </ion-button>
+        <span class="page-indicator">Halaman {{ currentPage }} dari {{ totalPages }}</span>
+        <ion-button 
+          [disabled]="!hasNextPage"
+          (click)="loadNextPage()"
+          size="small"
+          fill="outline">
+          Berikutnya
+        </ion-button>
       </div>
     </div>
 
-    <div class="empty-state-container" *ngIf="schedules.length === 0">
+    <!-- Empty State -->
+    <div class="empty-state-container" *ngIf="!loading && displaySchedules.length === 0">
       <span class="material-symbols-outlined">search_off</span>
-      <p>Tidak ada jadwal ditemukan untuk rute ini.</p>
+      <p class="empty-title">Jadwal tidak ditemukan</p>
+      <p class="empty-subtitle">Coba ubah filter pencarian atau tanggal</p>
     </div>
-  </main>
+  </div>
 </ion-content>
