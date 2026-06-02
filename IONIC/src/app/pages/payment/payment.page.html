@@ -10,77 +10,63 @@
 </ion-header>
 
 <ion-content class="payment-page">
-  <div class="main-container">
-    <!-- Timer Card -->
-    <div class="timer-card">
-      <div class="label">
-        <span class="material-symbols-outlined text-[20px]">schedule</span>
-        <span>Bayar dalam</span>
-      </div>
-      <div class="countdown">{{ countdown }}</div>
+  <div class="container">
+    <div class="grid">
+      <section class="left">
+        <div class="invoice-info">
+          <p><strong>Nama :</strong> NIRMALA FITRIA</p>
+          <p><strong>Nim :</strong> 24416255201092</p>
+          <p><strong>Email :</strong> nf24.nirmalafitria@mhs.ubpkarawang.ac.id</p>
+          <p><strong>Invoice:</strong> Tagihan UKT 20251</p>
+        </div>
+      </section>
+
+      <section class="center">
+        <h3>Rincian Tagihan:</h3>
+        <table class="installments">
+          <thead>
+            <tr><th>Cicilan</th><th>Tagihan</th><th>Total Bayar</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let it of installments" [class.paid]="it.paid">
+              <td>{{ it.label }}</td>
+              <td>{{ formatCurrency(it.amount) }}</td>
+              <td [attr.data-partial]="it.paidAmount">{{ formatCurrency(it.paidAmount || 0) }}</td>
+              <td><ion-checkbox [checked]="it.paid" slot="start" disabled></ion-checkbox></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <aside class="right">
+        <div class="summary">
+          <h4>Pembayaran:</h4>
+          <div class="row"><span>Total Tagihan:</span><strong>{{ formatCurrency(total) }}</strong></div>
+          <div class="row"><span>Telah Dibayar:</span><strong>{{ formatCurrency(paid) }}</strong></div>
+          <div class="row"><span>Sisa Tagihan :</span><strong class="red">{{ formatCurrency(remaining) }}</strong></div>
+        </div>
+      </aside>
     </div>
 
-    <!-- QR Section -->
-    <div class="qr-card">
-      <div class="qris-logo">
-        <span class="material-symbols-outlined">qr_code_2</span>
-        <div>
-          <div class="label">QRIS Payment</div>
-          <div class="sub">Scan dengan mobile banking atau e-wallet</div>
-        </div>
+    <ion-footer class="bottom-bar">
+      <div class="note">Isi form disamping untuk melakukan pembayaran</div>
+      <div class="pay-controls">
+        <ion-input id="nominal" type="text" inputmode="numeric" [(ngModel)]="nominalStr" placeholder="0"></ion-input>
+        <ion-button color="primary" (click)="onPay()">Bayar</ion-button>
       </div>
+    </ion-footer>
 
-      <div class="qr-container">
-        <div class="qr-wrapper">
-          <div class="qr-corners">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="qr-code-block">
-            <span class="material-symbols-outlined">qr_code</span>
-          </div>
-          <div class="payment-code">{{ booking?.payment_code || 'QR-AMBATU-0001' }}</div>
-        </div>
-      </div>
-
-      <p class="instruction">Simpan QR Code atau scan langsung untuk menyelesaikan pembayaran</p>
-    </div>
-
-    <!-- Booking Summary -->
-    <div class="summary-card" *ngIf="booking">
-      <h2>Ringkasan Pesanan</h2>
-      <div class="summary-details">
-        <div class="info">
-          <span class="route">{{ booking.schedule?.origin }} → {{ booking.schedule?.destination }}</span>
-          <span class="sub">{{ booking.schedule?.vehicle?.name }} • Kursi {{ getSeatLabel(booking.seat) }}</span>
-        </div>
-        <div class="price-box">
-          <span class="total-label">Total Pembayaran</span>
-          <span class="total-amount">Rp {{ (booking?.schedule?.price || 85000) | number:'1.0-0' }}</span>
+    <!-- Modal -->
+    <div class="modal" *ngIf="showConfirm">
+      <div class="modal-backdrop" (click)="hideConfirm()"></div>
+      <div class="modal-content">
+        <p>Konfirmasi pembayaran: <strong>{{ formatCurrency(confirmAmount) }}</strong></p>
+        <div class="modal-actions">
+          <button class="btn ghost" (click)="hideConfirm()">Batal</button>
+          <button class="btn primary" (click)="confirmPay()">Konfirmasi</button>
         </div>
       </div>
     </div>
 
-    <!-- Instruction Steps -->
-    <div class="instructions">
-      <div class="step">
-        <div class="num">1</div>
-        <p>Buka aplikasi mobile banking atau e-wallet pilihanmu.</p>
-      </div>
-      <div class="step">
-        <div class="num">2</div>
-        <p>Pilih menu 'Scan' atau 'QRIS' dan arahkan ke kode di atas.</p>
-      </div>
-      <div class="step">
-        <div class="num">3</div>
-        <p>Periksa detail transaksi dan masukkan PIN untuk membayar.</p>
-      </div>
-    </div>
   </div>
-
-  <footer class="payment-footer">
-    <button class="confirm-btn" (click)="confirmPayment()">
-      Cek Status Pembayaran
-    </button>
-    <button class="help-btn">Butuh Bantuan?</button>
-  </footer>
-</ion-content>
+  </ion-content>
