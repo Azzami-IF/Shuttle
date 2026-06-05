@@ -1,5 +1,5 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="pt-safe">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/driver-dashboard" text=""></ion-back-button>
     </ion-buttons>
@@ -8,6 +8,7 @@
 </ion-header>
 
 <ion-content class="driver-vehicle-page">
+  <div class="content-wrapper pb-32">
   <main class="p-4">
     <div class="vehicle-hero glass-panel">
       <div class="vehicle-art" aria-hidden="true"></div>
@@ -57,6 +58,7 @@
       Laporkan Kendala
     </button>
   </main>
+  </div>
 </ion-content>
 
 <nav class="bottom-nav">
@@ -64,9 +66,9 @@
     <span class="material-symbols-outlined">home</span>
     <span>Home</span>
   </button>
-  <button class="nav-item active">
-    <span class="material-symbols-outlined">directions_bus</span>
-    <span>Kendaraan</span>
+  <button class="nav-item" routerLink="/driver-trips">
+    <span class="material-symbols-outlined">calendar_month</span>
+    <span>Jadwal</span>
   </button>
   <button class="nav-item" routerLink="/driver-history">
     <span class="material-symbols-outlined">history</span>

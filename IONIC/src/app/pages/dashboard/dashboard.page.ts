@@ -12,6 +12,7 @@ import { UiService } from '../../services/ui.service';
 })
 export class DashboardPage {
   user$ = this.auth.user$;
+  currentUser: any = null;
   previewSchedules: any[] = [];
   featuredSchedule: any = null;
   schedulePreviewLoading = false;
@@ -29,7 +30,27 @@ export class DashboardPage {
   ) {}
 
   ionViewWillEnter() {
-    this.loadSchedulePreview();
+    this.currentUser = this.getResolvedUser();
+    if (this.currentUser?.role === 'customer') {
+      this.loadSchedulePreview();
+    }
+  }
+
+  getResolvedUser() {
+    if (this.currentUser) {
+      return this.currentUser;
+    }
+
+    const cached = localStorage.getItem('user');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
   }
 
   getGreeting(): string {
@@ -117,10 +138,12 @@ export class DashboardPage {
 
     this.auth.logout().subscribe({
       next: () => {
+        this.currentUser = null;
         this.router.navigate(['/login'], { replaceUrl: true });
       },
       error: (err) => {
         console.error('Logout failed', err);
+        this.currentUser = null;
         this.router.navigate(['/login'], { replaceUrl: true });
       }
     });

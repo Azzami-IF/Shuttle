@@ -124,12 +124,8 @@ const routes: Routes = [
   },
   {
     path: 'driver-status',
-    loadChildren: () => import('./pages/driver-status/driver-status.module').then( m => m.DriverStatusPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['driver'],
-      redirectTo: '/dashboard'
-    }
+    redirectTo: 'driver-history',
+    pathMatch: 'full'
   },
   {
     path: 'driver-vehicle',
