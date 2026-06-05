@@ -5,68 +5,143 @@
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
     </ion-buttons>
-    <ion-title>Pembayaran QRIS</ion-title>
+    <ion-title>Pembayaran Virtual Account</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="payment-page">
-  <div class="container">
-    <div class="grid">
-      <section class="left">
-        <div class="invoice-info">
-          <p><strong>Nama :</strong> NIRMALA FITRIA</p>
-          <p><strong>Nim :</strong> 24416255201092</p>
-          <p><strong>Email :</strong> nf24.nirmalafitria@mhs.ubpkarawang.ac.id</p>
-          <p><strong>Invoice:</strong> Tagihan UKT 20251</p>
+  <div class="container ion-padding">
+    <section class="progress-card card">
+      <div class="progress-header">
+        <span class="material-symbols-outlined">model_training</span>
+        <h3>Progress Pembayaran</h3>
+      </div>
+      <div class="stepper">
+        <div class="step" *ngFor="let step of steps; let i = index" [class.active]="i + 1 <= currentStep">
+          <div class="dot">{{ i + 1 }}</div>
+          <span>{{ step }}</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="state-card card loading" *ngIf="loadingBooking">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Memuat detail pembayaran...</p>
+    </div>
+
+    <div class="state-card card error" *ngIf="!loadingBooking && loadError">
+      <span class="material-symbols-outlined">error</span>
+      <h4>Terjadi Kendala</h4>
+      <p>{{ loadError }}</p>
+      <ion-button fill="outline" (click)="loadBooking()">Coba Lagi</ion-button>
+    </div>
+
+    <div class="state-card card empty" *ngIf="!loadingBooking && !loadError && !booking">
+      <span class="material-symbols-outlined">credit_card_off</span>
+      <h4>Data Booking Belum Tersedia</h4>
+      <p>Silakan lakukan pemesanan ulang untuk melanjutkan pembayaran.</p>
+      <ion-button color="primary" [routerLink]="[homeRoute]">Kembali ke Beranda</ion-button>
+    </div>
+
+    <div *ngIf="!loadingBooking && booking && screen === 'input'" class="content-stack">
+      <section class="card info-card">
+        <div class="card-title">
+          <span class="material-symbols-outlined">person</span>
+          <h3>Informasi Customer</h3>
+        </div>
+        <div class="info-list">
+          <div class="row"><span>Nama Customer</span><strong>{{ customerName }}</strong></div>
+          <div class="row"><span>Nomor Booking</span><strong>{{ bookingNumber }}</strong></div>
+          <div class="row"><span>Email</span><strong>{{ customerEmail }}</strong></div>
+          <div class="row"><span>Invoice / Tagihan</span><strong>{{ invoiceLabel }}</strong></div>
         </div>
       </section>
 
-      <section class="center">
-        <h3>Rincian Tagihan:</h3>
-        <table class="installments">
-          <thead>
-            <tr><th>Cicilan</th><th>Tagihan</th><th>Total Bayar</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let it of installments" [class.paid]="it.paid">
-              <td>{{ it.label }}</td>
-              <td>{{ formatCurrency(it.amount) }}</td>
-              <td [attr.data-partial]="it.paidAmount">{{ formatCurrency(it.paidAmount || 0) }}</td>
-              <td><ion-checkbox [checked]="it.paid" slot="start" disabled></ion-checkbox></td>
-            </tr>
-          </tbody>
-        </table>
+      <section class="card summary-card">
+        <div class="card-title">
+          <span class="material-symbols-outlined">receipt_long</span>
+          <h3>Ringkasan Pembayaran</h3>
+        </div>
+        <div class="row total-row">
+          <span>Total Tagihan</span>
+          <strong>{{ formatCurrency(totalAmount) }}</strong>
+        </div>
       </section>
 
-      <aside class="right">
-        <div class="summary">
-          <h4>Pembayaran:</h4>
-          <div class="row"><span>Total Tagihan:</span><strong>{{ formatCurrency(total) }}</strong></div>
-          <div class="row"><span>Telah Dibayar:</span><strong>{{ formatCurrency(paid) }}</strong></div>
-          <div class="row"><span>Sisa Tagihan :</span><strong class="red">{{ formatCurrency(remaining) }}</strong></div>
+      <section class="card nominal-card">
+        <div class="card-title">
+          <span class="material-symbols-outlined">payments</span>
+          <h3>Masukkan Nominal Pembayaran</h3>
         </div>
-      </aside>
-    </div>
+        <ion-input
+          class="nominal-input"
+          type="text"
+          inputmode="numeric"
+          [value]="nominalDisplay"
+          placeholder="Rp 0"
+          (ionInput)="onNominalInput($event)">
+        </ion-input>
+        <p class="helper">Nominal akan otomatis diformat ke Rupiah (Rp).</p>
+      </section>
 
-    <ion-footer class="bottom-bar">
-      <div class="note">Isi form disamping untuk melakukan pembayaran</div>
-      <div class="pay-controls">
-        <ion-input id="nominal" type="text" inputmode="numeric" [(ngModel)]="nominalStr" placeholder="0"></ion-input>
-        <ion-button color="primary" (click)="onPay()">Bayar</ion-button>
-      </div>
-    </ion-footer>
-
-    <!-- Modal -->
-    <div class="modal" *ngIf="showConfirm">
-      <div class="modal-backdrop" (click)="hideConfirm()"></div>
-      <div class="modal-content">
-        <p>Konfirmasi pembayaran: <strong>{{ formatCurrency(confirmAmount) }}</strong></p>
-        <div class="modal-actions">
-          <button class="btn ghost" (click)="hideConfirm()">Batal</button>
-          <button class="btn primary" (click)="confirmPay()">Konfirmasi</button>
-        </div>
+      <div class="state-card card error compact" *ngIf="createError">
+        <span class="material-symbols-outlined">warning</span>
+        <p>{{ createError }}</p>
       </div>
     </div>
 
+    <div *ngIf="!loadingBooking && booking && screen === 'detail'" class="content-stack">
+      <section class="card detail-card" *ngIf="vaData">
+        <div class="card-title">
+          <span class="material-symbols-outlined">account_balance</span>
+          <h3>Detail Virtual Account</h3>
+        </div>
+
+        <div class="detail-list">
+          <div class="row"><span>Nomor Virtual Account</span><strong class="mono">{{ vaData.vaNumber }}</strong></div>
+          <div class="row"><span>Nama Bank</span><strong>{{ vaData.bankName }}</strong></div>
+          <div class="row"><span>Nominal Pembayaran</span><strong>{{ formatCurrency(vaData.amount) }}</strong></div>
+          <div class="row">
+            <span>Status Pembayaran</span>
+            <ion-badge [color]="vaData.status === 'PAID' ? 'success' : (vaData.status === 'EXPIRED' ? 'danger' : 'warning')">
+              {{ getStatusLabel(vaData.status) }}
+            </ion-badge>
+          </div>
+          <div class="row"><span>Masa Berlaku VA</span><strong>{{ countdown }}</strong></div>
+        </div>
+
+        <div class="button-stack">
+          <ion-button expand="block" fill="outline" (click)="copyVaNumber()">
+            <ion-icon slot="start" name="copy-outline"></ion-icon>
+            Copy Nomor VA
+          </ion-button>
+          <ion-button expand="block" color="primary" (click)="checkPaymentStatus()" [disabled]="vaData.status === 'PAID'">
+            <ion-icon slot="start" name="refresh-outline"></ion-icon>
+            Cek Status Pembayaran
+          </ion-button>
+          <ion-button expand="block" fill="clear" (click)="backToNominalInput()">
+            Buat VA Baru
+          </ion-button>
+        </div>
+      </section>
+
+      <div class="state-card card empty" *ngIf="!vaData">
+        <span class="material-symbols-outlined">hourglass_disabled</span>
+        <h4>Virtual Account Belum Tersedia</h4>
+        <p>Silakan kembali ke input nominal dan buat Virtual Account baru.</p>
+        <ion-button color="primary" (click)="backToNominalInput()">Kembali ke Input</ion-button>
+      </div>
+    </div>
+
+    <div class="sticky-footer pb-safe" *ngIf="!loadingBooking && booking && screen === 'input'">
+      <div class="footer-info">
+        <span>Nominal Dibayar</span>
+        <strong>{{ formatCurrency(footerNominal) }}</strong>
+      </div>
+      <ion-button expand="block" color="primary" (click)="createVirtualAccount()" [disabled]="!canCreateVa" class="h-14">
+        <ion-spinner slot="start" *ngIf="isCreatingVa" name="dots"></ion-spinner>
+        {{ isCreatingVa ? 'Membuat Virtual Account...' : 'Buat Virtual Account' }}
+      </ion-button>
+    </div>
   </div>
-  </ion-content>
+</ion-content>

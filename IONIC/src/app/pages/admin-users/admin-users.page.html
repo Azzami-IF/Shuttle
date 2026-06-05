@@ -1,10 +1,12 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" class="pt-safe">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard" text=""></ion-back-button>
+    </ion-buttons>
     <ion-title>Manage Users</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="openCreateModal()" color="primary">
-        <ion-icon name="add" slot="start"></ion-icon>
-        New User
+      <ion-button (click)="openCreateModal()">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

@@ -1,20 +1,25 @@
-<ion-content class="dashboard-page">
-  <div class="top-bar">
-    <div class="brand">
-      <span class="material-symbols-outlined">directions_bus</span>
-      <span>Ambatu Bus</span>
-    </div>
-    <div class="actions">
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" class="pt-safe">
+    <ion-title slot="start">
+      <div class="brand">
+        <span class="material-symbols-outlined">directions_bus</span>
+        <span>Ambatu Bus</span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
       <button class="nav-btn" routerLink="/profile">
         <span class="material-symbols-outlined">account_circle</span>
       </button>
       <button class="nav-btn" type="button" aria-label="Logout" (click)="confirmLogout()">
         <span class="material-symbols-outlined">logout</span>
       </button>
-    </div>
-  </div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-  <main *ngIf="user$ | async as user">
+<ion-content class="dashboard-page">
+
+  <main *ngIf="(user$ | async) || getResolvedUser() as user; else guestState">
     <!-- Hero Section -->
     <section class="hero-section hero-gradient">
       <p class="greeting">{{ getGreeting() }},</p>
@@ -166,6 +171,18 @@
     </section>
   </main>
 </ion-content>
+
+<ng-template #guestState>
+  <div class="dashboard-empty-state">
+    <span class="material-symbols-outlined">person_off</span>
+    <h3>Sesi belum tersedia</h3>
+    <p>Silakan masuk kembali agar dashboard dan jadwal perjalanan dapat dimuat.</p>
+    <button class="search-btn" routerLink="/login">
+      <span class="material-symbols-outlined">login</span>
+      Ke Halaman Login
+    </button>
+  </div>
+</ng-template>
 
 <nav class="bottom-nav">
   <button class="nav-item active">

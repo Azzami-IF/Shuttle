@@ -8,45 +8,28 @@
   }
 }
 
-.top-bar {
-  background: linear-gradient(135deg, #18281e 0%, #2d3e33 100%);
-  color: white;
-  height: 64px;
+.brand {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--container-margin);
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 20px;
-    font-weight: 700;
-  }
+.nav-btn {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
 
-  .actions {
-    display: flex;
-    gap: 8px;
-
-    .nav-btn {
-      background: none;
-      border: none;
-      color: white;
-      padding: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: background 0.2s;
-
-      &:active {
-        background: rgba(255, 255, 255, 0.1);
-      }
-    }
+  &:active {
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -56,6 +39,7 @@
   padding: 24px var(--container-margin) 80px;
   color: white;
   overflow: hidden;
+  margin-top: -1px; /* prevent gaps */
 
   .decorative-blob {
     position: absolute;

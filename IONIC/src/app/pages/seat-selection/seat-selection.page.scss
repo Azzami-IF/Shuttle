@@ -67,18 +67,24 @@
 }
 
 .seat {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
   background: linear-gradient(180deg, #ffffff 0%, #f6f8f5 100%);
   border: 1px solid var(--outline-variant);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--ion-color-step-600);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active:not(.occupied) {
+    transform: scale(0.92);
+  }
 
   &.selected {
     background: linear-gradient(135deg, #2d3e33 0%, #536349 100%);

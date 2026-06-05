@@ -39,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 40px var(--container-margin) 0;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) var(--container-margin) 0;
 
     .back-btn {
       width: 40px;

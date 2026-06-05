@@ -17,9 +17,9 @@
   .login-form-content {
     /* center form content on larger screens */
     form {
-      max-width: 720px;
+      max-width: 100%;
       margin: 0 auto;
-      padding-right: 8px;
+      padding-right: 0;
     }
   }
 
@@ -78,6 +78,14 @@
           box-shadow: 0 6px 18px rgba(var(--ion-color-primary-rgb), 0.06);
         }
       }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .register-page {
+    .login-form-content form {
+      max-width: 560px;
     }
   }
 }

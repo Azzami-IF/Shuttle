@@ -1,5 +1,5 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="pt-safe">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/driver-dashboard" text=""></ion-back-button>
     </ion-buttons>
@@ -8,6 +8,7 @@
 </ion-header>
 
 <ion-content class="driver-trips-page">
+  <div class="content-wrapper pb-32">
   <!-- Greeting Header -->
   <section class="driver-header" *ngIf="user$ | async as user">
     <div class="subtitle">Driver Schedule</div>
@@ -125,6 +126,7 @@
     <span class="material-symbols-outlined text-gray-400 text-[64px]">assignment_late</span>
     <p class="text-gray-500 mt-4">Belum ada tugas perjalanan hari ini.</p>
   </div>
+  </div>
 </ion-content>
 
 <nav class="bottom-nav">
@@ -133,12 +135,12 @@
     <span>Home</span>
   </button>
   <button class="nav-item active">
-    <span class="material-symbols-outlined">analytics</span>
-    <span>Monitoring</span>
+    <span class="material-symbols-outlined">calendar_month</span>
+    <span>Jadwal</span>
   </button>
-  <button class="nav-item" routerLink="/driver-status">
-    <span class="material-symbols-outlined">route</span>
-    <span>Status</span>
+  <button class="nav-item" routerLink="/driver-history">
+    <span class="material-symbols-outlined">history</span>
+    <span>History</span>
   </button>
   <button class="nav-item" routerLink="/profile">
     <span class="material-symbols-outlined">person</span>

@@ -3,7 +3,8 @@
 }
 
 .map-container {
-  height: 60vh;
+  height: 50vh;
+  min-height: 300px;
   position: relative;
   background: var(--surface-container-high);
   display: flex;
