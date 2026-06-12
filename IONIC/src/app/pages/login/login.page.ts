@@ -70,4 +70,11 @@ export class LoginPage {
   continueAsGuest() {
     this.router.navigate(['/dashboard']);
   }
+
+  async showPrivacyPolicy() {
+    await this.ui.showAlert(
+      'Kebijakan Privasi',
+      'Kami menjaga data pribadi Anda dengan aman. Informasi Anda hanya digunakan untuk keperluan layanan transportasi KemanapunGo. Kami tidak akan membagikan data Anda kepada pihak ketiga tanpa izin Anda.'
+    );
+  }
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -20,8 +21,13 @@ export class DriverLoginPage {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private ui: UiService
+    private ui: UiService,
+    public langService: LanguageService
   ) {}
+
+  getTranslation(key: string): string {
+    return this.langService.get(key);
+  }
 
   onLogin(event: Event) {
     event.preventDefault();

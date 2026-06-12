@@ -11,6 +11,8 @@ export class UiService {
     private alertCtrl: AlertController
   ) {}
 
+  private loadingElement: any;
+
   async showToast(message: string, color: string = 'dark', duration: number = 2000) {
     const toast = await this.toastCtrl.create({
       message,
@@ -35,12 +37,12 @@ export class UiService {
     await alert.present();
   }
 
-  async showConfirm(header: string, message: string, confirmText: string = 'Logout') {
+  async showConfirm(header: string, message: string, confirmText: string = 'OK', cancelText: string = 'Batal') {
     const alert = await this.alertCtrl.create({
       header,
       message,
       buttons: [
-        { text: 'Batal', role: 'cancel' },
+        { text: cancelText, role: 'cancel' },
         { text: confirmText, role: 'confirm' }
       ]
     });
@@ -80,11 +82,38 @@ export class UiService {
   }
 
   async showLoading(message: string = 'Mohon tunggu...') {
-    const loading = await this.loadingCtrl.create({
+    this.loadingElement = await this.loadingCtrl.create({
       message,
       spinner: 'crescent'
     });
-    await loading.present();
-    return loading;
+    await this.loadingElement.present();
+    return this.loadingElement;
+  }
+
+  async hideLoading() {
+    if (this.loadingElement) {
+      await this.loadingElement.dismiss();
+      this.loadingElement = null;
+    }
+  }
+
+  async showRadioSelection(header: string, options: { label: string, value: string }[], currentValue: string) {
+    const alert = await this.alertCtrl.create({
+      header,
+      inputs: options.map(opt => ({
+        type: 'radio',
+        label: opt.label,
+        value: opt.value,
+        checked: opt.value === currentValue
+      })),
+      buttons: [
+        { text: 'Batal', role: 'cancel' },
+        { text: 'Pilih', role: 'confirm' }
+      ]
+    });
+
+    await alert.present();
+    const { data, role } = await alert.onDidDismiss();
+    return role === 'confirm' ? data.values : null;
   }
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -12,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class ScheduleListPage {
   schedules: any[] = [];
   displaySchedules: any[] = [];
+  lang$ = this.languageService.lang$;
   loading: boolean = false;
   filters = {
     origin: '',
@@ -26,7 +28,8 @@ export class ScheduleListPage {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private auth: AuthService
+    private auth: AuthService,
+    private languageService: LanguageService
   ) {}
 
   ionViewWillEnter() {
@@ -99,5 +102,9 @@ export class ScheduleListPage {
 
   viewSchedule(id: number) {
     this.router.navigate(['/seat-selection', { id }]);
+  }
+
+  getTranslation(key: string) {
+    return this.languageService.get(key);
   }
 }

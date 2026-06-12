@@ -10,7 +10,7 @@ import { UiService } from '../../services/ui.service';
 })
 export class DriverVehiclePage {
   vehicle: any = {
-    name: 'Ambatu Express 01',
+    name: 'Kemanapun Express 01',
     license_plate: 'B 1234 ABC',
     capacity: 12,
     fuel: 88,

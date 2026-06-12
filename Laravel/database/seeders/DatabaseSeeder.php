@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
         $bus1 = Vehicle::updateOrCreate(
             ['license_plate' => 'B 1234 ABC'],
             [
-                'name' => 'Ambatu Express 01',
+                'name' => 'Kemanapun Express 01',
                 'capacity' => 12,
             ]
         );

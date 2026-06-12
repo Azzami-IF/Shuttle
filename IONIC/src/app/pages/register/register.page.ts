@@ -19,6 +19,7 @@ export class RegisterPage {
   };
   isLoading = false;
   showPassword = false;
+  agreedToTerms = false;
 
   constructor(
     private auth: AuthService,
@@ -46,5 +47,12 @@ export class RegisterPage {
 
   goBack() {
     window.history.back();
+  }
+
+  async showPrivacyPolicy() {
+    await this.ui.showAlert(
+      'Kebijakan Privasi',
+      'Kami menjaga data pribadi Anda dengan aman. Informasi Anda hanya digunakan untuk keperluan layanan transportasi KemanapunGo. Kami tidak akan membagikan data Anda kepada pihak ketiga tanpa izin Anda.'
+    );
   }
 }

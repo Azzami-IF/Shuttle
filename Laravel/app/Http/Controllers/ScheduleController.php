@@ -27,8 +27,15 @@ class ScheduleController extends Controller
         }
 
         if ($request->has('date')) {
+            // Jika filter tanggal spesifik, hanya tampilkan tanggal itu
             $query->whereDate('departure_time', $request->get('date'));
+        } else {
+            // Default: hanya tampilkan jadwal yang BELUM lewat (mulai dari sekarang)
+            $query->where('departure_time', '>=', now());
         }
+
+        // Urutkan dari yang paling dekat
+        $query->orderBy('departure_time', 'asc');
 
         return response()->json($query->get());
     }

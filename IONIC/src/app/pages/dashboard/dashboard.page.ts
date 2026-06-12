@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -12,6 +13,7 @@ import { UiService } from '../../services/ui.service';
 })
 export class DashboardPage {
   user$ = this.auth.user$;
+  lang$ = this.languageService.lang$;
   currentUser: any = null;
   previewSchedules: any[] = [];
   featuredSchedule: any = null;
@@ -26,7 +28,8 @@ export class DashboardPage {
     private auth: AuthService,
     private api: ApiService,
     private router: Router,
-    private ui: UiService
+    private ui: UiService,
+    private languageService: LanguageService
   ) {}
 
   ionViewWillEnter() {
@@ -55,10 +58,17 @@ export class DashboardPage {
 
   getGreeting(): string {
     const hour = new Date().getHours();
-    if (hour < 11) return 'Selamat Pagi';
-    if (hour < 15) return 'Selamat Siang';
-    if (hour < 18) return 'Selamat Sore';
-    return 'Selamat Malam';
+    const g = this.languageService.get('greeting');
+    const isId = this.languageService.getCurrentLang() === 'id';
+
+    if (hour < 11) return isId ? `${g} Pagi` : `${g} Morning`;
+    if (hour < 15) return isId ? `${g} Siang` : `${g} Afternoon`;
+    if (hour < 18) return isId ? `${g} Sore` : `${g} Afternoon`;
+    return isId ? `${g} Malam` : `${g} Evening`;
+  }
+
+  getTranslation(key: string): string {
+    return this.languageService.get(key);
   }
 
   showPending() {
@@ -131,7 +141,7 @@ export class DashboardPage {
   }
 
   async confirmLogout() {
-    const confirmed = await this.ui.showConfirm('Logout', 'Anda akan keluar dari akun ini. Lanjutkan?');
+    const confirmed = await this.ui.showConfirm('Logout', 'Anda akan keluar dari akun ini. Lanjutkan?', 'Logout');
     if (!confirmed) {
       return;
     }

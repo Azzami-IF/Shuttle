@@ -28,7 +28,7 @@ You can track your driver's real-time location in the app.
 Track Your Trip
 @endcomponent
 
-Thank you for choosing Ambatu Bus!
+Thank you for choosing KemanapunGo!
 
 Best regards,  
 {{ config('app.name') }} Team

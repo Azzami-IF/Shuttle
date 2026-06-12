@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button [defaultHref]="homeRoute" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Profil Saya</ion-title>
+    <ion-title>{{ getTranslation('profile') }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -27,14 +27,23 @@
     </div>
 
     <!-- Account Sections -->
-    <div class="menu-container mt-8">
-      <h3 class="section-title">Informasi Akun</h3>
+    <div class="menu-container mt-8" *ngIf="lang$ | async">
+      <h3 class="section-title">{{ getTranslation('accountInfo') }}</h3>
       <div class="menu-list">
         <button class="menu-item" (click)="openEditProfile(user)">
           <span class="material-symbols-outlined icon">badge</span>
           <div class="label-box">
-            <span class="title">Data Pribadi</span>
-            <span class="sub">Kelola nama dan info kontak</span>
+            <span class="title">{{ getTranslation('personalData') }}</span>
+            <span class="sub">{{ getTranslation('manageProfile') }}</span>
+          </div>
+          <span class="material-symbols-outlined arrow">chevron_right</span>
+        </button>
+
+        <button class="menu-item" (click)="openLanguageSelection()">
+          <span class="material-symbols-outlined icon">language</span>
+          <div class="label-box">
+            <span class="title">{{ getTranslation('language') }}</span>
+            <span class="sub">{{ getTranslation('language') }}: {{ currentLanguageLabel }}</span>
           </div>
           <span class="material-symbols-outlined arrow">chevron_right</span>
         </button>
@@ -42,8 +51,8 @@
         <button class="menu-item" (click)="openChangePassword()">
           <span class="material-symbols-outlined icon">security</span>
           <div class="label-box">
-            <span class="title">Keamanan</span>
-            <span class="sub">Ganti kata sandi & verifikasi</span>
+            <span class="title">{{ getTranslation('security') }}</span>
+            <span class="sub">{{ getTranslation('manageSecurity') }}</span>
           </div>
           <span class="material-symbols-outlined arrow">chevron_right</span>
         </button>
@@ -54,7 +63,7 @@
     <div class="mt-10 mb-12">
       <button class="logout-btn" type="button" (click)="confirmLogout()">
         <span class="material-symbols-outlined">logout</span>
-        Logout
+        {{ getTranslation('logout') }}
       </button>
       <p class="version-text text-center mt-4">Versi 1.0.4-serene</p>
     </div>
@@ -120,19 +129,19 @@
   <nav class="bottom-nav" *ngIf="user.role === 'customer'">
     <button class="nav-item" routerLink="/dashboard">
       <span class="material-symbols-outlined">home</span>
-      <span>Home</span>
+      <span>{{ getTranslation('home') }}</span>
     </button>
     <button class="nav-item" routerLink="/schedule-list">
       <span class="material-symbols-outlined">directions_bus</span>
-      <span>Schedule</span>
+      <span>{{ getTranslation('schedule') }}</span>
     </button>
     <button class="nav-item" routerLink="/booking-detail">
       <span class="material-symbols-outlined">confirmation_number</span>
-      <span>Bookings</span>
+      <span>{{ getTranslation('bookings') }}</span>
     </button>
     <button class="nav-item active">
       <span class="material-symbols-outlined">person</span>
-      <span>Profile</span>
+      <span>{{ getTranslation('profile') }}</span>
     </button>
   </nav>
 

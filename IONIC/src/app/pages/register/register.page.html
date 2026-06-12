@@ -12,7 +12,7 @@
 
       <!-- Logo -->
       <div class="logo-container">
-        <img alt="Ambatu Bus Logo" class="logo-img animate-float" src="assets/icon/favicon.png">
+        <img alt="KemanapunGo Logo" class="logo-img animate-float" src="assets/icon/favicon.png">
       </div>
     </div>
 
@@ -20,7 +20,7 @@
     <div class="login-form-content glass-panel">
       <div class="text-center">
         <h1>Daftar Akun</h1>
-        <p>Bergabunglah dengan Ambatu Bus untuk perjalanan yang lebih tenang.</p>
+        <p>Bergabunglah dengan KemanapunGo untuk perjalanan yang lebih tenang.</p>
       </div>
 
       <form (submit)="onRegister($event)">
@@ -61,8 +61,16 @@
           </div>
         </div>
 
+        <!-- Privacy Policy Checkbox -->
+        <div class="privacy-agreement">
+          <ion-checkbox [(ngModel)]="agreedToTerms" name="agreedToTerms" mode="md"></ion-checkbox>
+          <label (click)="agreedToTerms = !agreedToTerms">
+            Saya telah membaca dan menyetujui <a (click)="showPrivacyPolicy(); $event.stopPropagation()">Kebijakan Privasi</a> KemanapunGo. Data saya akan digunakan sesuai kebijakan yang berlaku.
+          </label>
+        </div>
+
         <!-- Primary CTA -->
-        <button type="submit" class="submit-btn" [disabled]="isLoading">
+        <button type="submit" class="submit-btn" [disabled]="isLoading || !agreedToTerms">
           <span *ngIf="!isLoading">Daftar</span>
           <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
         </button>
@@ -72,6 +80,7 @@
       <div class="register-prompt">
         <p>Sudah punya akun? <a [routerLink]="['/login']">Masuk Sekarang</a></p>
       </div>
+
     </div>
   </div>
 </ion-content>
