@@ -3,7 +3,7 @@
     <ion-title slot="start">
       <div class="brand">
         <span class="material-symbols-outlined">directions_bus</span>
-        <span>Ambatu Bus</span>
+        <span>KemanapunGo</span>
       </div>
     </ion-title>
     <ion-buttons slot="end">
@@ -35,7 +35,7 @@
             <div class="line"></div>
           </div>
           <div class="info" style="width: 100%;">
-            <label>Asal</label>
+            <label>{{ getTranslation('origin') }}</label>
             <select [(ngModel)]="searchData.origin" style="background: transparent; border: none; outline: none; font-size: 16px; font-weight: 600; width: 100%; color: var(--ion-text-color, #2d3748); padding: 0;">
               <option value="Jakarta">Jakarta (Kampung Rambutan)</option>
               <option value="Bandung">Bandung (Leuwi Panjang)</option>
@@ -47,7 +47,7 @@
             <div class="dot destination"></div>
           </div>
           <div class="info" style="width: 100%;">
-            <label>Tujuan</label>
+            <label>{{ getTranslation('destination') }}</label>
             <select [(ngModel)]="searchData.destination" style="background: transparent; border: none; outline: none; font-size: 16px; font-weight: 600; width: 100%; color: var(--ion-text-color, #2d3748); padding: 0;">
               <option value="Bandung">Bandung (Leuwi Panjang)</option>
               <option value="Jakarta">Jakarta (Kampung Rambutan)</option>
@@ -58,32 +58,32 @@
 
       <div class="details-grid">
         <div class="detail-item">
-          <label>Tanggal Perjalanan</label>
+          <label>{{ getTranslation('travelDate') }}</label>
           <div class="val" style="display: flex; align-items: center; gap: 4px;">
             <span class="material-symbols-outlined" style="font-size: 18px;">calendar_month</span>
             <input type="date" [(ngModel)]="searchData.date" style="background: transparent; border: none; outline: none; font-size: 14px; font-weight: 500; width: 100%; color: var(--ion-text-color, #2d3748); padding: 0;" />
           </div>
         </div>
         <div class="detail-item">
-          <label>Jumlah Penumpang</label>
+          <label>{{ getTranslation('passengers') }}</label>
           <div class="val">
             <span class="material-symbols-outlined">person</span>
-            1 Dewasa
+            1 {{ getTranslation('adult') }}
           </div>
         </div>
       </div>
 
       <button class="search-btn" (click)="searchTickets()">
         <span class="material-symbols-outlined">search</span>
-        Cari Tiket Bus
+        {{ getTranslation('searchTicket') }}
       </button>
     </section>
 
     <section class="next-schedule-card" *ngIf="user.role === 'customer'">
       <div class="card-head">
         <div>
-          <span class="eyebrow">Jadwal Terdekat</span>
-          <h3>Keberangkatan Berikutnya</h3>
+          <span class="eyebrow" *ngIf="lang$ | async">{{ getTranslation('closestSchedule') }}</span>
+          <h3 *ngIf="lang$ | async">{{ getTranslation('nextDeparture') }}</h3>
         </div>
         <button class="refresh-btn" (click)="refreshSchedulePreview()">
           <span class="material-symbols-outlined">refresh</span>
@@ -106,11 +106,11 @@
 
           <div class="schedule-meta">
             <div>
-              <span class="meta-label">Sisa Kursi</span>
+              <span class="meta-label" *ngIf="lang$ | async">{{ getTranslation('remainingSeats') }}</span>
               <strong>{{ getAvailableSeats(featuredSchedule) }}</strong>
             </div>
             <div>
-              <span class="meta-label">Status</span>
+              <span class="meta-label" *ngIf="lang$ | async">{{ getTranslation('status') }}</span>
               <strong>{{ getCountdownLabel(featuredSchedule.departure_time) }}</strong>
             </div>
           </div>
@@ -139,8 +139,8 @@
     <!-- Driver Specific Card -->
     <section class="search-card" *ngIf="user.role === 'driver'">
       <div class="text-center py-4">
-        <h3 class="font-bold text-lg mb-2">Tugas Hari Ini</h3>
-        <p class="text-gray-600 mb-4">Anda memiliki rute aktif yang harus dimulai.</p>
+        <h2 class="text-2xl font-bold text-white mb-1" *ngIf="lang$ | async">{{ getGreeting() }}, {{ user.name }}</h2>
+        <p class="text-white/80" *ngIf="lang$ | async">{{ getTranslation('welcome') }}</p>
         <button class="search-btn" routerLink="/driver-trips">
           <span class="material-symbols-outlined">route</span>
           Lihat Perjalanan
@@ -154,19 +154,19 @@
         <div class="icon-box">
           <span class="material-symbols-outlined">schedule</span>
         </div>
-        <span>Jadwal</span>
+        <span>{{ getTranslation('schedule') }}</span>
       </button>
       <button class="menu-item" routerLink="/booking-detail" *ngIf="user.role === 'customer'">
         <div class="icon-box secondary">
           <span class="material-symbols-outlined">confirmation_number</span>
         </div>
-        <span>Tiket Saya</span>
+        <span>{{ getTranslation('bookings') }}</span>
       </button>
       <button class="menu-item" routerLink="/profile">
         <div class="icon-box tertiary">
           <span class="material-symbols-outlined">person</span>
         </div>
-        <span>Profil</span>
+        <span>{{ getTranslation('profile') }}</span>
       </button>
     </section>
   </main>
@@ -184,25 +184,41 @@
   </div>
 </ng-template>
 
-<nav class="bottom-nav">
-  <button class="nav-item active">
-    <span class="material-symbols-outlined">home</span>
-    <span>Home</span>
-  </button>
-  <button class="nav-item" routerLink="/schedule-list">
-    <span class="material-symbols-outlined">directions_bus</span>
-    <span>Schedule</span>
-  </button>
-  <button class="nav-item" routerLink="/booking-detail" *ngIf="(user$ | async)?.role === 'customer'">
-    <span class="material-symbols-outlined">confirmation_number</span>
-    <span>Bookings</span>
-  </button>
-  <button class="nav-item" routerLink="/driver-history" *ngIf="(user$ | async)?.role === 'driver'">
-    <span class="material-symbols-outlined">history</span>
-    <span>History</span>
-  </button>
-  <button class="nav-item" routerLink="/profile">
-    <span class="material-symbols-outlined">person</span>
-    <span>Profile</span>
-  </button>
+<nav class="bottom-nav" *ngIf="(user$ | async) as user">
+  <ng-container *ngIf="user.role === 'customer'">
+    <button class="nav-item active">
+      <span class="material-symbols-outlined">home</span>
+      <span>{{ getTranslation('home') }}</span>
+    </button>
+    <button class="nav-item" routerLink="/schedule-list">
+      <span class="material-symbols-outlined">directions_bus</span>
+      <span>{{ getTranslation('schedule') }}</span>
+    </button>
+    <button class="nav-item" routerLink="/booking-detail">
+      <span class="material-symbols-outlined">confirmation_number</span>
+      <span>{{ getTranslation('bookings') }}</span>
+    </button>
+    <button class="nav-item" routerLink="/profile">
+      <span class="material-symbols-outlined">person</span>
+      <span>{{ getTranslation('profile') }}</span>
+    </button>
+  </ng-container>
+  <ng-container *ngIf="user.role === 'driver'">
+    <button class="nav-item active" routerLink="/dashboard">
+      <span class="material-symbols-outlined">home</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" routerLink="/driver-trips">
+      <span class="material-symbols-outlined">route</span>
+      <span>Trips</span>
+    </button>
+    <button class="nav-item" routerLink="/driver-history">
+      <span class="material-symbols-outlined">history</span>
+      <span>History</span>
+    </button>
+    <button class="nav-item" routerLink="/profile">
+      <span class="material-symbols-outlined">person</span>
+      <span>Profile</span>
+    </button>
+  </ng-container>
 </nav>

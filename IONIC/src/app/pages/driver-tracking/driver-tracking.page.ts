@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -27,12 +28,21 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private api: ApiService,
     private router: Router,
-    private ui: UiService
+    private ui: UiService,
+    public langService: LanguageService
   ) {}
 
+  getTranslation(key: string): string {
+    return this.langService.get(key);
+  }
+
   ngOnInit() {
-    this.tripId = this.route.snapshot.paramMap.get('id');
-    this.loadTrip();
+    this.route.params.subscribe(params => {
+      this.tripId = params['id'];
+      if (this.tripId) {
+        this.loadTrip();
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -47,7 +57,11 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
       } else {
         this.stopLocationUpdates();
       }
-      this.loadPassengers();
+      
+      // Load passengers only after trip data is available
+      if (this.trip && this.trip.schedule_id) {
+        this.loadPassengers();
+      }
     });
   }
 
@@ -73,29 +87,45 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
   }
 
   autoUpdateLocation() {
-    if (!this.trip) return;
+    if (!this.trip || !this.trip.schedule) return;
 
-    // Default start from Bandung if no coordinates exist yet
+    // Database koordinat (Bisa dipindah ke service nantinya)
+    const coordinatesMap: { [key: string]: [number, number] } = {
+      'jakarta': [-6.3090, 106.8824],
+      'karawang': [-6.3073, 107.2913],
+      'sumedang': [-6.8524, 107.9234],
+      'bandung': [-6.9452, 107.5937],
+      'subang': [-6.5715, 107.7587],
+      'purwakarta': [-6.5571, 107.4431]
+    };
+
+    const originName = (this.trip.schedule.origin || '').toLowerCase().trim();
+    const destName = (this.trip.schedule.destination || '').toLowerCase().trim();
+
+    // Set posisi awal jika belum ada
     if (!this.trip.latitude || this.trip.latitude == 0) {
-      this.trip.latitude = -6.9452;
-      this.trip.longitude = 107.5937;
+      const originCoords = coordinatesMap[originName] || [-6.9452, 107.5937];
+      this.trip.latitude = originCoords[0];
+      this.trip.longitude = originCoords[1];
     }
 
-    // Target is Kampung Rambutan Jakarta: -6.3090, 106.8824
-    const targetLat = -6.3090;
-    const targetLng = 106.8824;
+    // Target sesuai tujuan di jadwal
+    const destCoords = coordinatesMap[destName] || [-6.3090, 106.8824];
+    const targetLat = destCoords[0];
+    const targetLng = destCoords[1];
 
     const latDiff = targetLat - this.trip.latitude;
     const lngDiff = targetLng - this.trip.longitude;
 
-    // If we are already extremely close, stop moving, just add tiny noise
-    if (Math.abs(latDiff) < 0.001 && Math.abs(lngDiff) < 0.001) {
-      this.trip.latitude += (Math.random() - 0.5) * 0.0001;
-      this.trip.longitude += (Math.random() - 0.5) * 0.0001;
+    if (Math.abs(latDiff) < 0.0005 && Math.abs(lngDiff) < 0.0005) {
+      // Sampai di tujuan
+      this.trip.latitude = targetLat;
+      this.trip.longitude = targetLng;
     } else {
-      // Step size is 5% towards target + random jitter
-      this.trip.latitude += latDiff * 0.05 + (Math.random() - 0.5) * 0.001;
-      this.trip.longitude += lngDiff * 0.05 + (Math.random() - 0.5) * 0.001;
+      // Kecepatan normal (Langkah sangat kecil: 0.2% dari sisa jarak per 10 detik)
+      // Ini bakal butuh waktu puluhan menit agar sampai, jauh lebih realistis.
+      this.trip.latitude += latDiff * 0.002 + (Math.random() - 0.5) * 0.0001;
+      this.trip.longitude += lngDiff * 0.002 + (Math.random() - 0.5) * 0.0001;
     }
 
     this.api.post(`trips/${this.tripId}/location`, {
@@ -104,9 +134,8 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
     }).subscribe({
       next: () => {
         this.lastUpdateTime = new Date().toLocaleTimeString('id-ID');
-        console.log('Driver location auto-updated to', this.trip.latitude, this.trip.longitude);
       },
-      error: (err) => console.error('Driver location auto-update failed', err)
+      error: (err) => console.error('Location sync failed', err)
     });
   }
 

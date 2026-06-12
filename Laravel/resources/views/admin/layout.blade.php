@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>@yield('title') | Ambatu Bus Admin</title>
+    <title>@yield('title') | KemanapunGo Admin</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -46,9 +46,13 @@
     <header class="bg-white shadow-sm flex justify-between items-center px-4 md:px-16 w-full h-16 fixed top-0 z-50">
         <div class="flex items-center gap-4">
             <button class="material-symbols-outlined text-on-surface-variant hover:bg-gray-100 p-2 rounded-full">menu</button>
-            <a href="{{ route('admin.dashboard') }}" class="font-bold text-xl text-primary">Ambatu Bus</a>
+            <a href="{{ route('admin.dashboard') }}" class="font-bold text-xl text-primary">KemanapunGo</a>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-4">
+            <select onchange="window.location.href='?lang='+this.value" class="text-sm border-none bg-transparent focus:ring-0 cursor-pointer text-on-surface-variant">
+                <option value="id" {{ app()->getLocale() == 'id' ? 'selected' : '' }}>ID</option>
+                <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>EN</option>
+            </select>
             @auth
                 <form method="POST" action="{{ route('admin.logout') }}">@csrf
                     <button type="submit" class="material-symbols-outlined text-primary p-2 hover:bg-gray-100 rounded-full">logout</button>
@@ -91,7 +95,7 @@
                 <span class="material-symbols-outlined">directions_bus</span>
                 <span class="text-sm">Manajemen Kendaraan</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.schedules*') ? 'bg-secondary-container text-secondary font-bold' : 'text-on-surface-variant' }} rounded-r-full" href="{{ route('admin.schedules') }}">
+            <a class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.route-templates*') || request()->routeIs('admin.schedules*') ? 'bg-secondary-container text-secondary font-bold' : 'text-on-surface-variant' }} rounded-r-full" href="{{ route('admin.route-templates.index') }}">
                 <span class="material-symbols-outlined">event_note</span>
                 <span class="text-sm">Manajemen Jadwal</span>
             </a>

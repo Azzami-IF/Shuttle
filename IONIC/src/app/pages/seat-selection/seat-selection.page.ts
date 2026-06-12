@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -14,14 +15,16 @@ export class SeatSelectionPage implements OnInit {
   schedule: any;
   rows: any[] = [];
   loading: boolean = false;
-  selectedSeatId: any = null;
+  selectedSeatIds: any[] = [];
   price: number = 0;
+  lang$ = this.languageService.lang$;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
     private router: Router,
-    private ui: UiService
+    private ui: UiService,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit() {
@@ -71,24 +74,40 @@ export class SeatSelectionPage implements OnInit {
   }
 
   selectSeat(seatId: any) {
-    this.selectedSeatId = this.selectedSeatId === seatId ? null : seatId;
+    const index = this.selectedSeatIds.indexOf(seatId);
+    if (index > -1) {
+      this.selectedSeatIds.splice(index, 1);
+    } else {
+      this.selectedSeatIds.push(seatId);
+    }
   }
 
-  getSelectedSeatLabel() {
-    if (!this.selectedSeatId) return 'Belum dipilih';
-    for (let row of this.rows) {
-      const found = row.left.find((s: any) => s.id === this.selectedSeatId) || row.right.find((s: any) => s.id === this.selectedSeatId);
-      if (found) return found.label;
-    }
-    return 'Belum dipilih';
+  getSelectedSeatLabels() {
+    if (this.selectedSeatIds.length === 0) return this.getTranslation('notSelected');
+    const labels: string[] = [];
+    this.selectedSeatIds.forEach(id => {
+      for (let row of this.rows) {
+        const found = row.left.find((s: any) => s.id === id) || row.right.find((s: any) => s.id === id);
+        if (found) labels.push(found.label);
+      }
+    });
+    return labels.join(', ');
+  }
+
+  getTotalPrice() {
+    return this.selectedSeatIds.length * this.price;
+  }
+
+  getTranslation(key: string) {
+    return this.languageService.get(key);
   }
 
   confirmBooking() {
-    if (!this.selectedSeatId) return;
+    if (this.selectedSeatIds.length === 0) return;
     this.loading = true;
     this.api.post('bookings', {
       schedule_id: this.scheduleId,
-      seat_id: this.selectedSeatId // This is now the actual DB ID
+      seat_ids: this.selectedSeatIds
     }).subscribe({
       next: (res: any) => {
         this.loading = false;

@@ -332,4 +332,28 @@
       }
     }
   }
+
+  .privacy-policy-container {
+    margin-top: 32px;
+    text-align: center;
+    padding: 0 10px;
+
+    p {
+      font-size: 11px;
+      color: var(--outline);
+      line-height: 1.5;
+      margin: 0;
+
+      a {
+        color: var(--ion-color-secondary);
+        font-weight: 700;
+        text-decoration: underline;
+        cursor: pointer;
+        
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
 }

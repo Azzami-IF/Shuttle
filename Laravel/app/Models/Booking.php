@@ -12,7 +12,9 @@ class Booking extends Model
         'schedule_id',
         'seat_id',
         'status',
-        'payment_code'
+        'payment_code',
+        'unique_code',
+        'payment_proof'
     ];
 
     public function user(): BelongsTo
