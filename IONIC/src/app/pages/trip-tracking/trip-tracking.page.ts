@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -13,6 +13,12 @@ declare var L: any;
   styleUrls: ['./trip-tracking.page.scss'],
 })
 export class TripTrackingPage implements OnDestroy, AfterViewInit {
+  private route = inject(ActivatedRoute);
+  private api = inject(ApiService);
+  private ui = inject(UiService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+
   tripId: any;
   trip: any;
   location: any;
@@ -24,13 +30,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   eta: number = 0;
   homeRoute = '/dashboard';
 
-  constructor(
-    private route: ActivatedRoute,
-    private api: ApiService,
-    private ui: UiService,
-    private router: Router,
-    private auth: AuthService
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();

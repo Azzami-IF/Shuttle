@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
@@ -13,13 +13,13 @@ import { AuthService } from '../../../services/auth.service';
   imports: [CommonModule, RouterModule]
 })
 export class BottomNavComponent implements OnInit {
+  private nav = inject(NavService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+
   items: NavItem[] = [];
 
-  constructor(
-    private nav: NavService,
-    private router: Router,
-    private auth: AuthService
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     const role = this.auth.getRole();

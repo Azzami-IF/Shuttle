@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { AdminService } from '../../services/admin.service';
@@ -40,6 +40,8 @@ interface SystemAlert {
   standalone: false
 })
 export class AdminSystemPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+
   systemHealth: SystemHealth | null = null;
   activityLogs: ActivityLog[] = [];
   systemAlerts: SystemAlert[] = [];
@@ -50,7 +52,7 @@ export class AdminSystemPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private adminService: AdminService) { }
+  constructor() {}
 
   ngOnInit() {
     this.loadSystemHealth();

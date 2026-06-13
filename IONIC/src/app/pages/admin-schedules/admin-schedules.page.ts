@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -36,6 +36,11 @@ interface PaginationData {
   standalone: false
 })
 export class AdminSchedulesPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private fb = inject(FormBuilder);
+
   schedules: Schedule[] = [];
   pagination: PaginationData = {
     current_page: 1,
@@ -53,12 +58,7 @@ export class AdminSchedulesPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private adminService: AdminService,
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private fb: FormBuilder
-  ) {
+  constructor() {
     this.initializeForm();
   }
 
@@ -280,11 +280,13 @@ export class AdminSchedulesPage implements OnInit, OnDestroy {
   `,
   standalone: false
 })
-export class ScheduleFormModal {
+export class ScheduleFormModalComponent {
+  private modalCtrl = inject(ModalController);
+
   form!: FormGroup;
   schedule: Schedule | null = null;
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor() { }
 
   dismiss() {
     this.modalCtrl.dismiss(null, 'cancel');

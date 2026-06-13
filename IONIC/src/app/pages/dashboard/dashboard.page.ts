@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
@@ -12,6 +12,12 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage {
+  private auth = inject(AuthService);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   user$ = this.auth.user$;
   lang$ = this.languageService.lang$;
   currentUser: any = null;
@@ -24,13 +30,7 @@ export class DashboardPage {
     date: new Date().toISOString().substring(0, 10)
   };
 
-  constructor(
-    private auth: AuthService,
-    private api: ApiService,
-    private router: Router,
-    private ui: UiService,
-    private languageService: LanguageService
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.currentUser = this.getResolvedUser();
