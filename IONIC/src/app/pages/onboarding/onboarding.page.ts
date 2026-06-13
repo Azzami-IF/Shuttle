@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
@@ -9,9 +9,6 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./onboarding.page.scss'],
 })
 export class OnboardingPage implements OnInit {
-  private router = inject(Router);
-  private auth = inject(AuthService);
-
 
   public footerExpanded: boolean = false;
   public isDraggingFooter: boolean = false;
@@ -24,7 +21,10 @@ export class OnboardingPage implements OnInit {
     return `translateY(${this.currentTranslate}px)`;
   }
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private auth: AuthService
+  ) { }
 
   ngOnInit() {
     if (this.auth.isAuthenticated()) {
