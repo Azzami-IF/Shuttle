@@ -38,10 +38,9 @@
     </div>
 
     <div class="eta-card" *ngIf="trip?.status === 'on-going'">
-      <span class="time">{{ calculateETA() }}</span>
+      <span class="time">{{ formatETATime(calculateETA()) }}</span>
       <div class="flex flex-col">
-        <span class="label">Menit Lagi</span>
-        <span class="text-xs font-bold text-on-surface">Estimasi Waktu Tiba</span>
+        <span class="text-xs text-white/80 font-bold tracking-wider uppercase">Estimasi Waktu Tiba</span>
       </div>
       <span class="material-symbols-outlined ml-auto text-secondary">timer</span>
     </div>

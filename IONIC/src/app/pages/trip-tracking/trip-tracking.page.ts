@@ -40,6 +40,11 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.initMap();
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 500);
   }
 
   ngOnDestroy() {
@@ -89,7 +94,16 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
       'karawang': [-6.3073, 107.2913],
       'sumedang': [-6.8524, 107.9234],
       'subang': [-6.5715, 107.7587],
-      'purwakarta': [-6.5571, 107.4431]
+      'purwakarta': [-6.5571, 107.4431],
+      'cikampek': [-6.4025, 107.4589],
+      'malang': [-7.9839, 112.6214],
+      'surabaya': [-7.2504, 112.7688],
+      'semarang': [-6.9667, 110.4167],
+      'cirebon': [-6.7320, 108.5523],
+      'bogor': [-6.5971, 106.7932],
+      'depok': [-6.4025, 106.8227],
+      'tangerang': [-6.1702, 106.6403],
+      'bekasi': [-6.2383, 106.9756]
     };
 
     const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
@@ -117,16 +131,22 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     });
     L.marker(destCoords, { icon: destIcon }).addTo(this.map);
 
-    // Draw Polyline (Route path)
-    L.polyline([originCoords, destCoords], {
-      color: '#536349',
-      weight: 4,
-      opacity: 0.7,
-      dashArray: '5, 10'
-    }).addTo(this.map);
+    const lng1 = originCoords[1];
+    const lat1 = originCoords[0];
+    const lng2 = destCoords[1];
+    const lat2 = destCoords[0];
 
-    // Fit map bounds to show both
-    this.map.fitBounds([originCoords, destCoords], { padding: [50, 50] });
+    fetch(`https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.routes && data.routes.length > 0) {
+          const coords = data.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]);
+          L.polyline(coords, {
+            color: '#536349', weight: 4, opacity: 0.7, dashArray: '5, 10'
+          }).addTo(this.map);
+          this.map.fitBounds(L.polyline(coords).getBounds(), { padding: [50, 50] });
+        }
+      });
   }
 
   startPolling() {
@@ -222,27 +242,85 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     return labels[status] || status;
   }
 
-  calculateETA(): number {
-    if (!this.trip?.schedule?.departure_time) return 0;
+  calculateETA(): number | null {
+    if (!this.trip?.schedule?.departure_time) return null;
 
-    const departure = new Date(this.trip.schedule.departure_time).getTime();
     const now = new Date().getTime();
-    const duration = 120; // Assume 2 hours for Jakarta-Bandung
+    
+    if (this.location && this.location.latitude && this.trip?.schedule?.destination) {
+       const destCoords = this.getDestinationCoords(this.trip.schedule.destination);
+       if (destCoords) {
+         const dist = this.getDistanceFromLatLonInKm(this.location.latitude, this.location.longitude, destCoords[0], destCoords[1]);
+         // Asumsi kecepatan rata-rata bus 40km/h (0.66 km/menit)
+         const remainingMinutes = Math.ceil(dist / 0.66);
+         return remainingMinutes;
+       }
+    }
+
+    if (this.trip.status === 'on-going') {
+      return null; // Menunggu perhitungan lokasi...
+    }
+
+    // Fallback statis jika lokasi belum ada
+    const departure = new Date(this.trip.schedule.departure_time).getTime();
+    const duration = 120; // Assume 2 hours default
     const estimatedArrival = departure + (duration * 60 * 1000);
     const remaining = Math.max(0, estimatedArrival - now);
 
-    return Math.ceil(remaining / (60 * 1000)); // Convert to minutes
+    return Math.ceil(remaining / (60 * 1000));
   }
 
-  formatETATime(minutes: number): string {
+  getDestinationCoords(destName: string): [number, number] | null {
+    const name = destName.toLowerCase().trim();
+    const map: { [key: string]: [number, number] } = {
+      'jakarta': [-6.3090, 106.8824],
+      'terminal kampung rambutan': [-6.3090, 106.8824],
+      'bandung': [-6.9452, 107.5937],
+      'terminal leuwi panjang': [-6.9452, 107.5937],
+      'karawang': [-6.3073, 107.2913],
+      'sumedang': [-6.8524, 107.9234],
+      'subang': [-6.5715, 107.7587],
+      'purwakarta': [-6.5571, 107.4431],
+      'cikampek': [-6.4025, 107.4589],
+      'malang': [-7.9839, 112.6214],
+      'surabaya': [-7.2504, 112.7688],
+      'semarang': [-6.9667, 110.4167],
+      'cirebon': [-6.7320, 108.5523],
+      'bogor': [-6.5971, 106.7932],
+      'depok': [-6.4025, 106.8227],
+      'tangerang': [-6.1702, 106.6403],
+      'bekasi': [-6.2383, 106.9756]
+    };
+    return map[name] || null;
+  }
+
+  getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = this.deg2rad(lat2-lat1);  
+    const dLon = this.deg2rad(lon2-lon1); 
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const d = R * c; 
+    return d;
+  }
+
+  deg2rad(deg: number) {
+    return deg * (Math.PI/180);
+  }
+
+  formatETATime(minutes: number | null): string {
+    if (minutes === null) return 'Menghitung...';
     if (minutes <= 0) return 'Tiba sekarang';
-    if (minutes < 60) return `${minutes} menit lagi`;
+    if (minutes < 60) return `${minutes} Menit`;
     
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (mins === 0) {
-      return `${hours} jam lagi`;
+      return `${hours} Jam`;
     }
-    return `${hours}j ${mins}m lagi`;
+    return `${hours} Jam, ${mins} Menit`;
   }
 }

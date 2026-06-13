@@ -9,13 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class TripController extends Controller
 {
-    private array $driverStatuses = ['scheduled', 'boarding', 'on-going', 'arrived', 'delayed', 'completed'];
-    private array $persistedStatuses = ['scheduled', 'on-going', 'completed'];
-    private array $statusMap = [
-        'boarding' => 'on-going',
-        'arrived' => 'on-going',
-        'delayed' => 'on-going',
-    ];
+    private array $driverStatuses = ['scheduled', 'boarding', 'on-going', 'arrived', 'delayed', 'completed', 'cancelled_empty'];
+    private array $persistedStatuses = ['scheduled', 'boarding', 'on-going', 'arrived', 'delayed', 'completed', 'cancelled_empty'];
 
     public function index(Request $request)
     {
@@ -23,7 +18,9 @@ class TripController extends Controller
         if ($user->role === 'driver') {
             return response()->json(Trip::whereHas('schedule', function ($query) use ($user) {
                 $query->where('driver_id', $user->id);
-            })->with(['schedule.vehicle', 'schedule.driver'])->get());
+            })->with(['schedule.vehicle', 'schedule.driver', 'schedule.bookings' => function($q) {
+                $q->whereIn('status', ['booked', 'completed', 'paid']);
+            }])->get());
         }
         return response()->json(Trip::with(['schedule.vehicle', 'schedule.driver'])->get());
     }
@@ -38,6 +35,14 @@ class TripController extends Controller
         // Allow starting if trip is scheduled or on-going (in case status was already updated)
         if (!in_array($trip->status, ['scheduled', 'on-going'])) {
             return response()->json(['message' => 'Trip already started or completed'], 422);
+        }
+
+        $passengerCount = $trip->schedule->bookings()->whereIn('status', ['booked', 'completed', 'paid'])->count();
+        if ($passengerCount === 0) {
+            $trip->update([
+                'status' => 'cancelled_empty',
+            ]);
+            return response()->json(['message' => 'Jadwal ditolak karena tidak ada penumpang'], 422);
         }
 
         $trip->update([
@@ -58,8 +63,8 @@ class TripController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        if ($trip->status !== 'on-going') {
-            return response()->json(['message' => 'Trip not in progress'], 422);
+        if (!in_array($trip->status, ['on-going', 'arrived', 'delayed', 'boarding'])) {
+            return response()->json(['message' => 'Trip is not in an active state to be completed'], 422);
         }
 
         return DB::transaction(function () use ($trip) {
@@ -107,13 +112,11 @@ class TripController extends Controller
             return response()->json(['message' => 'Trip already completed'], 422);
         }
 
-        $persistedStatus = $this->statusMap[$status] ?? $status;
-
-        if (!in_array($persistedStatus, $this->persistedStatuses, true)) {
+        if (!in_array($status, $this->persistedStatuses, true)) {
             return response()->json(['message' => 'Unsupported status transition'], 422);
         }
 
-        $trip->update(['status' => $persistedStatus]);
+        $trip->update(['status' => $status]);
 
         event(new \App\Events\TripStarted($trip->load(['schedule.vehicle', 'schedule.driver'])));
 

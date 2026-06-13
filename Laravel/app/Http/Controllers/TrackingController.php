@@ -15,8 +15,8 @@ class TrackingController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        if ($trip->status !== 'on-going') {
-            return response()->json(['message' => 'Trip not in progress'], 422);
+        if ($trip->status === 'scheduled' || $trip->status === 'completed') {
+            return response()->json(['message' => 'Trip not active'], 422);
         }
 
         $request->validate([

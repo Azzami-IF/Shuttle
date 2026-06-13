@@ -27,29 +27,33 @@
   </div>
 
   <!-- Active Trip Hero Card -->
-  <section class="hero-trip-card" *ngIf="activeTrip" style="border: 2px solid var(--ion-color-success, #2dd36f); margin-bottom: 16px;">
+  <section class="hero-trip-card" *ngIf="activeTrip" style="border: 2px solid #2d5a27; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(45,90,39,0.15);">
     <div class="image-box">
       <div class="trip-art" aria-hidden="true"></div>
-      <div class="overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(45, 211, 111, 0.2) 100%);"></div>
+      <div class="overlay" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(45, 90, 39, 0.4) 100%);"></div>
       <div class="content">
-        <span class="badge" style="background: var(--ion-color-success, #2dd36f); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SEDANG BERJALAN</span>
+        <span class="badge" style="background: #2d5a27; color: white; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px;">SEDANG BERJALAN</span>
         <h3>{{ activeTrip.schedule?.origin }} → {{ activeTrip.schedule?.destination }}</h3>
       </div>
     </div>
     <div class="card-footer">
       <div class="info-grid">
         <div class="item">
-          <span class="label">Waktu</span>
-          <span class="val">{{ activeTrip.schedule?.departure_time | date:'HH:mm' }}</span>
+          <span class="label">Jadwal</span>
+          <span class="val">{{ activeTrip.schedule?.departure_time | date:'dd MMM, HH:mm' }}</span>
+        </div>
+        <div class="item">
+          <span class="label">Penumpang</span>
+          <span class="val">{{ activeTrip.schedule?.bookings?.length || 0 }} Org</span>
         </div>
         <div class="item">
           <span class="label">Unit</span>
           <span class="val">{{ activeTrip.schedule?.vehicle?.license_plate }}</span>
         </div>
       </div>
-      <button class="start-btn" style="background: var(--ion-color-success, #2dd36f);" [routerLink]="['/driver-tracking', { id: activeTrip.id }]">
-        <span class="material-symbols-outlined">near_me</span>
-        Lacak
+      <button class="start-btn" style="background: linear-gradient(135deg, #18281e 0%, #2d5a27 100%); width: 100%; justify-content: center; margin-top: 12px;" [routerLink]="['/driver-tracking', { id: activeTrip.id }]">
+        <span class="material-symbols-outlined">explore</span>
+        Buka Live Map
       </button>
     </div>
   </section>
@@ -67,17 +71,21 @@
     <div class="card-footer">
       <div class="info-grid">
         <div class="item">
-          <span class="label">Waktu</span>
-          <span class="val">{{ nextTrip.schedule?.departure_time | date:'HH:mm' }}</span>
+          <span class="label">Jadwal</span>
+          <span class="val">{{ nextTrip.schedule?.departure_time | date:'dd MMM, HH:mm' }}</span>
+        </div>
+        <div class="item">
+          <span class="label">Penumpang</span>
+          <span class="val">{{ nextTrip.schedule?.bookings?.length || 0 }} Org</span>
         </div>
         <div class="item">
           <span class="label">Unit</span>
           <span class="val">{{ nextTrip.schedule?.vehicle?.license_plate }}</span>
         </div>
       </div>
-      <button class="start-btn" (click)="startTrip(nextTrip)">
+      <button class="start-btn" style="width: 100%; justify-content: center; margin-top: 12px;" (click)="startTrip(nextTrip)" [disabled]="isStarting">
         <span class="material-symbols-outlined">play_arrow</span>
-        Mulai
+        Mulai Perjalanan
       </button>
     </div>
   </section>
@@ -103,9 +111,10 @@
   <!-- Later Today List -->
   <section class="later-today" *ngIf="filteredLaterTrips.length > 0">
     <h4>Nanti Hari Ini</h4>
-    <div class="trip-item" *ngFor="let trip of filteredLaterTrips">
+    <div class="trip-item" *ngFor="let trip of filteredLaterTrips" [ngClass]="{'is-empty-cancelled': trip.status === 'cancelled_empty'}">
       <div class="item-header">
-        <div class="status">SCHEDULED</div>
+        <div class="status" *ngIf="trip.status === 'scheduled'">SCHEDULED</div>
+        <div class="status cancelled" *ngIf="trip.status === 'cancelled_empty'">BATAL (KOSONG)</div>
         <div class="time">{{ trip.schedule?.departure_time | date:'HH:mm' }}</div>
       </div>
       <div class="route">
@@ -116,6 +125,10 @@
         <div class="point end">
           <span class="material-symbols-outlined text-[14px]">location_on</span>
           {{ trip.schedule?.destination }}
+        </div>
+        <div class="point mt-1 text-gray-500 font-medium">
+          <span class="material-symbols-outlined text-[14px]">group</span>
+          {{ trip.schedule?.bookings?.length || 0 }} Penumpang Booking
         </div>
       </div>
       <button class="text-secondary font-bold text-sm mt-2 text-right" [routerLink]="['/driver-tracking', { id: trip.id }]">Details</button>

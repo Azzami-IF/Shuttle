@@ -129,6 +129,17 @@
       align-items: center;
       gap: 8px;
       border: none;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+      
+      &:active {
+        transform: scale(0.96);
+        box-shadow: 0 4px 12px rgba(24, 40, 30, 0.2);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        transform: none;
+      }
     }
   }
 }
@@ -205,11 +216,18 @@
 
       .status {
         background: var(--surface-container);
-        padding: 2px 8px;
-        border-radius: 4px;
+        padding: 4px 10px;
+        border-radius: 6px;
         font-size: 10px;
-        font-weight: 700;
+        font-weight: 800;
+        letter-spacing: 0.5px;
         color: var(--outline);
+        
+        &.cancelled {
+          background: #fef2f2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
+        }
       }
 
       .time { font-size: 14px; font-weight: 700; }
@@ -228,6 +246,14 @@
 
         &.end { color: var(--ion-color-secondary); }
       }
+    }
+    
+    &.is-empty-cancelled {
+      opacity: 0.5;
+      filter: grayscale(100%);
+      pointer-events: none;
+      background: rgba(245, 245, 245, 0.9);
+      border-color: #e5e7eb;
     }
   }
 }
