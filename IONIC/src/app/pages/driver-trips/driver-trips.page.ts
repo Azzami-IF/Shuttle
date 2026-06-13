@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   standalone: false,
@@ -18,11 +19,14 @@ export class DriverTripsPage {
   activeTrip: any = null;
   today = new Date();
   searchTerm: string = '';
+  isStarting = false;
 
   constructor(
     private api: ApiService,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
   ) {}
 
   ionViewWillEnter() {
@@ -34,13 +38,13 @@ export class DriverTripsPage {
       this.trips = res;
       this.activeTrip = this.trips.find(t => t.status === 'on-going');
 
-      const scheduledTrips = this.trips
-        .filter(t => t.status === 'scheduled')
+      const upcomingTrips = this.trips
+        .filter(t => t.status === 'scheduled' || t.status === 'cancelled_empty')
         .sort((a, b) => new Date(a.schedule.departure_time).getTime() - new Date(b.schedule.departure_time).getTime());
 
-      if (scheduledTrips.length > 0) {
-        this.nextTrip = scheduledTrips[0];
-        this.laterTrips = scheduledTrips.slice(1);
+      if (upcomingTrips.length > 0) {
+        this.nextTrip = upcomingTrips.find(t => t.status === 'scheduled') || null;
+        this.laterTrips = upcomingTrips.filter(t => t !== this.nextTrip);
         this.applySearch();
       } else {
         this.nextTrip = null;
@@ -75,8 +79,32 @@ export class DriverTripsPage {
   }
 
   startTrip(trip: any) {
-    this.api.post(`trips/${trip.id}/start`, {}).subscribe(() => {
-      this.router.navigate(['/driver-tracking', { id: trip.id }]);
+    if (this.isStarting) return;
+    this.isStarting = true;
+    this.api.post(`trips/${trip.id}/start`, {}).subscribe({
+      next: () => {
+        this.isStarting = false;
+        this.router.navigate(['/driver-tracking', { id: trip.id }]);
+      },
+      error: async (err) => {
+        this.isStarting = false;
+        if (err.status === 422 && err.error?.message?.includes('tidak ada penumpang')) {
+          this.loadTrips(); // Refresh trips to mark it as empty
+          const alert = await this.alertCtrl.create({
+            header: 'Jadwal Kosong',
+            message: 'Jadwal ini ditolak dan otomatis dibatalkan karena tidak ada penumpang yang melakukan booking.',
+            buttons: ['OK']
+          });
+          await alert.present();
+        } else {
+          const toast = await this.toastCtrl.create({
+            message: 'Gagal memulai perjalanan',
+            duration: 2000,
+            color: 'danger'
+          });
+          toast.present();
+        }
+      }
     });
   }
 

@@ -9,7 +9,7 @@
 .hero-section {
   position: relative;
   width: 100%;
-  --hero-height: 320px;
+  --hero-height: 380px;
   height: var(--hero-height);
   overflow: hidden;
   background: var(--primary-container);
@@ -81,8 +81,8 @@
     align-items: center;
 
     .logo-img {
-      width: 96px;
-      height: 96px;
+      width: 140px;
+      height: auto;
       filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
     }
   }

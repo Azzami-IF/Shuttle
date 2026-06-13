@@ -72,10 +72,16 @@
             </div>
           </div>
 
-          <button class="view-ticket-btn" *ngIf="item.status === 'booked'" (click)="openTicket(item); $event.stopPropagation()">
-            <span class="material-symbols-outlined">confirmation_number</span>
-            {{ getTranslation('viewTicket') }}
-          </button>
+          <div class="action-buttons-col" *ngIf="item.status === 'booked' || item.status === 'completed'">
+            <button class="view-ticket-btn" (click)="openTicket(item); $event.stopPropagation()">
+              <span class="material-symbols-outlined">confirmation_number</span>
+              {{ getTranslation('viewTicket') }}
+            </button>
+            <button class="track-trip-btn" *ngIf="isTrackable(item)" (click)="viewTracking(item); $event.stopPropagation()">
+              <span class="material-symbols-outlined">explore</span>
+              Lacak Perjalanan
+            </button>
+          </div>
 
           <!-- UNPAID -->
           <div class="status-detail unpaid-detail" *ngIf="item.status === 'pending_payment'">

@@ -344,24 +344,40 @@
   p { color: #94a3b8; font-size: 15px; }
 }
 
-/* ── View Ticket Button ── */
-.view-ticket-btn {
+/* ── Action Buttons ── */
+.action-buttons-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.view-ticket-btn, .track-trip-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, var(--ion-color-primary, #2d5a27), #4a7c3f);
-  color: #fff;
   border: none;
   border-radius: 14px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 14px;
-  box-shadow: 0 4px 14px rgba(45, 90, 39, 0.3);
   .material-symbols-outlined { font-size: 20px; }
+}
+
+.view-ticket-btn {
+  background: linear-gradient(135deg, var(--ion-color-primary, #2d5a27), #4a7c3f);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(45, 90, 39, 0.3);
+}
+
+.track-trip-btn {
+  background: #f1f5f9;
+  color: var(--ion-color-primary, #2d5a27);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
 }
 
 /* ══ TICKET MODAL ══ */
