@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -10,6 +10,10 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+
   registerData = {
     name: '',
     email: '',
@@ -19,12 +23,9 @@ export class RegisterPage {
   };
   isLoading = false;
   showPassword = false;
+  agreedToTerms = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService
-  ) {}
+  constructor() {}
 
   onRegister(event: Event) {
     event.preventDefault();
@@ -46,5 +47,12 @@ export class RegisterPage {
 
   goBack() {
     window.history.back();
+  }
+
+  async showPrivacyPolicy() {
+    await this.ui.showAlert(
+      'Kebijakan Privasi',
+      'Kami menjaga data pribadi Anda dengan aman. Informasi Anda hanya digunakan untuk keperluan layanan transportasi KemanapunGo. Kami tidak akan membagikan data Anda kepada pihak ketiga tanpa izin Anda.'
+    );
   }
 }

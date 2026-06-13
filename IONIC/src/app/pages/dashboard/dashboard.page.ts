@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -11,7 +12,15 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage {
+  private auth = inject(AuthService);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   user$ = this.auth.user$;
+  lang$ = this.languageService.lang$;
+  currentUser: any = null;
   previewSchedules: any[] = [];
   featuredSchedule: any = null;
   schedulePreviewLoading = false;
@@ -21,23 +30,45 @@ export class DashboardPage {
     date: new Date().toISOString().substring(0, 10)
   };
 
-  constructor(
-    private auth: AuthService,
-    private api: ApiService,
-    private router: Router,
-    private ui: UiService
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
-    this.loadSchedulePreview();
+    this.currentUser = this.getResolvedUser();
+    if (this.currentUser?.role === 'customer') {
+      this.loadSchedulePreview();
+    }
+  }
+
+  getResolvedUser() {
+    if (this.currentUser) {
+      return this.currentUser;
+    }
+
+    const cached = localStorage.getItem('user');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
   }
 
   getGreeting(): string {
     const hour = new Date().getHours();
-    if (hour < 11) return 'Selamat Pagi';
-    if (hour < 15) return 'Selamat Siang';
-    if (hour < 18) return 'Selamat Sore';
-    return 'Selamat Malam';
+    const g = this.languageService.get('greeting');
+    const isId = this.languageService.getCurrentLang() === 'id';
+
+    if (hour < 11) return isId ? `${g} Pagi` : `${g} Morning`;
+    if (hour < 15) return isId ? `${g} Siang` : `${g} Afternoon`;
+    if (hour < 18) return isId ? `${g} Sore` : `${g} Afternoon`;
+    return isId ? `${g} Malam` : `${g} Evening`;
+  }
+
+  getTranslation(key: string): string {
+    return this.languageService.get(key);
   }
 
   showPending() {
@@ -110,17 +141,19 @@ export class DashboardPage {
   }
 
   async confirmLogout() {
-    const confirmed = await this.ui.showConfirm('Logout', 'Anda akan keluar dari akun ini. Lanjutkan?');
+    const confirmed = await this.ui.showConfirm('Logout', 'Anda akan keluar dari akun ini. Lanjutkan?', 'Logout');
     if (!confirmed) {
       return;
     }
 
     this.auth.logout().subscribe({
       next: () => {
+        this.currentUser = null;
         this.router.navigate(['/login'], { replaceUrl: true });
       },
       error: (err) => {
         console.error('Logout failed', err);
+        this.currentUser = null;
         this.router.navigate(['/login'], { replaceUrl: true });
       }
     });

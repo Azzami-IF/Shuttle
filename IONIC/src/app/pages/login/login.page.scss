@@ -9,7 +9,7 @@
 .hero-section {
   position: relative;
   width: 100%;
-  --hero-height: 320px;
+  --hero-height: 380px;
   height: var(--hero-height);
   overflow: hidden;
   background: var(--primary-container);
@@ -39,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 40px var(--container-margin) 0;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) var(--container-margin) 0;
 
     .back-btn {
       width: 40px;
@@ -81,8 +81,8 @@
     align-items: center;
 
     .logo-img {
-      width: 96px;
-      height: 96px;
+      width: 140px;
+      height: auto;
       filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
     }
   }
@@ -168,7 +168,7 @@
 
       .icon {
         position: absolute;
-        left: 12px;
+        left: 16px;
         width: 28px;
         height: 28px;
         display: inline-flex;
@@ -177,6 +177,7 @@
         color: var(--outline);
         transition: color 0.2s;
         font-size: 18px;
+        z-index: 2;
         pointer-events: none;
       }
 
@@ -186,7 +187,7 @@
         background: var(--surface-container-lowest);
         border: 1px solid var(--outline-variant);
         border-radius: 8px;
-        padding: 0 16px 0 52px;
+        padding: 0 16px 0 64px;
         font-size: 16px;
         color: var(--ion-text-color);
         outline: none;
@@ -329,6 +330,30 @@
       &:active {
         background: rgba(var(--ion-color-primary-rgb), 0.05);
         transform: scale(0.98);
+      }
+    }
+  }
+
+  .privacy-policy-container {
+    margin-top: 32px;
+    text-align: center;
+    padding: 0 10px;
+
+    p {
+      font-size: 11px;
+      color: var(--outline);
+      line-height: 1.5;
+      margin: 0;
+
+      a {
+        color: var(--ion-color-secondary);
+        font-weight: 700;
+        text-decoration: underline;
+        cursor: pointer;
+        
+        &:hover {
+          opacity: 0.8;
+        }
       }
     }
   }

@@ -10,6 +10,13 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
 Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 Route::post('/admin/login', [\App\Http\Controllers\AdminApiController::class, 'adminLogin']);
+Route::get('/payment-info', function() {
+    return response()->json([
+        'bank_name' => 'BNI',
+        'account_number' => '1962757389',
+        'account_holder' => 'NIRMALA FITRIA'
+    ]);
+});
 
 // Stripe Webhook (public, no authentication required)
 Route::post('/webhooks/stripe', [\App\Http\Controllers\PaymentController::class, 'webhook']);
@@ -36,8 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('throttle:60,1')->group(function () {
         Route::post('schedules', [\App\Http\Controllers\ScheduleController::class, 'store']);
         Route::post('bookings', [\App\Http\Controllers\BookingController::class, 'store']);
-        Route::post('bookings/{booking}/confirm-payment', [\App\Http\Controllers\BookingController::class, 'confirmPayment']);
         Route::post('bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel']);
+        Route::post('bookings/{booking}/upload-proof', [\App\Http\Controllers\BookingController::class, 'uploadProof']);
+        Route::post('bookings/{booking}/confirm-payment', [\App\Http\Controllers\BookingController::class, 'confirmPayment']);
         Route::post('trips/{trip}/start', [\App\Http\Controllers\TripController::class, 'start']);
         Route::post('trips/{trip}/status', [\App\Http\Controllers\TripController::class, 'updateStatus']);
         Route::post('trips/{trip}/complete', [\App\Http\Controllers\TripController::class, 'complete']);

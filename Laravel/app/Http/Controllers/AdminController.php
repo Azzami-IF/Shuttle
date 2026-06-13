@@ -253,16 +253,79 @@ class AdminController extends Controller
         }
 
         $bookings = $query->latest()->get();
+
+        // Group by payment_code to show as one transaction in admin
+        $bookings = $bookings->groupBy('payment_code')->map(function ($group) {
+            $first = $group->first();
+            
+            // Gabungkan label kursi
+            $seats = $group->map(function($b) {
+                $num = intval($b->seat?->seat_number);
+                if (!$num) return $b->seat?->seat_number;
+                $row = floor(($num - 1) / 4) + 1;
+                $col = ['A', 'B', 'C', 'D'][($num - 1) % 4];
+                return $num . " ($row$col)";
+            })->filter()->implode(', ');
+
+            // Ambil bukti bayar dari salah satu booking dalam grup (jika ada)
+            $proof = $group->first(function($b) { return !empty($b->payment_proof); })?->payment_proof;
+            $first->payment_proof = $proof;
+
+            // Hitung total harga (Harga dasar + Kode Unik sekali saja)
+            $totalBase = $group->sum(function($b) {
+                return $b->total_price ?? ($b->schedule->price ?? 0);
+            });
+            $first->aggregated_total = $totalBase + ($first->unique_code ?? 0);
+            $first->aggregated_seats = $seats;
+            $first->group_count = $group->count();
+            $first->related_ids = $group->pluck('id'); // Simpan buat konfirmasi massal
+
+            return $first;
+        })->values();
+
         return view('admin.bookings.index', compact('bookings'));
+    }
+
+    public function verifications()
+    {
+        // Ambil pemesanan yang statusnya pending_payment (menunggu verifikasi)
+        $bookings = Booking::with(['user', 'schedule'])
+            ->where('status', 'pending_payment')
+            ->latest()
+            ->get();
+
+        return view('admin.bookings.verifications', compact('bookings'));
     }
 
     public function confirmBookingPayment(Booking $booking)
     {
-        if ($booking->status === 'pending_payment') {
-            $booking->update(['status' => 'booked']);
-            return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi secara manual.');
+        // Approve ALL bookings with the same payment_code
+        $bookings = Booking::where('payment_code', $booking->payment_code)->get();
+        
+        foreach ($bookings as $b) {
+            if ($b->status === 'pending_payment' || $b->status === 'pending_verification') {
+                $b->update(['status' => 'booked']);
+            }
         }
-        return redirect()->back()->with('error', 'Status pemesanan tidak valid untuk dikonfirmasi.');
+
+        return redirect()->back()->with('success', count($bookings) . ' kursi berhasil dikonfirmasi sekaligus.');
+    }
+
+    public function rejectBookingPayment(Booking $booking)
+    {
+        // Reject ALL bookings with the same payment_code
+        $bookings = Booking::where('payment_code', $booking->payment_code)->get();
+
+        foreach ($bookings as $b) {
+            if ($b->status === 'pending_payment' || $b->status === 'pending_verification') {
+                $b->update(['status' => 'cancelled']);
+                if ($b->seat) {
+                    $b->seat->update(['status' => 'available']);
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', count($bookings) . ' kursi berhasil ditolak sekaligus.');
     }
 
     // Trip Monitoring

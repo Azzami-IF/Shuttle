@@ -497,44 +497,54 @@ class AdminApiController extends Controller
             'origin' => 'required|string',
             'destination' => 'required|string',
             'departure_time' => 'required|date',
+            'repeat_days' => 'nullable|integer|min:1|max:30',
         ]);
 
         try {
-            $schedule = DB::transaction(function () use ($request) {
-                $schedule = Schedule::create($request->only([
-                    'vehicle_id',
-                    'driver_id',
-                    'origin',
-                    'destination',
-                    'departure_time',
-                ]));
+            $repeatDays = $request->get('repeat_days', 1);
+            $schedules = [];
 
-                // Create seats based on vehicle capacity
-                $vehicle = Vehicle::find($request->vehicle_id);
-                for ($i = 1; $i <= $vehicle->capacity; $i++) {
-                    \App\Models\Seat::create([
-                        'schedule_id' => $schedule->id,
-                        'seat_number' => (string)$i,
-                        'status' => 'available',
+            DB::transaction(function () use ($request, $repeatDays, &$schedules) {
+                $baseTime = new \Illuminate\Support\Carbon($request->departure_time);
+
+                for ($i = 0; $i < $repeatDays; $i++) {
+                    $departureTime = $baseTime->copy()->addDays($i);
+
+                    $schedule = Schedule::create([
+                        'vehicle_id' => $request->vehicle_id,
+                        'driver_id' => $request->driver_id,
+                        'origin' => $request->origin,
+                        'destination' => $request->destination,
+                        'departure_time' => $departureTime,
                     ]);
+
+                    // Create seats based on vehicle capacity
+                    $vehicle = Vehicle::find($request->vehicle_id);
+                    for ($j = 1; $j <= $vehicle->capacity; $j++) {
+                        \App\Models\Seat::create([
+                            'schedule_id' => $schedule->id,
+                            'seat_number' => (string)$j,
+                            'status' => 'available',
+                        ]);
+                    }
+
+                    // Create trip record
+                    Trip::create([
+                        'schedule_id' => $schedule->id,
+                        'status' => 'scheduled',
+                    ]);
+
+                    $schedules[] = $schedule;
                 }
-
-                // Create trip record
-                Trip::create([
-                    'schedule_id' => $schedule->id,
-                    'status' => 'scheduled',
-                ]);
-
-                return $schedule;
             });
 
             return response()->json([
-                'message' => 'Schedule created successfully',
-                'schedule' => $schedule->load(['vehicle', 'driver']),
+                'message' => $repeatDays > 1 ? "Created $repeatDays schedules successfully" : 'Schedule created successfully',
+                'schedules' => $schedules,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to create schedule',
+                'message' => 'Failed to create schedule(s)',
                 'error' => $e->getMessage(),
             ], 500);
         }

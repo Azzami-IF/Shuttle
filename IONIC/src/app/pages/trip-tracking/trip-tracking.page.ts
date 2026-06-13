@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -13,6 +13,12 @@ declare var L: any;
   styleUrls: ['./trip-tracking.page.scss'],
 })
 export class TripTrackingPage implements OnDestroy, AfterViewInit {
+  private route = inject(ActivatedRoute);
+  private api = inject(ApiService);
+  private ui = inject(UiService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+
   tripId: any;
   trip: any;
   location: any;
@@ -24,13 +30,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   eta: number = 0;
   homeRoute = '/dashboard';
 
-  constructor(
-    private route: ActivatedRoute,
-    private api: ApiService,
-    private ui: UiService,
-    private router: Router,
-    private auth: AuthService
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();
@@ -85,11 +85,15 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
       'jakarta': [-6.3090, 106.8824],
       'terminal kampung rambutan': [-6.3090, 106.8824],
       'bandung': [-6.9452, 107.5937],
-      'terminal leuwi panjang': [-6.9452, 107.5937]
+      'terminal leuwi panjang': [-6.9452, 107.5937],
+      'karawang': [-6.3073, 107.2913],
+      'sumedang': [-6.8524, 107.9234],
+      'subang': [-6.5715, 107.7587],
+      'purwakarta': [-6.5571, 107.4431]
     };
 
-    const originCoords = coordinatesMap[originName] || [-6.9452, 107.5937]; // default Bandung
-    const destCoords = coordinatesMap[destName] || [-6.3090, 106.8824]; // default Jakarta
+    const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
+    const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
 
     // Add Origin Marker
     const originIcon = L.divIcon({

@@ -1,6 +1,6 @@
-# Ambatu Bus - Sistem Pemesanan & Pelacakan Shuttle
+# KemanapunGo - Sistem Pemesanan & Pelacakan Shuttle
 
-Ambatu Bus adalah solusi manajemen shuttle komprehensif yang menghadirkan aplikasi mobile *high-fidelity* untuk pelanggan dan pengemudi, dipadukan dengan dashboard administrasi berbasis web yang kokoh. Proyek ini dibangun dengan fokus pada "Serene Transit"—memberikan pengalaman perjalanan yang tenang, andal, dan modern.
+KemanapunGo adalah solusi manajemen shuttle komprehensif yang menghadirkan aplikasi mobile *high-fidelity* untuk pelanggan dan pengemudi, dipadukan dengan dashboard administrasi berbasis web yang kokoh. Proyek ini dibangun dengan fokus pada "Serene Transit"—memberikan pengalaman perjalanan yang tenang, andal, dan modern.
 
 ## 🌿 Filosofi Desain: Serene Transit
 Sistem ini menggunakan estetika yang terinspirasi dari alam (nada "Forest Green" dan "Sage") dengan UI **Glassmorphism** modern. Fokus utamanya adalah pada kejelasan, kemudahan penggunaan, dan stabilitas visual, memastikan pengguna dapat memesan dan melacak perjalanan mereka tanpa stres.

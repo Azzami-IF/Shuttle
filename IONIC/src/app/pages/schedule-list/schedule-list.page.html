@@ -3,15 +3,16 @@
     <ion-buttons slot="start">
       <ion-back-button [defaultHref]="homeRoute" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Pilih Jadwal</ion-title>
+    <ion-title *ngIf="lang$ | async">{{ getTranslation('selectSchedule') }}</ion-title>
     <!-- filter button removed (non-functional) -->
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="schedule-list-page">
-  <section class="search-summary p-4">
+  <div class="content-wrapper pb-32">
+    <section class="search-summary p-4">
     <div class="flex flex-col gap-3 bg-white/10 p-4 rounded-xl">
-      <ion-searchbar placeholder="Cari origin, tujuan, atau unit" [(ngModel)]="searchTerm" (ionInput)="applySearch()" showCancelButton="focus"></ion-searchbar>
+      <ion-searchbar [placeholder]="getTranslation('searchSchedule')" [(ngModel)]="searchTerm" (ionInput)="applySearch()" showCancelButton="focus" *ngIf="lang$ | async"></ion-searchbar>
       <div class="flex items-center gap-2">
         <ion-input placeholder="Asal" [(ngModel)]="filters.origin" (ionChange)="onFilterChange()" class="text-white border-b border-white/30"></ion-input>
         <span class="material-symbols-outlined text-[16px] text-white">arrow_forward</span>
@@ -21,14 +22,14 @@
     </div>
   </section>
 
-  <section class="filter-bar">
+  <section class="filter-bar" *ngIf="lang$ | async">
     <div class="filter-item" [class.active]="sortBy === 'time'" (click)="setSort('time')">
       <span class="material-symbols-outlined text-[16px]">sort</span>
-      Tercepat
+      {{ getTranslation('fastest') }}
     </div>
     <div class="filter-item" [class.active]="sortBy === 'price'" (click)="setSort('price')">
       <span class="material-symbols-outlined text-[16px]">payments</span>
-      Termurah
+      {{ getTranslation('cheapest') }}
     </div>
   </section>
 
@@ -40,9 +41,9 @@
           <div class="time">{{ schedule.departure_time | date:'HH:mm' }}</div>
           <div class="date">{{ schedule.departure_time | date:'d MMM yyyy' }}</div>
         </div>
-        <div class="price-info">
+        <div class="price-info" *ngIf="lang$ | async">
           <div class="price">Rp {{ (schedule.price || 85000) | number:'1.0-0' }}</div>
-          <div class="seats">{{ getAvailableSeats(schedule) }} Kursi Tersedia</div>
+          <div class="seats">{{ getAvailableSeats(schedule) }} {{ getTranslation('seatsAvailable') }}</div>
         </div>
       </div>
 
@@ -66,15 +67,16 @@
           <span class="material-symbols-outlined text-[16px]" aria-hidden="true">ac_unit</span>
           <span class="material-symbols-outlined text-[16px]" aria-hidden="true">electrical_services</span>
         </div>
-        <div class="action">
-          <ion-button size="small" color="secondary" (click)="$event.stopPropagation(); viewSchedule(schedule.id)" [disabled]="getAvailableSeats(schedule) === 0" aria-label="Pilih jadwal">Pilih</ion-button>
+        <div class="action" *ngIf="lang$ | async">
+          <ion-button size="small" color="secondary" (click)="$event.stopPropagation(); viewSchedule(schedule.id)" [disabled]="getAvailableSeats(schedule) === 0" aria-label="Pilih jadwal">{{ getTranslation('select') }}</ion-button>
         </div>
       </div>
     </div>
 
-    <div class="empty-state-container" *ngIf="schedules.length === 0">
+    <div class="empty-state-container" *ngIf="schedules.length === 0 && (lang$ | async)">
       <span class="material-symbols-outlined">search_off</span>
-      <p>Tidak ada jadwal ditemukan untuk rute ini.</p>
+      <p>{{ getTranslation('noSchedule') }}</p>
     </div>
   </main>
+</div>
 </ion-content>

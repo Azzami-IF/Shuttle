@@ -1,9 +1,9 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="pt-safe">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/driver-trips" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Driver Control Panel</ion-title>
+    <ion-title>{{ getTranslation('driverPanel') }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,23 +12,23 @@
     <!-- Status Toggle -->
     <section class="status-panel" *ngIf="trip">
       <div class="header">
-        <h2>Status Perjalanan</h2>
+        <h2>{{ getTranslation('tripStatus') }}</h2>
         <div class="status-badge" [class]="trip.status">{{ trip.status | uppercase }}</div>
       </div>
 
       <div class="status-controls">
-        <button class="status-btn" [class.active]="trip.status === 'boarding'" (click)="updateStatus('boarding')">Boarding</button>
-        <button class="status-btn" [class.active]="trip.status === 'on-going'" (click)="updateStatus('on-going')">On-going</button>
-        <button class="status-btn" [class.active]="trip.status === 'arrived'" (click)="updateStatus('arrived')">Arrived</button>
+        <button type="button" class="status-btn" [class.active]="trip.status === 'boarding'" (click)="updateStatus('boarding')">{{ getTranslation('boarding') }}</button>
+        <button type="button" class="status-btn" [class.active]="trip.status === 'on-going'" (click)="updateStatus('on-going')">{{ getTranslation('ongoing') }}</button>
+        <button type="button" class="status-btn" [class.active]="trip.status === 'arrived'" (click)="updateStatus('arrived')">{{ getTranslation('arrived') }}</button>
       </div>
 
       <div class="status-actions">
-        <button class="status-action warn" (click)="updateStatus('delayed')">Tunda</button>
-        <button class="status-action success" (click)="updateStatus('completed')">Selesaikan</button>
+        <button type="button" class="status-action warn" (click)="updateStatus('delayed')">{{ getTranslation('delay') }}</button>
+        <button type="button" class="status-action success" (click)="updateStatus('completed')">{{ getTranslation('finishTrip') }}</button>
       </div>
 
       <div class="info-box" *ngIf="trip.status === 'on-going' || trip.status === 'boarding'">
-        <p>Status saat ini: <strong>{{ trip.status | titlecase }}</strong>. Penumpang dapat melihat posisi bus Anda di peta publik.</p>
+        <p>{{ getTranslation('updateStatusSuccess') }}. {{ getTranslation('updateLocation') }}...</p>
       </div>
     </section>
 
@@ -41,19 +41,19 @@
 
       <div class="metrics-grid">
         <div class="metric">
-          <span class="label">Bahan Bakar</span>
+          <span class="label">{{ getTranslation('fuel') }}</span>
           <span class="val">{{ metrics.fuel }}%</span>
         </div>
         <div class="metric">
-          <span class="label">Suhu Mesin</span>
-          <span class="val">{{ metrics.temp }}</span>
+          <span class="label">{{ getTranslation('engineTemp') }}</span>
+          <span class="val">{{ getTranslation('normal') }}</span>
         </div>
       </div>
 
       <div class="actions">
-        <button class="update-btn" (click)="updateLocation()">
+        <button type="button" class="update-btn" (click)="updateLocation()">
           <span class="material-symbols-outlined">my_location</span>
-          Update Lokasi
+          {{ getTranslation('updateLocation') }}
         </button>
       </div>
     </section>
@@ -61,7 +61,7 @@
     <!-- Shift Timer -->
     <div class="shift-timer-card">
       <div class="content">
-        <span class="label">Shift Berakhir Dalam</span>
+        <span class="label">{{ getTranslation('shiftEndsIn') }}</span>
         <span class="time">{{ shiftTimer }}</span>
       </div>
       <span class="material-symbols-outlined bg-icon">timer</span>
@@ -70,8 +70,8 @@
     <!-- Passenger List -->
     <section class="passenger-section">
       <div class="section-header">
-        <h3>Daftar Penumpang</h3>
-        <span class="count">{{ passengers.length }} Penumpang</span>
+        <h3>{{ getTranslation('passengerList') }}</h3>
+        <span class="count">{{ passengers.length }} {{ getTranslation('passengers') }}</span>
       </div>
 
       <div class="passenger-grid">
@@ -79,15 +79,15 @@
           <div class="avatar">{{ p.user?.name?.substring(0, 2) | uppercase }}</div>
           <div class="details">
             <div class="name">{{ p.user?.name }}</div>
-            <div class="seat">Kursi: {{ p.seat?.seat_number }}</div>
+            <div class="seat">{{ getTranslation('seat') }}: {{ getSeatLabel(p.seat) }}</div>
           </div>
-          <span class="material-symbols-outlined text-green-500" *ngIf="p.status === 'completed'">check_circle</span>
-          <span class="material-symbols-outlined text-gray-300" *ngIf="p.status !== 'completed'">radio_button_unchecked</span>
+          <span class="material-symbols-outlined text-green-500" *ngIf="p.status === 'booked' || p.status === 'completed'">check_circle</span>
+          <span class="material-symbols-outlined text-gray-300" *ngIf="p.status !== 'booked' && p.status !== 'completed'">radio_button_unchecked</span>
         </div>
       </div>
 
       <div class="text-center py-8" *ngIf="passengers.length === 0">
-        <p class="text-gray-500">Belum ada penumpang terdaftar.</p>
+        <p class="text-gray-500">{{ getTranslation('noPassengers') }}</p>
       </div>
     </section>
   </main>

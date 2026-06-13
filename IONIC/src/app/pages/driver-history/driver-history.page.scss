@@ -2,6 +2,8 @@
   --background: var(--ion-background-color);
 }
 
+@import "../../components/shared/design-system.scss";
+
 .summary-section {
   padding: 24px var(--container-margin);
 
@@ -11,6 +13,11 @@
     color: var(--ion-color-primary);
     margin-bottom: 16px;
   }
+}
+
+/* Ensure shared bottom-nav styles apply on this page */
+.bottom-nav {
+  @extend .shared-bottom-nav;
 }
 
 .summary-grid {

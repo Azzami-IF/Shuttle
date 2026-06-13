@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { DriverVehiclePageRoutingModule } from './driver-vehicle-routing.module';
 import { DriverVehiclePage } from './driver-vehicle.page';
+import { SharedModule } from '../../components/shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DriverVehiclePageRoutingModule
+    DriverVehiclePageRoutingModule,
+    SharedModule
   ],
   declarations: [DriverVehiclePage]
 })

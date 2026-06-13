@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
 
@@ -9,8 +9,11 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./driver-vehicle.page.scss'],
 })
 export class DriverVehiclePage {
+  private api = inject(ApiService);
+  private ui = inject(UiService);
+
   vehicle: any = {
-    name: 'Ambatu Express 01',
+    name: 'Kemanapun Express 01',
     license_plate: 'B 1234 ABC',
     capacity: 12,
     fuel: 88,
@@ -18,7 +21,7 @@ export class DriverVehiclePage {
     last_service: '2023-10-15'
   };
 
-  constructor(private api: ApiService, private ui: UiService) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.api.get('vehicles').subscribe({

@@ -50,9 +50,18 @@ Route::prefix('admin')->group(function () {
     Route::put('/users/{user}', [\App\Http\Controllers\AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('/users/{user}', [\App\Http\Controllers\AdminController::class, 'deleteUser'])->name('admin.users.delete');
 
-    // Bookings Monitoring
+    // Bookings Monitoring & Verification
     Route::get('/bookings', [\App\Http\Controllers\AdminController::class, 'bookings'])->name('admin.bookings');
+    Route::get('/verifications', [\App\Http\Controllers\AdminController::class, 'verifications'])->name('admin.bookings.verifications');
     Route::post('/bookings/{booking}/confirm', [\App\Http\Controllers\AdminController::class, 'confirmBookingPayment'])->name('admin.bookings.confirm');
+    Route::post('/bookings/{booking}/reject', [\App\Http\Controllers\AdminController::class, 'rejectBookingPayment'])->name('admin.bookings.reject');
+
+    // Route Templates (Auto-Generation)
+    Route::get('/route-templates', [\App\Http\Controllers\RouteTemplateController::class, 'index'])->name('admin.route-templates.index');
+    Route::post('/route-templates', [\App\Http\Controllers\RouteTemplateController::class, 'store'])->name('admin.route-templates.store');
+    Route::post('/route-templates/{routeTemplate}/toggle', [\App\Http\Controllers\RouteTemplateController::class, 'update'])->name('admin.route-templates.toggle');
+    Route::delete('/route-templates/{routeTemplate}', [\App\Http\Controllers\RouteTemplateController::class, 'destroy'])->name('admin.route-templates.destroy');
+    Route::post('/route-templates/generate', [\App\Http\Controllers\RouteTemplateController::class, 'generate'])->name('admin.route-templates.generate');
 
     // Trips Monitoring
     Route::get('/trips', [\App\Http\Controllers\AdminController::class, 'trips'])->name('admin.trips');

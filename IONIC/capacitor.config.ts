@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'id.shuttle.ambatu',
-  appName: 'AmbatuBus',
+  appId: 'app.kemanapungo.id',
+  appName: 'KemanapunGo',
   webDir: 'www'
 };
 
