@@ -5,8 +5,7 @@ import { RouterModule } from '@angular/router';
 import { BottomNavComponent } from './bottom-nav/bottom-nav.component';
 
 @NgModule({
-  declarations: [BottomNavComponent],
-  imports: [CommonModule, IonicModule, RouterModule],
+  imports: [CommonModule, IonicModule, RouterModule, BottomNavComponent],
   exports: [BottomNavComponent]
 })
 export class SharedModule {}
