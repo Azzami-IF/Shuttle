@@ -76,13 +76,6 @@ ion-modal .modal-wrapper .modal-content ion-content {
 	border-radius: 12px !important;
 }
 
-/* Inputs placed inside an `.input-wrapper` (with an icon) need extra left padding
-   to avoid placeholder overlapping the icon. Use !important to override older
-   global rules that set padding. */
-.input-wrapper .custom-input {
-  padding-left: 70px !important;
-}
-
 .btn-submit {
 	display: inline-block;
 	width: 100% !important;
