@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -8,13 +8,15 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./driver-history.page.scss'],
 })
 export class DriverHistoryPage {
+  private api = inject(ApiService);
+
   trips: any[] = [];
   summary = {
     totalTrips: 42,
     totalDistance: 1284
   };
 
-  constructor(private api: ApiService) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.loadHistory();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -10,6 +10,10 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+
   loginData = {
     email: '',
     password: ''
@@ -17,11 +21,7 @@ export class LoginPage {
   showPassword = false;
   isLoading = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService
-  ) {}
+  constructor() {}
 
   onLogin(event: Event) {
     event.preventDefault();

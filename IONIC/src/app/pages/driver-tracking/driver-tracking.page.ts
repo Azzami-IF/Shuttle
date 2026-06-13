@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
@@ -11,6 +11,12 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./driver-tracking.page.scss'],
 })
 export class DriverTrackingPage implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  langService = inject(LanguageService);
+
   tripId: any;
   trip: any;
   passengers: any[] = [];
@@ -24,13 +30,7 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
   shiftTimer: string = '03:24:15';
   passengerCount = 0;
 
-  constructor(
-    private route: ActivatedRoute,
-    private api: ApiService,
-    private router: Router,
-    private ui: UiService,
-    public langService: LanguageService
-  ) {}
+  constructor() {}
 
   getTranslation(key: string): string {
     return this.langService.get(key);

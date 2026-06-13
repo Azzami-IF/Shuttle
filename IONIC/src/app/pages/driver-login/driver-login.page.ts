@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -11,6 +11,11 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./driver-login.page.scss'],
 })
 export class DriverLoginPage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  langService = inject(LanguageService);
+
   loginData = {
     email: '',
     password: ''
@@ -18,12 +23,7 @@ export class DriverLoginPage {
   showPassword = false;
   isLoading = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService,
-    public langService: LanguageService
-  ) {}
+  constructor() {}
 
   getTranslation(key: string): string {
     return this.langService.get(key);

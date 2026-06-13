@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -40,6 +40,9 @@ interface SystemHealth {
   standalone: false
 })
 export class AdminDashboardPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+  private router = inject(Router);
+
   stats: DashboardStats | null = null;
   bookingData: BookingData[] = [];
   revenueData: RevenueData[] = [];
@@ -49,10 +52,7 @@ export class AdminDashboardPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private adminService: AdminService,
-    private router: Router
-  ) { }
+  constructor() { }
 
   ngOnInit() {
     this.loadDashboardData();

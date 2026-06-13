@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -34,6 +34,11 @@ interface PaginationData {
   standalone: false
 })
 export class AdminVehiclesPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private fb = inject(FormBuilder);
+
   vehicles: Vehicle[] = [];
   pagination: PaginationData = {
     current_page: 1,
@@ -51,12 +56,7 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private adminService: AdminService,
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private fb: FormBuilder
-  ) {
+  constructor() {
     this.initializeForm();
   }
 
@@ -147,7 +147,7 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
 
   private async showFormModal() {
     const modal = await this.modalCtrl.create({
-      component: VehicleFormModal,
+      component: VehicleFormModalComponent,
       componentProps: {
         form: this.vehicleForm,
         vehicle: this.editingVehicle
@@ -284,11 +284,13 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
   `,
   standalone: false
 })
-export class VehicleFormModal {
+export class VehicleFormModalComponent {
+  private modalCtrl = inject(ModalController);
+
   form!: FormGroup;
   vehicle: Vehicle | null = null;
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor() { }
 
   dismiss() {
     this.modalCtrl.dismiss(null, 'cancel');
