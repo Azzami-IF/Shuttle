@@ -9,8 +9,8 @@ import { AuthService } from '../../../services/auth.service';
   selector: 'app-bottom-nav',
   templateUrl: './bottom-nav.component.html',
   styleUrls: ['./bottom-nav.component.scss'],
-  // converted to a declared component (not standalone) so it can be
-  // included in SharedModule declarations
+  standalone: true,
+  imports: [CommonModule, RouterModule]
 })
 export class BottomNavComponent implements OnInit {
   private nav = inject(NavService);
