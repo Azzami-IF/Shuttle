@@ -1,13 +1,14 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="pt-safe">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/driver-dashboard" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Riwayat Perjalanan</ion-title>
+    <ion-title>Detail Status</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="driver-status-page">
+  <div class="content-wrapper pb-32">
   <!-- Weekly Summary (Bento Style) -->
   <section class="summary-section">
     <h2 class="section-title">Ringkasan Minggu Ini</h2>
@@ -69,23 +70,7 @@
       </div>
     </div>
   </section>
+  </div>
 </ion-content>
 
-<nav class="bottom-nav">
-  <button class="nav-item" routerLink="/driver-dashboard">
-    <span class="material-symbols-outlined">home</span>
-    <span>Home</span>
-  </button>
-  <button class="nav-item" routerLink="/driver-trips">
-    <span class="material-symbols-outlined">analytics</span>
-    <span>Monitoring</span>
-  </button>
-  <button class="nav-item active">
-    <span class="material-symbols-outlined">route</span>
-    <span>Status</span>
-  </button>
-  <button class="nav-item" routerLink="/profile">
-    <span class="material-symbols-outlined">person</span>
-    <span>Profile</span>
-  </button>
-</nav>
+<app-bottom-nav></app-bottom-nav>

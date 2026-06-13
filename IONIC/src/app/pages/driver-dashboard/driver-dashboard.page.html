@@ -1,18 +1,24 @@
-<ion-content class="driver-dashboard-page">
-  <div class="top-bar">
-    <div class="brand">
-      <span class="material-symbols-outlined">directions_bus</span>
-      <span>Ambatu Bus</span>
-    </div>
-    <div class="actions">
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" class="pt-safe">
+    <ion-title slot="start">
+      <div class="brand">
+        <span class="material-symbols-outlined">directions_bus</span>
+        <span>KemanapunGo</span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
       <button class="nav-btn" (click)="showPending()">
         <span class="material-symbols-outlined">notifications</span>
       </button>
       <button class="nav-btn" type="button" aria-label="Logout" (click)="confirmLogout()">
         <span class="material-symbols-outlined">logout</span>
       </button>
-    </div>
-  </div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="driver-dashboard-page">
+  <div class="content-wrapper pb-32">
 
   <main *ngIf="user$ | async as user">
     <!-- Hero Section -->
@@ -158,23 +164,7 @@
       </div>
     </section>
   </main>
+</div>
 </ion-content>
 
-<nav class="bottom-nav">
-  <button class="nav-item active">
-    <span class="material-symbols-outlined">home</span>
-    <span>Home</span>
-  </button>
-  <button class="nav-item" routerLink="/driver-trips">
-    <span class="material-symbols-outlined">analytics</span>
-    <span>Monitoring</span>
-  </button>
-  <button class="nav-item" routerLink="/driver-status">
-    <span class="material-symbols-outlined">route</span>
-    <span>Status</span>
-  </button>
-  <button class="nav-item" routerLink="/profile">
-    <span class="material-symbols-outlined">person</span>
-    <span>Profile</span>
-  </button>
-</nav>
+<app-bottom-nav></app-bottom-nav>

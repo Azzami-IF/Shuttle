@@ -8,54 +8,38 @@
   }
 }
 
-.top-bar {
-  background: linear-gradient(135deg, #18281e 0%, #2d3e33 100%);
-  color: white;
-  height: 64px;
+.brand {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--container-margin);
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 20px;
-    font-weight: 700;
-  }
+.nav-btn {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
 
-  .actions {
-    display: flex;
-    gap: 8px;
-
-    .nav-btn {
-      background: none;
-      border: none;
-      color: white;
-      padding: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: background 0.2s;
-
-      &:active {
-        background: rgba(255, 255, 255, 0.1);
-      }
-    }
+  &:active {
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
 .hero-section {
   position: relative;
   background: linear-gradient(180deg, #18281e 0%, #2d3e33 100%);
-  padding: 24px var(--container-margin) 80px;
+  padding: 16px var(--container-margin) 56px;
   color: white;
   overflow: hidden;
+  margin-top: -1px; /* prevent gaps */
 
   .decorative-blob {
     position: absolute;
@@ -70,30 +54,33 @@
 
   .greeting-content {
     position: relative;
-    z-index: 2;
+    z-index: 50;
+    margin-bottom: 12px;
 
     .greeting {
-      opacity: 0.8;
-      font-size: 14px;
+      opacity: 0.85;
+      font-size: 13px;
+      margin-bottom: 4px;
     }
 
     .user-name {
-      font-size: 24px;
-      font-weight: 600;
-      margin: 4px 0 0;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.02em;
     }
   }
 }
 
 .metrics-card {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
-  padding: 16px;
-  margin: -60px var(--container-margin) 0;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 12px;
+  margin: -8px var(--container-margin) 0;
   position: relative;
-  z-index: 20;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+  box-shadow: 0 6px 10px -4px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -120,7 +107,7 @@
       }
       .status-val {
         margin-top: 4px;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
         color: var(--ion-text-color);
 
@@ -148,18 +135,18 @@
   }
 
   .metric-bottom {
-    border-top: 1px solid var(--outline-variant);
-    padding-top: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  border-top: 1px solid var(--outline-variant);
+  padding-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
     .stat {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: var(--ion-text-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ion-text-color);
 
       .count { font-weight: 700; }
       .label { color: var(--outline); }
@@ -168,13 +155,13 @@
     .badge.premium {
       background: var(--secondary-fixed);
       color: var(--on-secondary-fixed);
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 9999px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
   }
 }

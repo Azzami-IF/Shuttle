@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -10,8 +11,15 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./schedule-list.page.scss'],
 })
 export class ScheduleListPage {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private auth = inject(AuthService);
+  private languageService = inject(LanguageService);
+
   schedules: any[] = [];
   displaySchedules: any[] = [];
+  lang$ = this.languageService.lang$;
   loading: boolean = false;
   filters = {
     origin: '',
@@ -22,12 +30,7 @@ export class ScheduleListPage {
   searchTerm: string = '';
   homeRoute = '/dashboard';
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private auth: AuthService
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();
@@ -99,5 +102,9 @@ export class ScheduleListPage {
 
   viewSchedule(id: number) {
     this.router.navigate(['/seat-selection', { id }]);
+  }
+
+  getTranslation(key: string) {
+    return this.languageService.get(key);
   }
 }

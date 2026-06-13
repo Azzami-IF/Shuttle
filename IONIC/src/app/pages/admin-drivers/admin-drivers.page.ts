@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { AdminService } from '../../services/admin.service';
@@ -34,6 +34,9 @@ interface PaginationData {
   standalone: false
 })
 export class AdminDriversPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+  private alertCtrl = inject(AlertController);
+
   drivers: Driver[] = [];
   pagination: PaginationData = {
     current_page: 1,
@@ -49,10 +52,7 @@ export class AdminDriversPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private adminService: AdminService,
-    private alertCtrl: AlertController
-  ) { }
+  constructor() { }
 
   ngOnInit() {
     this.loadDrivers();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -10,6 +10,10 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./driver-trips.page.scss'],
 })
 export class DriverTripsPage {
+  private api = inject(ApiService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
   user$ = this.auth.user$;
   trips: any[] = [];
   nextTrip: any = null;
@@ -19,11 +23,7 @@ export class DriverTripsPage {
   today = new Date();
   searchTerm: string = '';
 
-  constructor(
-    private api: ApiService,
-    private auth: AuthService,
-    private router: Router
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.loadTrips();

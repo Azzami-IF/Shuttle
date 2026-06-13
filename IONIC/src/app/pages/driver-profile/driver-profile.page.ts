@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -10,13 +10,11 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./driver-profile.page.scss'],
 })
 export class DriverProfilePage {
-  user$ = this.auth.user$;
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService
-  ) {}
+  user$ = this.auth.user$;
 
   showPending() {
     this.ui.showFeaturePending();

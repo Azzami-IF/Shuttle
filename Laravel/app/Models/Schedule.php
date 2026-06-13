@@ -14,7 +14,8 @@ class Schedule extends Model
         'driver_id',
         'origin',
         'destination',
-        'departure_time'
+        'departure_time',
+        'price'
     ];
 
     public function vehicle(): BelongsTo

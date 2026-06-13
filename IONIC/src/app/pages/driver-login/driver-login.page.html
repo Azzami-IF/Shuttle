@@ -2,71 +2,79 @@
   <header class="top-bar">
     <div class="brand">
       <span class="material-symbols-outlined text-3xl">directions_bus</span>
-      <span class="title">Ambatu Bus</span>
+      <span class="title">KemanapunGo</span>
     </div>
     <div class="version">Fleet Operations v1.0.4</div>
   </header>
 
   <main class="main-container">
+    <!-- Kolom Kiri: Visual -->
     <div class="brand-visual">
       <div class="image-wrapper">
         <div class="hero-art" aria-hidden="true"></div>
-        <div class="overlay"></div>
-        <div class="text-overlay">
-          <h2>Professional Excellence</h2>
-          <p>Driving the future of sustainable and stress-free urban mobility, one journey at a time.</p>
+        <div class="login-visual shadow-inner">
+          <div class="visual-content">
+            <h1 class="visual-title">{{ getTranslation('excellence') }}</h1>
+            <p class="visual-subtitle">{{ getTranslation('excellenceSubtitle') }}</p>
+          </div>
+          <div class="blobs">
+            <div class="blob"></div>
+            <div class="blob"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="form-side">
-      <div class="glass-card">
-        <div class="form-header">
-          <h1>Driver Login</h1>
-          <p>Enter your credentials to access the operational dashboard and routes.</p>
+    <!-- Kolom Kanan: Form -->
+    <div class="login-form-container">
+      <div class="login-card-inner">
+        <div class="login-header">
+          <h2 class="title">{{ getTranslation('driverLogin') }}</h2>
+          <p class="subtitle">{{ getTranslation('driverLoginSubtitle') }}</p>
         </div>
 
-        <form (submit)="onLogin($event)">
+        <form (submit)="onLogin($event)" class="form-stack">
           <div class="input-group">
-            <label for="driver_id">Driver ID or Email</label>
+            <label class="input-label">{{ getTranslation('driverIdOrEmail') }}</label>
             <div class="input-wrapper">
-              <span class="material-symbols-outlined icon">badge</span>
-              <input type="text" id="driver_id" name="email" [(ngModel)]="loginData.email" placeholder="e.g. DRV-8829 or email@ambatu.com" autocomplete="username" inputmode="email" enterkeyhint="next" required>
+              <span class="material-symbols-outlined input-icon">contact_mail</span>
+              <input type="text" [(ngModel)]="loginData.email" name="email" placeholder="e.g. DRV-8829 or email@kemanapungo.com" required>
             </div>
           </div>
 
           <div class="input-group">
             <div class="label-row">
-              <label for="password">Password</label>
-              <a [routerLink]="['/forgot-password']" [queryParams]="{ source: 'driver' }" class="forgot">Forgot?</a>
+              <label class="input-label">{{ getTranslation('password') }}</label>
+              <a class="forgot-link">{{ getTranslation('forgot') }}</a>
             </div>
             <div class="input-wrapper">
-              <span class="material-symbols-outlined icon">lock</span>
-              <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="loginData.password" placeholder="••••••••" autocomplete="current-password" required>
-              <button type="button" class="toggle-password" (click)="showPassword = !showPassword" aria-label="Tampilkan atau sembunyikan kata sandi">
+              <span class="material-symbols-outlined input-icon">lock</span>
+              <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" name="password" placeholder="••••••••" required>
+              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
                 <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
           </div>
 
-          <div class="remember-me">
-            <input type="checkbox" id="remember">
-            <label for="remember">Keep me logged in on this device</label>
+          <div class="options-row">
+            <label class="checkbox-container">
+              <input type="checkbox">
+              <span class="checkmark"></span>
+              <span class="checkbox-label">{{ getTranslation('keepLoggedIn') }}</span>
+            </label>
           </div>
 
-            <button type="submit" class="primary-btn" [disabled]="isLoading">
-            <span *ngIf="!isLoading">Login as Driver</span>
+          <button type="submit" class="login-btn-primary" [disabled]="isLoading">
+            <span *ngIf="!isLoading">{{ getTranslation('loginBtn') }}</span>
             <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
-            <span class="material-symbols-outlined" *ngIf="!isLoading">arrow_forward</span>
+            <span class="material-symbols-outlined ml-2" *ngIf="!isLoading">arrow_forward</span>
           </button>
         </form>
 
-        <div class="back-link">
-          <button type="button" (click)="goToPassengerLogin()">
-            <span class="material-symbols-outlined">arrow_back</span>
-            Back to Passenger Login
-          </button>
-        </div>
+        <button class="back-btn" (click)="goToPassengerLogin()">
+          <span class="material-symbols-outlined">west</span>
+          {{ getTranslation('backToPassenger') }}
+        </button>
       </div>
     </div>
   </main>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
@@ -11,17 +11,17 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./driver-dashboard.page.scss'],
 })
 export class DriverDashboardPage {
+  private auth = inject(AuthService);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+
   user$ = this.auth.user$;
   upcomingTrips: any[] = [];
   featuredTrip: any = null;
   tripSummaryLoading = false;
 
-  constructor(
-    private auth: AuthService,
-    private api: ApiService,
-    private router: Router,
-    private ui: UiService
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.loadTripSummary();

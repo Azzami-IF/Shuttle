@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -14,7 +14,7 @@ export class DriverStatusPage {
     totalDistance: 1284
   };
 
-  constructor(private api: ApiService) {}
+  private api = inject(ApiService);
 
   ionViewWillEnter() {
     this.loadHistory();

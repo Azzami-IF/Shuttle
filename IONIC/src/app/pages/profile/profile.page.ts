@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   standalone: false,
@@ -10,23 +11,49 @@ import { UiService } from '../../services/ui.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   user$ = this.auth.user$;
+  lang$ = this.languageService.lang$;
   homeRoute = '/dashboard';
+  currentLanguageLabel = 'Indonesia';
   isEditingProfile = false;
   isChangingPassword = false;
   profileData = { name: '', phone: '' };
   passwordData = { old_password: '', new_password: '' };
   isLoading = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService
-  ) {}
+  constructor() {
+    const savedLanguage = this.languageService.getCurrentLang();
+    this.currentLanguageLabel = savedLanguage === 'en' ? 'English' : 'Indonesia';
+  }
 
   ionViewWillEnter() {
     console.log('Profile will enter');
     this.homeRoute = this.auth.getRole() === 'driver' ? '/driver-dashboard' : '/dashboard';
+  }
+
+  async openLanguageSelection() {
+    const options = [
+      { label: 'Indonesia', value: 'id' },
+      { label: 'English', value: 'en' }
+    ];
+    
+    const currentVal = this.languageService.getCurrentLang();
+    const selected = await this.ui.showRadioSelection('Pilih Bahasa', options, currentVal);
+    
+    if (selected) {
+      this.languageService.setLanguage(selected);
+      this.currentLanguageLabel = selected === 'en' ? 'English' : 'Indonesia';
+      void this.ui.showToast(`Bahasa diganti ke ${this.currentLanguageLabel}`, 'success');
+    }
+  }
+
+  getTranslation(key: string): string {
+    return this.languageService.get(key);
   }
 
   showPending() {

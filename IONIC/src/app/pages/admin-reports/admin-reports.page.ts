@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -31,6 +31,8 @@ interface MonthlyReportData {
   standalone: false
 })
 export class AdminReportsPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+
   // Daily Report
   selectedDate = new Date().toISOString().split('T')[0];
   dailyReport: DailyReportData | null = null;
@@ -45,7 +47,7 @@ export class AdminReportsPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private adminService: AdminService) { }
+  constructor() { }
 
   ngOnInit() {
     this.loadDailyReport();
