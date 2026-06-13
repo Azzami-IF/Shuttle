@@ -76,6 +76,33 @@ ion-modal .modal-wrapper .modal-content ion-content {
 	border-radius: 12px !important;
 }
 
+/* Default helpers for inputs paired with icons.
+	 These provide consistent icon positioning and ensure the input placeholder
+	 has enough left padding so it doesn't overlap the icon. Component-level
+	 styles may override specific sizes, but this gives a sensible global default. */
+.input-wrapper {
+	position: relative;
+}
+
+.input-wrapper .icon {
+	position: absolute;
+	left: 12px;
+	width: 28px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--outline);
+	font-size: 18px;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.input-wrapper .custom-input {
+	/* match component defaults (52px) plus a small gap; use !important to
+		 ensure this applies when pages import different global rules */
+	padding-left: 56px !important;
+}
 .btn-submit {
 	display: inline-block;
 	width: 100% !important;
