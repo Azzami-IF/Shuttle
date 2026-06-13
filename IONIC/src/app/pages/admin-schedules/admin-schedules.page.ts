@@ -138,7 +138,7 @@ export class AdminSchedulesPage implements OnInit, OnDestroy {
 
   private async showFormModal() {
     const modal = await this.modalCtrl.create({
-      component: ScheduleFormModal,
+      component: ScheduleFormModalComponent,
       componentProps: {
         form: this.scheduleForm,
         schedule: this.editingSchedule
