@@ -6,6 +6,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/privacy-policy', 'privacy')->name('privacy');
+
 // Default password reset route name used by Laravel password broker.
 // Redirect users to Ionic reset page with token and email query params.
 Route::get('/password/reset/{token}', function (string $token) {

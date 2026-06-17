@@ -1,0 +1,84 @@
+<ion-content class="driver-login-page">
+  <header class="top-bar">
+    <div class="brand">
+      <span class="material-symbols-outlined text-3xl">directions_bus</span>
+      <span class="title">KemanapunGo</span>
+    </div>
+    <div class="version">Fleet Operations v1.0.4</div>
+  </header>
+
+  <main class="main-container">
+    <!-- Kolom Kiri: Visual -->
+    <div class="brand-visual">
+      <div class="image-wrapper">
+        <div class="hero-art" aria-hidden="true"></div>
+        <div class="login-visual shadow-inner">
+          <div class="visual-content">
+            <h1 class="visual-title">{{ getTranslation('excellence') }}</h1>
+            <p class="visual-subtitle">{{ getTranslation('excellenceSubtitle') }}</p>
+          </div>
+          <div class="blobs">
+            <div class="blob"></div>
+            <div class="blob"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom Kanan: Form -->
+    <div class="login-form-container">
+      <div class="login-card-inner">
+        <div class="login-header">
+          <h2 class="title">{{ getTranslation('driverLogin') }}</h2>
+          <p class="subtitle">{{ getTranslation('driverLoginSubtitle') }}</p>
+        </div>
+
+        <form (submit)="onLogin($event)" class="form-stack">
+          <div class="input-group">
+            <label class="input-label">{{ getTranslation('driverIdOrEmail') }}</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon">contact_mail</span>
+              <input type="text" [(ngModel)]="loginData.email" name="email" placeholder="e.g. DRV-8829 or email@kemanapungo.com" required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="label-row">
+              <label class="input-label">{{ getTranslation('password') }}</label>
+              <a class="forgot-link">{{ getTranslation('forgot') }}</a>
+            </div>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon">lock</span>
+              <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" name="password" placeholder="••••••••" required>
+              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="options-row">
+            <label class="checkbox-container">
+              <input type="checkbox">
+              <span class="checkmark"></span>
+              <span class="checkbox-label">{{ getTranslation('keepLoggedIn') }}</span>
+            </label>
+          </div>
+
+          <button type="submit" class="login-btn-primary" [disabled]="isLoading">
+            <span *ngIf="!isLoading">{{ getTranslation('loginBtn') }}</span>
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span class="material-symbols-outlined ml-2" *ngIf="!isLoading">arrow_forward</span>
+          </button>
+        </form>
+
+        <button class="back-btn" (click)="goToPassengerLogin()">
+          <span class="material-symbols-outlined">west</span>
+          {{ getTranslation('backToPassenger') }}
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div class="bg-decorative-1"></div>
+  <div class="bg-decorative-2"></div>
+</ion-content>
