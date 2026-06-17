@@ -1,0 +1,124 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Manage Vehicles</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreateModal()" color="primary">
+        <ion-icon name="add" slot="start"></ion-icon>
+        New Vehicle
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="loadVehicles(1); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="vehicles-container">
+    <!-- Error Message -->
+    <ion-card *ngIf="error" class="error-card">
+      <ion-card-content>{{ error }}</ion-card-content>
+    </ion-card>
+
+    <!-- Search Filter -->
+    <ion-card class="search-card">
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Search by registration or model</ion-label>
+          <ion-input
+            [(ngModel)]="searchQuery"
+            (ionChange)="onSearchChange()"
+            placeholder="Enter search term">
+          </ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <ion-spinner></ion-spinner>
+      <p>Loading vehicles...</p>
+    </div>
+
+    <!-- Vehicles List -->
+    <ion-card *ngIf="!loading && vehicles.length > 0" class="vehicles-card">
+      <ion-card-header>
+        <ion-card-title>Vehicles ({{ pagination.total }})</ion-card-title>
+      </ion-card-header>
+      <ion-list>
+        <ion-item *ngFor="let vehicle of vehicles" class="vehicle-item">
+          <ion-icon [name]="getTypeIcon(vehicle.vehicle_type)" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <div class="vehicle-title">
+              {{ vehicle.make }} {{ vehicle.model }}
+              <span class="year">({{ vehicle.year }})</span>
+            </div>
+            <div class="vehicle-meta">
+              <span>{{ vehicle.registration_number }}</span>
+              <span class="dot">·</span>
+              <span>{{ vehicle.capacity }} seats</span>
+            </div>
+          </ion-label>
+          <ion-badge [color]="getStatusBadgeColor(vehicle.status)" slot="start">
+            {{ vehicle.status }}
+          </ion-badge>
+          <ion-button
+            slot="end"
+            fill="clear"
+            size="small"
+            (click)="openEditModal(vehicle)"
+            color="primary">
+            <ion-icon name="create"></ion-icon>
+          </ion-button>
+          <ion-button
+            slot="end"
+            fill="clear"
+            size="small"
+            (click)="deleteVehicle(vehicle)"
+            color="danger">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <!-- Empty State -->
+    <ion-card *ngIf="!loading && vehicles.length === 0" class="empty-card">
+      <ion-card-content class="empty-content">
+        <ion-icon name="car-outline"></ion-icon>
+        <h2>No Vehicles Found</h2>
+        <p>Start by creating a new vehicle</p>
+        <ion-button (click)="openCreateModal()" color="primary">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Add Vehicle
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Pagination -->
+    <ion-card *ngIf="!loading && pagination.last_page > 1" class="pagination-card">
+      <ion-card-content>
+        <div class="pagination-controls">
+          <ion-button
+            (click)="prevPage()"
+            [disabled]="pagination.current_page === 1"
+            fill="outline">
+            <ion-icon name="chevron-back" slot="start"></ion-icon>
+            Previous
+          </ion-button>
+          <span class="page-info">
+            Page {{ pagination.current_page }} of {{ pagination.last_page }}
+          </span>
+          <ion-button
+            (click)="nextPage()"
+            [disabled]="pagination.current_page === pagination.last_page"
+            fill="outline">
+            Next
+            <ion-icon name="chevron-forward" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
