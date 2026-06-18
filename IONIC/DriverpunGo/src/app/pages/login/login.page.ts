@@ -17,6 +17,7 @@ export class LoginPage {
   };
   showPassword = false;
   isLoading = false;
+  privacyAccepted = false;
 
   constructor(
     private auth: AuthService,

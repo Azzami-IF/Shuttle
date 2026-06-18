@@ -31,6 +31,20 @@ export class DriverDashboardPage {
     this.ui.showFeaturePending();
   }
 
+  async showHelpDesk() {
+    await this.ui.showAlert(
+      'Bantuan Help Desk 24/7',
+      'Jika Anda mengalami kendala operasional, masalah pada kendaraan, atau kondisi darurat di jalan, silakan hubungi tim Support kami:\n\n📞 0812-3456-7890\n✉️ support@driverpungo.com\n\nTim kami siap membantu Anda 24 jam sehari.'
+    );
+  }
+
+  async showManual() {
+    await this.ui.showAlert(
+      'SOP & Panduan Pengemudi',
+      '1. Pastikan kendaraan dalam kondisi prima sebelum berangkat.\n2. Verifikasi tiket penumpang saat proses boarding.\n3. Tekan "Mulai Perjalanan" saat akan berangkat agar sistem GPS aktif.\n4. Patuhi rambu lalu lintas dan jaga kecepatan aman.\n5. Laporkan segera jika terjadi kendala (delay, kerusakan) via aplikasi atau Help Desk.'
+    );
+  }
+
   loadTripSummary() {
     this.tripSummaryLoading = true;
     this.api.get('trips').subscribe({
