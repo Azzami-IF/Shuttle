@@ -78,9 +78,13 @@ export class LocationService {
   }
 
   private sendMockPosition() {
+    // Tambahkan jitter kecil agar terlihat ada pergerakan saat simulasi berjalan di browser tanpa HTTPS
+    const jitterLat = (Math.random() - 0.5) * 0.001;
+    const jitterLng = (Math.random() - 0.5) * 0.001;
+
     const mockPosition = {
       timestamp: Date.now(),
-      coords: { latitude: -6.200000, longitude: 106.816666, accuracy: 10, altitudeAccuracy: null, altitude: null, speed: null, heading: null } as any
+      coords: { latitude: -6.200000 + jitterLat, longitude: 106.816666 + jitterLng, accuracy: 10, altitudeAccuracy: null, altitude: null, speed: null, heading: null } as any
     } as Position;
     this.currentPositionSubject.next(mockPosition);
   }

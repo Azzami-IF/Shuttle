@@ -55,62 +55,7 @@
   }
 }
 
-.brand-visual {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-right: 48px;
-  display: none;
-
-  @media (min-width: 1024px) {
-    display: flex;
-  }
-
-  .image-wrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-
-    .hero-art {
-      width: 100%;
-      height: 100%;
-      background:
-        radial-gradient(circle at 22% 22%, rgba(255, 255, 255, 0.38) 0 10%, transparent 11%),
-        radial-gradient(circle at 76% 30%, rgba(255, 255, 255, 0.22) 0 8%, transparent 9%),
-        linear-gradient(135deg, #18281e 0%, #2d3e33 48%, #536349 100%);
-    }
-
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(var(--ion-color-primary-rgb), 0.4), transparent);
-    }
-
-    .text-overlay {
-      position: absolute;
-      bottom: 24px;
-      left: 24px;
-      right: 24px;
-      color: white;
-
-      h2 {
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-
-      p {
-        font-size: 16px;
-        opacity: 0.9;
-        max-width: 384px;
-      }
-    }
-  }
-}
+// brand visual removed
 
 // Alias buat class baru di HTML ========
 .login-form-container {
@@ -199,19 +144,11 @@
 .login-visual {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; justify-content: flex-end; padding: 28px;
+  
   .visual-content {
     color: white; z-index: 2;
     h1.visual-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
     p.visual-subtitle { font-size: 15px; opacity: 0.88; }
-  }
-  .blobs {
-    position: absolute; inset: 0; pointer-events: none;
-    .blob {
-      position: absolute; border-radius: 50%;
-      background: rgba(255,255,255,0.12);
-      &:nth-child(1) { width: 160px; height: 160px; top: 15%; left: 10%; }
-      &:nth-child(2) { width: 100px; height: 100px; top: 22%; right: 20%; }
-    }
   }
 }
 

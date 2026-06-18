@@ -7,22 +7,6 @@
   </header>
 
   <main class="main-container">
-    <!-- Kolom Kiri: Visual -->
-    <div class="brand-visual">
-      <div class="image-wrapper">
-        <div class="hero-art" aria-hidden="true"></div>
-        <div class="login-visual shadow-inner">
-          <div class="visual-content">
-            <h1 class="visual-title">{{ getTranslation('excellence') }}</h1>
-            <p class="visual-subtitle">{{ getTranslation('excellenceSubtitle') }}</p>
-          </div>
-          <div class="blobs">
-            <div class="blob"></div>
-            <div class="blob"></div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Kolom Kanan: Form -->
     <div class="login-form-container">
@@ -55,16 +39,17 @@
             </div>
           </div>
 
-          <div class="options-row" style="display: flex; justify-content: space-between; align-items: center;">
-            <label class="checkbox-container">
-              <input type="checkbox">
-              <span class="checkmark"></span>
-              <span class="checkbox-label">{{ getTranslation('keepLoggedIn') }}</span>
+          <div class="options-row" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+            <label class="checkbox-container" style="display: flex; gap: 8px; align-items: flex-start;">
+              <input type="checkbox" [(ngModel)]="privacyAccepted" name="privacy" required style="margin-top: 2px;">
+              <span class="checkbox-label" style="font-size: 13px; line-height: 1.4;">
+                Saya telah membaca dan menyetujui 
+                <a routerLink="/privacy-policy" class="forgot-link" style="font-weight: 600; color: var(--ion-color-primary);">Kebijakan Privasi</a>
+              </span>
             </label>
-            <a routerLink="/privacy-policy" class="forgot-link" style="font-size: 13px; font-weight: 600;">Kebijakan Privasi</a>
           </div>
 
-          <button type="submit" class="login-btn-primary" [disabled]="isLoading">
+          <button type="submit" class="login-btn-primary" [disabled]="isLoading || !privacyAccepted">
             <span *ngIf="!isLoading">{{ getTranslation('loginBtn') }}</span>
             <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
             <span class="material-symbols-outlined ml-2" *ngIf="!isLoading">arrow_forward</span>

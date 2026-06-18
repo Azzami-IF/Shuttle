@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
 
@@ -24,27 +25,71 @@ export class DriverVehiclePage {
   constructor() {}
 
   ionViewWillEnter() {
-    this.api.get('vehicles').subscribe({
-      next: (res: any) => {
-        if (res && res.length > 0) {
-          const v = res[0];
+    this.api.get('trips').subscribe({
+      next: (res: any[]) => {
+        const trips = res || [];
+        // Cari perjalanan yang sedang berjalan atau yang akan datang
+        const activeTrip = trips.find(t => t.status === 'on-going' || t.status === 'boarding') 
+          || trips.filter(t => t.status === 'scheduled').sort((a, b) => new Date(a.schedule?.departure_time).getTime() - new Date(b.schedule?.departure_time).getTime())[0];
+
+        if (activeTrip && activeTrip.schedule?.vehicle) {
+          const v = activeTrip.schedule.vehicle;
           this.vehicle = {
             name: v.name,
             license_plate: v.license_plate,
             capacity: v.capacity,
-            fuel: 92,
+            fuel: 92, // Mock data
             maintenance: 'Siap Beroperasi',
             last_service: '2026-05-10'
           };
         }
       },
       error: (err) => {
-        console.error('Error fetching vehicles', err);
+        console.error('Error fetching trips for vehicle', err);
       }
     });
   }
 
-  showPending() {
-    this.ui.showFeaturePending();
+  private alertCtrl = inject(AlertController);
+
+  async reportIssue() {
+    const alert = await this.alertCtrl.create({
+      header: 'Laporkan Kendala',
+      subHeader: `${this.vehicle?.name || '-'} (${this.vehicle?.license_plate || '-'})`,
+      message: 'Silakan deskripsikan masalah pada kendaraan ini:',
+      inputs: [
+        {
+          name: 'issue',
+          type: 'textarea',
+          placeholder: 'Contoh: AC tidak dingin, ban kempes...',
+        }
+      ],
+      buttons: [
+        {
+          text: 'Batal',
+          role: 'cancel'
+        },
+        {
+          text: 'Kirim Laporan',
+          handler: (data) => {
+            if (data.issue && data.issue.trim() !== '') {
+              // Simulasi pengiriman data
+              this.ui.showLoading('Mengirim laporan...').then(loading => {
+                setTimeout(() => {
+                  loading.dismiss();
+                  this.ui.showToast('Laporan kendala berhasil dikirim ke Admin!', 'success');
+                }, 1000);
+              });
+            } else {
+              this.ui.showToast('Laporan tidak boleh kosong', 'warning');
+              return false; // Prevent closing
+            }
+            return true;
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

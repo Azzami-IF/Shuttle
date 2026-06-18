@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -9,6 +10,7 @@ import { ApiService } from '../../services/api.service';
 })
 export class DriverHistoryPage {
   private api = inject(ApiService);
+  private router = inject(Router);
 
   trips: any[] = [];
   summary = {
@@ -29,5 +31,9 @@ export class DriverHistoryPage {
       this.summary.totalTrips = this.trips.length;
       this.summary.totalDistance = this.trips.length * 150; // Bandung to Jakarta is approx 150km
     });
+  }
+
+  viewTrip(trip: any) {
+    this.router.navigate(['/driver-tracking', { id: trip.id }]);
   }
 }

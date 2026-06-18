@@ -171,6 +171,23 @@ export class DriverTrackingPage implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  startTrip() {
+    this.api.post(`trips/${this.tripId}/start`, {}).subscribe({
+      next: () => {
+        this.ui.showToast('Perjalanan berhasil dimulai!', 'success');
+        this.loadTrip();
+      },
+      error: (err) => {
+        const msg = err.error?.message || 'Gagal memulai perjalanan.';
+        // Tampilkan pesan alasan kenapa ditolak (misal tidak ada penumpang)
+        this.ui.showToast(msg, 'danger');
+        if (msg.includes('tidak ada penumpang')) {
+          this.loadTrip(); // Refresh agar UI berubah jadi dibatalkan
+        }
+      }
+    });
+  }
+
   updateStatus(status: string) {
     const endpoint = status === 'completed' ? 'complete' : 'status';
     const payload = status === 'completed' ? {} : { status };

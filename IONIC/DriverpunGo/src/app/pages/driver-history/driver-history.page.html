@@ -45,7 +45,7 @@
     </div>
 
     <div class="trip-list">
-      <div class="history-item" *ngFor="let trip of trips">
+      <div class="history-item cursor-pointer" *ngFor="let trip of trips" (click)="viewTrip(trip)">
         <div class="icon-box">
           <span class="material-symbols-outlined">directions_bus</span>
         </div>
