@@ -82,6 +82,10 @@ const routes: Routes = [
   {
     path: 'driver-help',
     loadChildren: () => import('./pages/driver-help/driver-help.module').then( m => m.DriverHelpPageModule)
+  },
+  {
+    path: 'privacy-policy',
+    loadChildren: () => import('./pages/privacy-policy/privacy-policy.module').then( m => m.PrivacyPolicyPageModule)
   }
 ];
 

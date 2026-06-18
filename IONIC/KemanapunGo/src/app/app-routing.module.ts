@@ -230,7 +230,11 @@ const routes: Routes = [
     path: '',
     redirectTo: 'onboarding',
     pathMatch: 'full'
+  },  {
+    path: 'privacy-policy',
+    loadChildren: () => import('./pages/privacy-policy/privacy-policy.module').then( m => m.PrivacyPolicyPageModule)
   },
+
 ];
 
 @NgModule({

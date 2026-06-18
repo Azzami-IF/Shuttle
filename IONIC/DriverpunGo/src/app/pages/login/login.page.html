@@ -1,8 +1,7 @@
 <ion-content class="driver-login-page">
   <header class="top-bar">
     <div class="brand">
-      <span class="material-symbols-outlined text-3xl">directions_bus</span>
-      <span class="title">KemanapunGo</span>
+      <img src="assets/icon/logo.png" alt="DriverpunGo Logo" class="w-8 h-8 rounded-md" style="width: 32px; height: 32px; object-fit: contain;">
     </div>
     <div class="version">Fleet Operations v1.0.4</div>
   </header>
@@ -38,7 +37,7 @@
             <label class="input-label">{{ getTranslation('driverIdOrEmail') }}</label>
             <div class="input-wrapper">
               <span class="material-symbols-outlined input-icon">contact_mail</span>
-              <input type="text" [(ngModel)]="loginData.email" name="email" placeholder="e.g. DRV-8829 or email@kemanapungo.com" required>
+              <input type="text" [(ngModel)]="loginData.email" name="email" placeholder="Contoh: DRV-8829 atau Email" required>
             </div>
           </div>
 
@@ -56,12 +55,13 @@
             </div>
           </div>
 
-          <div class="options-row">
+          <div class="options-row" style="display: flex; justify-content: space-between; align-items: center;">
             <label class="checkbox-container">
               <input type="checkbox">
               <span class="checkmark"></span>
               <span class="checkbox-label">{{ getTranslation('keepLoggedIn') }}</span>
             </label>
+            <a routerLink="/privacy-policy" class="forgot-link" style="font-size: 13px; font-weight: 600;">Kebijakan Privasi</a>
           </div>
 
           <button type="submit" class="login-btn-primary" [disabled]="isLoading">

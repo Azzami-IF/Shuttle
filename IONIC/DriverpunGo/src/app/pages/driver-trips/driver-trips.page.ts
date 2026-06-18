@@ -81,8 +81,15 @@ export class DriverTripsPage {
   }
 
   startTrip(trip: any) {
-    this.api.post(`trips/${trip.id}/start`, {}).subscribe(() => {
-      this.router.navigate(['/driver-tracking', { id: trip.id }]);
+    this.api.post(`trips/${trip.id}/start`, {}).subscribe({
+      next: () => {
+        this.router.navigate(['/driver-tracking', { id: trip.id }]);
+      },
+      error: (err) => {
+        // Fallback alert using native DOM since we might not have UiService injected
+        const msg = err.error?.message || 'Gagal memulai perjalanan';
+        alert(msg);
+      }
     });
   }
 
