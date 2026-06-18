@@ -183,8 +183,9 @@ export class DriverTrackingPage implements OnInit, OnDestroy, AfterViewInit {
         }
         this.loadTrip();
       },
-      error: () => {
-        this.ui.showToast('Gagal memperbarui status perjalanan', 'danger');
+      error: (err) => {
+        const msg = err.error?.message || 'Gagal memperbarui status perjalanan';
+        this.ui.showToast(msg, 'danger');
       }
     });
   }
