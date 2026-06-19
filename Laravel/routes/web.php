@@ -42,6 +42,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/schedules', [\App\Http\Controllers\AdminController::class, 'schedules'])->name('admin.schedules');
     Route::get('/schedules/create', [\App\Http\Controllers\AdminController::class, 'createSchedule'])->name('admin.schedules.create');
     Route::post('/schedules', [\App\Http\Controllers\AdminController::class, 'storeSchedule'])->name('admin.schedules.store');
+    Route::get('/schedules/{schedule}/edit', [\App\Http\Controllers\AdminController::class, 'editSchedule'])->name('admin.schedules.edit');
+    Route::put('/schedules/{schedule}', [\App\Http\Controllers\AdminController::class, 'updateSchedule'])->name('admin.schedules.update');
     Route::delete('/schedules/{schedule}', [\App\Http\Controllers\AdminController::class, 'deleteSchedule'])->name('admin.schedules.delete');
 
     // Drivers/Users
@@ -67,5 +69,6 @@ Route::prefix('admin')->group(function () {
 
     // Trips Monitoring
     Route::get('/trips', [\App\Http\Controllers\AdminController::class, 'trips'])->name('admin.trips');
+    Route::get('/active-trips-locations', [\App\Http\Controllers\AdminController::class, 'activeTripsLocations'])->name('admin.trips.locations');
     });
 });
