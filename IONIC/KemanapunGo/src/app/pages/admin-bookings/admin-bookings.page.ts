@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -34,6 +34,9 @@ interface PaginationData {
   standalone: false
 })
 export class AdminBookingsPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+  private alertCtrl = inject(AlertController);
+
   bookings: Booking[] = [];
   pagination: PaginationData = {
     current_page: 1,
@@ -53,10 +56,7 @@ export class AdminBookingsPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private adminService: AdminService,
-    private alertCtrl: AlertController
-  ) { }
+  constructor() { }
 
   ngOnInit() {
     this.loadBookings();

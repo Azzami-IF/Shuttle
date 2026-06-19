@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -11,6 +11,12 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./schedule-list.page.scss'],
 })
 export class ScheduleListPage {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private auth = inject(AuthService);
+  private languageService = inject(LanguageService);
+
   schedules: any[] = [];
   displaySchedules: any[] = [];
   lang$ = this.languageService.lang$;
@@ -41,13 +47,7 @@ export class ScheduleListPage {
   // Date strip list
   dateStrips: any[] = [];
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private auth: AuthService,
-    private languageService: LanguageService
-  ) {}
+  constructor() {}
 
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
@@ -11,6 +11,12 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./seat-selection.page.scss'],
 })
 export class SeatSelectionPage implements OnInit {
+  private route = inject(ActivatedRoute);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   scheduleId: any;
   schedule: any;
   rows: any[] = [];
@@ -19,13 +25,7 @@ export class SeatSelectionPage implements OnInit {
   price: number = 0;
   lang$ = this.languageService.lang$;
 
-  constructor(
-    private route: ActivatedRoute,
-    private api: ApiService,
-    private router: Router,
-    private ui: UiService,
-    private languageService: LanguageService
-  ) {}
+  constructor() {}
 
   ngOnInit() {
     this.scheduleId = this.route.snapshot.paramMap.get('id');

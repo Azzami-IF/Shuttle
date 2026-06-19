@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -11,6 +11,10 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  langService = inject(LanguageService);
   loginData = {
     email: '',
     password: ''
@@ -18,12 +22,7 @@ export class LoginPage {
   showPassword = false;
   isLoading = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService,
-    public langService: LanguageService
-  ) {}
+  constructor() {}
 
   getTranslation(key: string): string {
     return this.langService.get(key);

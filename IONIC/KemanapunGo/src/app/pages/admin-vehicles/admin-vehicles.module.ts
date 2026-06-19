@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
-import { AdminVehiclesPage, VehicleFormModal } from './admin-vehicles.page';
+import { AdminVehiclesPage, VehicleFormModalComponent } from './admin-vehicles.page';
 
 const routes: Routes = [
   {
@@ -20,6 +20,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [AdminVehiclesPage, VehicleFormModal]
+  declarations: [AdminVehiclesPage, VehicleFormModalComponent]
 })
 export class AdminVehiclesPageModule {}

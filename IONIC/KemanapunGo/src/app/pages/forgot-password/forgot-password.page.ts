@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -11,15 +11,14 @@ import { UiService } from '../../services/ui.service';
   standalone: false,
 })
 export class ForgotPasswordPage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private route = inject(ActivatedRoute);
+
   email = '';
   isLoading = false;
-
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService,
-    private route: ActivatedRoute
-  ) {}
+  constructor() {}
 
   submit(event: Event) {
     event.preventDefault();
