@@ -6,14 +6,6 @@
         <span>KemanapunGo</span>
       </div>
     </ion-title>
-    <ion-buttons slot="end">
-      <button class="nav-btn" routerLink="/profile">
-        <span class="material-symbols-outlined">account_circle</span>
-      </button>
-      <button class="nav-btn" type="button" aria-label="Logout" (click)="confirmLogout()">
-        <span class="material-symbols-outlined">logout</span>
-      </button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -21,9 +13,13 @@
 
   <main *ngIf="(user$ | async) || getResolvedUser() as user; else guestState">
     <!-- Hero Section -->
-    <section class="hero-section hero-gradient">
-      <p class="greeting">{{ getGreeting() }},</p>
-      <h2 class="user-name">{{ user.name }}</h2>
+    <section class="hero-section">
+      <div class="hero-wrapper">
+        <div class="hero-text-block">
+          <p class="greeting">{{ getGreeting() }},</p>
+          <h2 class="user-name">{{ user.name }} 👋</h2>
+        </div>
+      </div>
     </section>
 
     <!-- Route Selection Card (Customer Only) -->
@@ -77,6 +73,43 @@
         <span class="material-symbols-outlined">search</span>
         {{ getTranslation('searchTicket') }}
       </button>
+    </section>
+
+    <!-- Promo Slider Section -->
+    <section class="promo-section" *ngIf="user.role === 'customer'">
+      <div class="section-header">
+        <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--ion-text-color);">Promo Spesial</h3>
+      </div>
+      <div 
+        class="promo-carousel-wrapper"
+        (touchstart)="onTouchStart($event)"
+        (touchmove)="onTouchMove($event)"
+        (touchend)="onTouchEnd($event)"
+        (mousedown)="onMouseDown($event)"
+        (mousemove)="onMouseMove($event)"
+        (mouseup)="onMouseUp($event)"
+        (mouseleave)="onMouseLeave()"
+        [style.cursor]="isDragging ? 'grabbing' : 'grab'">
+        <div 
+          class="promo-scroll" 
+          [style.transform]="'translateX(calc(-' + (activePromoIndex * 100) + '% + ' + dragDeltaX + 'px))'"
+          [style.transition]="transitionStyle">
+          <div class="promo-card" *ngFor="let promo of promos" [style.background]="promo.color">
+            <div class="promo-card-content">
+              <span class="badge">{{ promo.discount }}</span>
+              <h4>{{ promo.title }}</h4>
+              <p>{{ promo.desc }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="promo-carousel-indicators">
+        <span 
+          *ngFor="let promo of promos; let i = index" 
+          [class.active]="i === activePromoIndex"
+          (click)="setActivePromo(i)">
+        </span>
+      </div>
     </section>
 
     <section class="next-schedule-card" *ngIf="user.role === 'customer'">
@@ -136,6 +169,24 @@
       </div>
     </section>
 
+    <!-- Rute Terpopuler -->
+    <section class="popular-routes-section" *ngIf="user.role === 'customer'">
+      <h3>Rute Terpopuler</h3>
+      <div class="routes-grid">
+        <div 
+          class="route-card" 
+          *ngFor="let route of popularRoutes" 
+          [style.background]="route.gradient"
+          (click)="selectPopularRoute(route)">
+          <div class="route-path">{{ route.origin }} → {{ route.destination }}</div>
+          <div class="price-info">
+            <span class="price-label">Mulai</span>
+            <span class="price-val">Rp {{ route.price | number:'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
 
 
     <!-- Quick Access Menu -->
@@ -158,6 +209,43 @@
         </div>
         <span>{{ getTranslation('profile') }}</span>
       </button>
+    </section>
+
+    <!-- Keunggulan Kami -->
+    <section class="info-section" *ngIf="user.role === 'customer'">
+      <div class="info-grid">
+        <div class="info-banner">
+          <div class="content">
+            <span class="label">KENAPA KEMANAPUNGO?</span>
+            <p>Layanan Shuttle Premium dengan kenyamanan ekstra, jaminan pasti berangkat & kemudahan pelacakan real-time.</p>
+          </div>
+          <span class="material-symbols-outlined icon">verified_user</span>
+        </div>
+
+        <div class="info-item">
+          <span class="material-symbols-outlined primary">bolt</span>
+          <span class="title">Pesan Instan</span>
+          <p>Pilih kursi dan bayar langsung di aplikasi.</p>
+        </div>
+
+        <div class="info-item">
+          <span class="material-symbols-outlined secondary">explore</span>
+          <span class="title">Live Tracking</span>
+          <p>Pantau lokasi shuttle Anda secara langsung.</p>
+        </div>
+
+        <div class="info-item">
+          <span class="material-symbols-outlined secondary">event_seat</span>
+          <span class="title">Pilih Kursi</span>
+          <p>Bebas pilih kursi ternyaman Anda sendiri.</p>
+        </div>
+
+        <div class="info-item">
+          <span class="material-symbols-outlined primary">workspace_premium</span>
+          <span class="title">Fasilitas Lengkap</span>
+          <p>WiFi gratis, Charger USB, dan AC di setiap unit.</p>
+        </div>
+      </div>
     </section>
   </main>
 </ion-content>
