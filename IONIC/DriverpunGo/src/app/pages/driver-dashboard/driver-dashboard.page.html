@@ -93,13 +93,7 @@
     <section class="info-section">
       <h3 class="section-title">Informasi Operasional</h3>
       <div class="info-grid">
-        <div class="info-banner primary-fixed" (click)="showPending()">
-          <div class="content">
-            <span class="label">PENGUMUMAN</span>
-            <p>Perbaikan jalan di KM 42 Tol Cipularang. Harap gunakan rute alternatif.</p>
-          </div>
-          <span class="material-symbols-outlined icon">notification_important</span>
-        </div>
+
         <div class="info-item surface-high" (click)="showHelpDesk()">
           <span class="material-symbols-outlined secondary">support_agent</span>
           <span class="title">Help Desk</span>
@@ -129,6 +123,9 @@
           <div class="trip-main">
             <div>
               <p class="trip-route">{{ featuredTrip.schedule?.origin }} → {{ featuredTrip.schedule?.destination }}</p>
+              <p class="text-[11px] text-gray-500 mt-1" *ngIf="featuredTrip.schedule?.origin_terminal || featuredTrip.schedule?.destination_terminal">
+                {{ featuredTrip.schedule?.origin_terminal || '-' }} → {{ featuredTrip.schedule?.destination_terminal || '-' }}
+              </p>
               <p class="trip-time">{{ formatTime(featuredTrip.schedule?.departure_time) }}</p>
             </div>
             <div class="trip-status">{{ getCountdownLabel(featuredTrip.schedule?.departure_time) }}</div>
@@ -156,6 +153,9 @@
         <button class="preview-item" *ngFor="let trip of upcomingTrips" routerLink="/driver-trips">
           <div>
             <span class="preview-route">{{ trip.schedule?.origin }} → {{ trip.schedule?.destination }}</span>
+            <span class="text-[10px] text-gray-500 block mt-1" *ngIf="trip.schedule?.origin_terminal || trip.schedule?.destination_terminal">
+              {{ trip.schedule?.origin_terminal || '-' }} → {{ trip.schedule?.destination_terminal || '-' }}
+            </span>
             <span class="preview-time">{{ formatTime(trip.schedule?.departure_time) }}</span>
           </div>
           <span class="preview-seat">{{ getCountdownLabel(trip.schedule?.departure_time) }}</span>

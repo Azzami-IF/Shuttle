@@ -34,6 +34,9 @@
       <div class="content">
         <span class="badge" style="background: var(--ion-color-success, #2dd36f); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">SEDANG BERJALAN</span>
         <h3>{{ activeTrip.schedule?.origin }} → {{ activeTrip.schedule?.destination }}</h3>
+        <p class="text-[11px] text-white/80 mt-1 font-medium" *ngIf="activeTrip.schedule?.origin_terminal || activeTrip.schedule?.destination_terminal">
+          {{ activeTrip.schedule?.origin_terminal || '-' }} → {{ activeTrip.schedule?.destination_terminal || '-' }}
+        </p>
       </div>
     </div>
     <div class="card-footer">
@@ -62,6 +65,9 @@
       <div class="content">
         <div class="badge">Keberangkatan Selanjutnya</div>
         <h3>{{ nextTrip.schedule?.origin }} → {{ nextTrip.schedule?.destination }}</h3>
+        <p class="text-[11px] text-white/80 mt-1 font-medium" *ngIf="nextTrip.schedule?.origin_terminal || nextTrip.schedule?.destination_terminal">
+          {{ nextTrip.schedule?.origin_terminal || '-' }} → {{ nextTrip.schedule?.destination_terminal || '-' }}
+        </p>
       </div>
     </div>
     <div class="card-footer">
@@ -111,11 +117,17 @@
       <div class="route">
         <div class="point">
           <span class="material-symbols-outlined text-[14px]">circle</span>
-          {{ trip.schedule?.origin }}
+          <div>
+            <div>{{ trip.schedule?.origin }}</div>
+            <div class="text-[10px] text-gray-500" *ngIf="trip.schedule?.origin_terminal">{{ trip.schedule?.origin_terminal }}</div>
+          </div>
         </div>
         <div class="point end">
           <span class="material-symbols-outlined text-[14px]">location_on</span>
-          {{ trip.schedule?.destination }}
+          <div>
+            <div>{{ trip.schedule?.destination }}</div>
+            <div class="text-[10px] text-gray-500" *ngIf="trip.schedule?.destination_terminal">{{ trip.schedule?.destination_terminal }}</div>
+          </div>
         </div>
       </div>
       <button class="text-secondary font-bold text-sm mt-2 text-right" [routerLink]="['/driver-tracking', { id: trip.id }]">Detail</button>
