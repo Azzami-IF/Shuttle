@@ -1,5 +1,10 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary" class="pt-safe">
+    <ion-buttons slot="start">
+      <ion-button (click)="confirmLogout()" color="light">
+        <span class="material-symbols-outlined" style="color: white; font-size: 24px;">logout</span>
+      </ion-button>
+    </ion-buttons>
     <ion-title>Admin Dashboard</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="refresh()" [disabled]="loading">
