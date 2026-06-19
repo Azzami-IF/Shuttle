@@ -1,5 +1,11 @@
+@import "../../components/shared/design-system.scss";
+
 .admin-dashboard-content {
   --background: #f7f9f6;
+
+  &::part(scroll) {
+    padding-bottom: 110px;
+  }
 }
 
 .dashboard-container {
@@ -362,4 +368,8 @@
       text-align: center;
     }
   }
+}
+
+.bottom-nav {
+  @extend .shared-bottom-nav;
 }

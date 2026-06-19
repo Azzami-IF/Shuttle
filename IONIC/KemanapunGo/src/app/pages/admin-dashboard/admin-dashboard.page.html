@@ -1,10 +1,5 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary" class="pt-safe">
-    <ion-buttons slot="start">
-      <ion-button (click)="confirmLogout()" color="light">
-        <span class="material-symbols-outlined" style="color: white; font-size: 24px;">logout</span>
-      </ion-button>
-    </ion-buttons>
     <ion-title>Admin Dashboard</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="refresh()" [disabled]="loading">
@@ -240,3 +235,26 @@
     </div>
   </div>
 </ion-content>
+
+<nav class="bottom-nav">
+  <button class="nav-item active">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span>Dashboard</span>
+  </button>
+  <button class="nav-item" routerLink="/admin/admin-vehicles">
+    <span class="material-symbols-outlined">directions_bus</span>
+    <span>Armada</span>
+  </button>
+  <button class="nav-item" routerLink="/admin/admin-schedules">
+    <span class="material-symbols-outlined">calendar_month</span>
+    <span>Jadwal</span>
+  </button>
+  <button class="nav-item" routerLink="/admin/admin-drivers">
+    <span class="material-symbols-outlined">person</span>
+    <span>Supir</span>
+  </button>
+  <button class="nav-item" (click)="confirmLogout()">
+    <span class="material-symbols-outlined">logout</span>
+    <span>Logout</span>
+  </button>
+</nav>

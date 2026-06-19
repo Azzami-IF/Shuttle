@@ -3,6 +3,10 @@
 .admin-drivers-content {
   --background: var(--ion-background-color);
   background: var(--ion-background-color);
+
+  &::part(scroll) {
+    padding-bottom: 110px;
+  }
 }
 
 .drivers-container {
@@ -375,4 +379,8 @@
       }
     }
   }
+}
+
+.bottom-nav {
+  @extend .shared-bottom-nav;
 }

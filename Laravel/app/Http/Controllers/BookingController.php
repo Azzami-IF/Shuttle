@@ -147,13 +147,27 @@ class BookingController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        if ($booking->status !== 'booked' && $booking->status !== 'pending_payment') {
+        if ($booking->status !== 'booked' && $booking->status !== 'pending_payment' && $booking->status !== 'pending_verification') {
             return response()->json(['message' => 'Cannot cancel booking in current status'], 422);
         }
 
         return DB::transaction(function () use ($booking) {
-            $booking->update(['status' => 'cancelled']);
-            $booking->seat->update(['status' => 'available']);
+            if ($booking->payment_code) {
+                $bookings = Booking::where('payment_code', $booking->payment_code)->get();
+                foreach ($bookings as $b) {
+                    if (in_array($b->status, ['booked', 'pending_payment', 'pending_verification'])) {
+                        $b->update(['status' => 'cancelled']);
+                        if ($b->seat) {
+                            $b->seat->update(['status' => 'available']);
+                        }
+                    }
+                }
+            } else {
+                $booking->update(['status' => 'cancelled']);
+                if ($booking->seat) {
+                    $booking->seat->update(['status' => 'available']);
+                }
+            }
 
             // Invalidate related caches
             \App\Services\CacheManager::invalidateBookingCache($booking->schedule_id);
@@ -197,15 +211,13 @@ class BookingController extends Controller
             $path = $file->store('proofs', 'public');
             
             // Update ALL bookings with the same payment_code
-            $relatedBookings = Booking::where('payment_code', $booking->payment_code)->get();
-            
-            foreach ($relatedBookings as $b) {
-                // Delete old proof if exists (only once per unique path if possible, but simple is fine)
-                if ($b->payment_proof && $b->payment_proof !== $path) {
-                    // We only delete if no other booking in this group is using it? 
-                    // Actually, simple update is safer for now.
+            if ($booking->payment_code) {
+                $relatedBookings = Booking::where('payment_code', $booking->payment_code)->get();
+                foreach ($relatedBookings as $b) {
+                    $b->update(['payment_proof' => $path]);
                 }
-                $b->update(['payment_proof' => $path]);
+            } else {
+                $booking->update(['payment_proof' => $path]);
             }
 
             return response()->json([

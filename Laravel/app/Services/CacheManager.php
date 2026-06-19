@@ -21,7 +21,7 @@ class CacheManager
                 'total_bookings' => \App\Models\Booking::count(),
                 'total_users' => \App\Models\User::where('role', 'customer')->count(),
                 'total_drivers' => \App\Models\User::where('role', 'driver')->count(),
-                'active_trips' => \App\Models\Trip::where('status', 'on-going')->count(),
+                'active_trips' => \App\Models\Trip::whereIn('status', ['boarding', 'on-going', 'delayed', 'arrived'])->count(),
                 'pending_bookings' => \App\Models\Booking::where('status', 'pending_payment')->count(),
                 'completed_trips' => \App\Models\Trip::where('status', 'completed')->count(),
             ];

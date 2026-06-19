@@ -1,8 +1,5 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary" class="pt-safe">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/admin/dashboard" color="light" text=""></ion-back-button>
-    </ion-buttons>
     <ion-title>Manajemen Jadwal</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="openCreateModal()" color="light">
@@ -125,3 +122,26 @@
     </ion-card>
   </div>
 </ion-content>
+
+<nav class="bottom-nav">
+  <button class="nav-item" routerLink="/admin/dashboard">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span>Dashboard</span>
+  </button>
+  <button class="nav-item" routerLink="/admin/admin-vehicles">
+    <span class="material-symbols-outlined">directions_bus</span>
+    <span>Armada</span>
+  </button>
+  <button class="nav-item active">
+    <span class="material-symbols-outlined">calendar_month</span>
+    <span>Jadwal</span>
+  </button>
+  <button class="nav-item" routerLink="/admin/admin-drivers">
+    <span class="material-symbols-outlined">person</span>
+    <span>Supir</span>
+  </button>
+  <button class="nav-item" (click)="confirmLogout()">
+    <span class="material-symbols-outlined">logout</span>
+    <span>Logout</span>
+  </button>
+</nav>

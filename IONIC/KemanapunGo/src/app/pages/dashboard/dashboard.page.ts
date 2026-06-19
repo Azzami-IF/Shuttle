@@ -184,6 +184,11 @@ export class DashboardPage {
     return isId ? `${g} Malam` : `${g} Evening`;
   }
 
+  stripEmoji(name: string): string {
+    if (!name) return '';
+    return name.replace(/👋/g, '').trim();
+  }
+
   getTranslation(key: string): string {
     return this.languageService.get(key);
   }

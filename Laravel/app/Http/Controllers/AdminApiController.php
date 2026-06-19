@@ -630,17 +630,29 @@ class AdminApiController extends Controller
 
         $booking = Booking::findOrFail($bookingId);
 
-        if ($booking->status !== 'pending_payment') {
+        if ($booking->status !== 'pending_payment' && $booking->status !== 'pending_verification') {
             return response()->json([
-                'message' => 'Only pending payment bookings can be approved',
+                'message' => 'Only pending payment or verification bookings can be approved',
             ], 400);
         }
 
-        $booking->update(['status' => 'booked']);
+        if ($booking->payment_code) {
+            $bookings = Booking::where('payment_code', $booking->payment_code)->get();
+            foreach ($bookings as $b) {
+                if ($b->status === 'pending_payment' || $b->status === 'pending_verification') {
+                    $b->update(['status' => 'booked']);
+                }
+            }
+        } else {
+            $booking->update(['status' => 'booked']);
+        }
+
+        // Invalidate related caches
+        \App\Services\CacheManager::invalidateBookingCache($booking->schedule_id);
 
         return response()->json([
             'message' => 'Booking approved successfully',
-            'booking' => $booking,
+            'booking' => $booking->fresh(),
         ]);
     }
 
@@ -659,16 +671,29 @@ class AdminApiController extends Controller
             ], 400);
         }
 
-        $booking->update(['status' => 'cancelled']);
-
-        // Return seat to available
-        if ($booking->seat) {
-            $booking->seat->update(['status' => 'available']);
+        if ($booking->payment_code) {
+            $bookings = Booking::where('payment_code', $booking->payment_code)->get();
+            foreach ($bookings as $b) {
+                if (!in_array($b->status, ['cancelled', 'completed'])) {
+                    $b->update(['status' => 'cancelled']);
+                    if ($b->seat) {
+                        $b->seat->update(['status' => 'available']);
+                    }
+                }
+            }
+        } else {
+            $booking->update(['status' => 'cancelled']);
+            if ($booking->seat) {
+                $booking->seat->update(['status' => 'available']);
+            }
         }
+
+        // Invalidate related caches
+        \App\Services\CacheManager::invalidateBookingCache($booking->schedule_id);
 
         return response()->json([
             'message' => 'Booking cancelled successfully',
-            'booking' => $booking,
+            'booking' => $booking->fresh(),
         ]);
     }
 
@@ -704,7 +729,14 @@ class AdminApiController extends Controller
     {
         $this->checkAdminRole($request);
 
-        $trip = Trip::with(['schedule.vehicle', 'schedule.driver', 'locations'])->findOrFail($tripId);
+        $trip = Trip::with([
+            'schedule.vehicle', 
+            'schedule.driver', 
+            'schedule.bookings' => function($q) {
+                $q->where('status', '!=', 'cancelled')->with('user');
+            }, 
+            'locations'
+        ])->findOrFail($tripId);
 
         return response()->json($trip);
     }

@@ -492,6 +492,6 @@ export class PaymentPage implements OnInit, OnDestroy {
   }
 
   goBack() {
-    window.history.back();
+    this.router.navigate(['/booking-detail'], { replaceUrl: true });
   }
 }

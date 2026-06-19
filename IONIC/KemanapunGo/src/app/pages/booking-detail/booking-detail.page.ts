@@ -58,6 +58,7 @@ export class BookingDetailPage {
         const groupedMap = new Map<string, any>();
 
         res.forEach(booking => {
+          if (booking.status === 'cancelled') return;
           const key = booking.payment_code || `SINGLE-${booking.id}`;
           const seatPrice = parseFloat(booking.total_price) || parseFloat(booking.schedule?.price) || 85000;
           const uniqueCode = parseFloat(booking.unique_code) || 0;
