@@ -17,8 +17,12 @@ class BookingController extends Controller
         $user = $request->user();
         $query = Booking::with(['user', 'schedule.trip', 'schedule.vehicle', 'schedule.driver', 'seat']);
 
-        if ($user->role !== 'admin') {
+        if ($user->role === 'customer') {
             $query->where('user_id', $user->id);
+        } elseif ($user->role === 'driver') {
+            $query->whereHas('schedule', function ($q) use ($user) {
+                $q->where('driver_id', $user->id);
+            });
         }
 
         if ($request->has('status')) {

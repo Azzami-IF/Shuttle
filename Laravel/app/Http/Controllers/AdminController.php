@@ -19,12 +19,12 @@ class AdminController extends Controller
             'vehicles' => Vehicle::count(),
             'schedules' => Schedule::count(),
             'bookings' => Booking::count(),
-            'active_trips' => Trip::where('status', 'on-going')->count(),
+            'active_trips' => Trip::whereIn('status', ['boarding', 'on-going', 'delayed', 'arrived'])->count(),
             'drivers' => User::where('role', 'driver')->count(),
         ];
 
         $recent_bookings = Booking::with(['user', 'schedule'])->latest()->take(5)->get();
-        $active_trips = Trip::with(['schedule.vehicle', 'schedule.driver'])->where('status', 'on-going')->get();
+        $active_trips = Trip::with(['schedule.vehicle', 'schedule.driver', 'schedule.bookings.user'])->whereIn('status', ['boarding', 'on-going', 'delayed', 'arrived'])->get();
 
         // Chart Data: Bookings in last 7 days
         $booking_stats = Booking::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as total'))
@@ -331,7 +331,13 @@ class AdminController extends Controller
     // Trip Monitoring
     public function trips(Request $request)
     {
-        $query = Trip::with(['schedule.vehicle', 'schedule.driver', 'locations']);
+        $query = Trip::with([
+            'schedule.vehicle',
+            'schedule.driver',
+            'schedule.bookings.user',
+            'schedule.bookings.seat',
+            'locations'
+        ]);
 
         if ($request->has('status') && $request->get('status') != '') {
             $query->where('status', $request->get('status'));
