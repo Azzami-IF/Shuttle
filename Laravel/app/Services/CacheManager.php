@@ -33,6 +33,7 @@ class CacheManager
      */
     public static function getSchedules()
     {
+        \App\Http\Controllers\ScheduleController::autoGenerateSchedulesIfNeeded();
         return Cache::remember('schedules:all', self::CACHE_DURATION_SHORT, function () {
             return \App\Models\Schedule::with(['vehicle', 'driver'])
                 ->select('id', 'vehicle_id', 'driver_id', 'origin', 'destination', 'departure_time', 'created_at')
