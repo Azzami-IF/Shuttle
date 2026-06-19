@@ -1,5 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary" class="pt-safe">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard" color="light" text=""></ion-back-button>
+    </ion-buttons>
     <ion-title>Manajemen Armada</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="openCreateModal()" color="light">

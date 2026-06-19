@@ -1,10 +1,13 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Manage Schedules</ion-title>
+  <ion-toolbar color="primary" class="pt-safe">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/dashboard" color="light" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Manajemen Jadwal</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="openCreateModal()" color="primary">
-        <ion-icon name="add" slot="start"></ion-icon>
-        New Schedule
+      <ion-button (click)="openCreateModal()" color="light">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Jadwal Baru
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
