@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -13,6 +13,12 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./booking-detail.page.scss'],
 })
 export class BookingDetailPage {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   bookings: any[] = [];
   searchTerm: string = '';
   homeRoute = '/dashboard';
@@ -24,13 +30,7 @@ export class BookingDetailPage {
   bankDetails: any = null;
   storageUrl = environment.apiUrl.replace('/api', '/storage/');
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private auth: AuthService,
-    private ui: UiService,
-    private languageService: LanguageService
-  ) { }
+  constructor() { }
 
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();

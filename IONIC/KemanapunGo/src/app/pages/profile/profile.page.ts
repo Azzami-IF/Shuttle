@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -11,6 +11,11 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   user$ = this.auth.user$;
   lang$ = this.languageService.lang$;
   homeRoute = '/dashboard';
@@ -21,12 +26,7 @@ export class ProfilePage {
   passwordData = { old_password: '', new_password: '' };
   isLoading = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService,
-    private languageService: LanguageService
-  ) {
+  constructor() {
     const savedLanguage = this.languageService.getCurrentLang();
     this.currentLanguageLabel = savedLanguage === 'en' ? 'English' : 'Indonesia';
   }

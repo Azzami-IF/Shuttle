@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -10,6 +10,11 @@ import { UiService } from '../../services/ui.service';
   standalone: false,
 })
 export class ResetPasswordPage implements OnInit {
+  private route = inject(ActivatedRoute);
+  private auth = inject(AuthService);
+  private ui = inject(UiService);
+  private router = inject(Router);
+
   form = {
     token: '',
     email: '',
@@ -21,12 +26,7 @@ export class ResetPasswordPage implements OnInit {
   showConfirmPassword = false;
   source: 'client' | 'driver' = 'client';
 
-  constructor(
-    private route: ActivatedRoute,
-    private auth: AuthService,
-    private ui: UiService,
-    private router: Router
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
