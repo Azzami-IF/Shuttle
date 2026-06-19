@@ -1,5 +1,11 @@
+@import "../../components/shared/design-system.scss";
+
 .schedule-list-page {
   --background: var(--ion-background-color);
+
+  ion-content::part(scroll) {
+    padding-bottom: 144px;
+  }
 }
 
 .search-summary {
@@ -7,24 +13,212 @@
   color: white;
   padding: 16px var(--container-margin) 40px;
 
-  ::ng-deep .ion-input {
-    --color: white;
-    --placeholder-color: rgba(255, 255, 255, 0.7);
-    --highlight-color-focused: rgba(255, 255, 255, 0.7);
-  }
-
-  .route-text {
-    font-size: 18px;
-    font-weight: 600;
+  .search-form-card {
+    background: rgba(0, 0, 0, 0.25);
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+    flex-direction: column;
+    gap: 12px;
 
-  .date-text {
-    font-size: 12px;
-    opacity: 0.8;
-    margin-top: 4px;
+    ion-searchbar {
+      padding: 0;
+      --background: rgba(255, 255, 255, 0.1);
+      --color: white;
+      --placeholder-color: rgba(255, 255, 255, 0.6);
+      --icon-color: rgba(255, 255, 255, 0.6);
+      --border-radius: 12px;
+      margin-bottom: 4px;
+    }
+
+    .route-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .input-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .input-box {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.25s ease;
+      height: 48px;
+
+      &:focus-within {
+        border-color: var(--ion-color-secondary, #3880ff);
+        box-shadow: 0 0 0 3px rgba(56, 128, 255, 0.18);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .icon-left {
+        font-size: 20px;
+        margin-right: 6px;
+      }
+
+      ion-input {
+        --color: white;
+        --placeholder-color: rgba(255, 255, 255, 0.6);
+        --padding-start: 0px;
+        --padding-end: 0px;
+        font-size: 14px;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        --border-style: none;
+        --border-width: 0px;
+        --highlight-height: 0px;
+      }
+
+      /* Color-coding of icons */
+      .origin-icon {
+        color: #2ecc71 !important;
+      }
+      .dest-icon {
+        color: #ff7675 !important;
+      }
+    }
+
+    .arrow-icon {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.6);
+      flex-shrink: 0;
+    }
+
+    .date-strip-container {
+      margin-top: 4px;
+      width: 100%;
+      overflow: hidden;
+
+      .date-strip-scroll {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 2px 8px;
+        
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .date-card {
+        flex: 0 0 62px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 10px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.25s ease;
+
+        .day-label {
+          font-size: 9px;
+          color: rgba(255, 255, 255, 0.6);
+          font-weight: 500;
+          text-transform: uppercase;
+          margin-bottom: 2px;
+        }
+
+        .day-num {
+          font-size: 15px;
+          color: white;
+          font-weight: 700;
+        }
+
+        &.active {
+          background: var(--ion-color-secondary, #3880ff);
+          border-color: var(--ion-color-secondary, #3880ff);
+          box-shadow: 0 4px 10px rgba(56, 128, 255, 0.3);
+
+          .day-label {
+            color: rgba(255, 255, 255, 0.8);
+          }
+          .day-num {
+            color: white;
+          }
+        }
+
+        &.calendar-card {
+          background: rgba(255, 255, 255, 0.05);
+          border-style: dashed;
+
+          span {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2px;
+          }
+
+          .day-label {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.6);
+          }
+        }
+      }
+    }
+
+    .suggestions-list {
+      position: absolute;
+      top: 52px;
+      left: 0;
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      z-index: 999;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--outline-variant);
+
+      .suggestion-header {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--outline);
+        text-transform: uppercase;
+        background: rgba(0, 0, 0, 0.02);
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--outline-variant);
+      }
+
+      .suggestion-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 14px;
+        font-size: 13px;
+        color: var(--ion-text-color);
+        cursor: pointer;
+        transition: background 0.1s ease;
+        border-bottom: 1px solid var(--outline-variant);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover, &:active {
+          background: rgba(0, 0, 0, 0.05);
+        }
+
+        .icon-item {
+          font-size: 16px;
+          margin-right: 8px;
+        }
+      }
+    }
   }
 }
 
@@ -159,4 +353,8 @@
     line-height: 1.5;
     max-width: 280px;
   }
+}
+
+.bottom-nav {
+  @extend .shared-bottom-nav;
 }

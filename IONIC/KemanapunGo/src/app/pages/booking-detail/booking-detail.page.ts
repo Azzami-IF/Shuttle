@@ -20,6 +20,7 @@ export class BookingDetailPage {
   ticketModalOpen = false;
   selectedBooking: any = null;
   lang$ = this.languageService.lang$;
+  user$ = this.auth.user$;
   bankDetails: any = null;
   storageUrl = environment.apiUrl.replace('/api', '/storage/');
 
