@@ -21,6 +21,16 @@ Route::get('/payment-info', function() {
 // Stripe Webhook (public, no authentication required)
 Route::post('/webhooks/stripe', [\App\Http\Controllers\PaymentController::class, 'webhook']);
 
+// Database Seeding Helper for cPanel
+Route::get('/seed-database', function() {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('db:seed');
+        return response()->json(['message' => 'Seeding completed successfully!']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/profile/update', [AuthController::class, 'updateProfile']);
