@@ -32,6 +32,10 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     private auth: AuthService
   ) {}
 
+  isDemoSimulationActive: boolean = false;
+  demoInterval: any;
+  demoProgress: number = 0;
+
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();
     this.tripId = this.route.snapshot.paramMap.get('id');
@@ -50,6 +54,81 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     if (this.pollingInterval) clearInterval(this.pollingInterval);
     if (this.statusPollingInterval) clearInterval(this.statusPollingInterval);
+    if (this.demoInterval) clearInterval(this.demoInterval);
+  }
+
+  startDemoSimulation() {
+    if (this.isDemoSimulationActive) {
+      this.stopDemoSimulation();
+      return;
+    }
+
+    this.isDemoSimulationActive = true;
+    if (this.pollingInterval) clearInterval(this.pollingInterval);
+    if (this.statusPollingInterval) clearInterval(this.statusPollingInterval);
+
+    const originName = (this.trip?.schedule?.origin || '').toLowerCase().trim();
+    const destName = (this.trip?.schedule?.destination || '').toLowerCase().trim();
+
+    const coordinatesMap: { [key: string]: [number, number] } = {
+      'jakarta': [-6.3090, 106.8824],
+      'terminal kampung rambutan': [-6.3090, 106.8824],
+      'bandung': [-6.9452, 107.5937],
+      'terminal leuwi panjang': [-6.9452, 107.5937],
+      'karawang': [-6.3073, 107.2913],
+      'sumedang': [-6.8524, 107.9234],
+      'subang': [-6.5715, 107.7587],
+      'purwakarta': [-6.5571, 107.4431],
+      'cikampek': [-6.4025, 107.4589],
+      'cirebon': [-6.7320, 108.5523],
+      'bogor': [-6.5971, 106.7932],
+      'depok': [-6.4025, 106.8227],
+      'tangerang': [-6.1702, 106.6403],
+      'bekasi': [-6.2383, 106.9756]
+    };
+
+    const originCoords = coordinatesMap[originName] || [-6.9452, 107.5937];
+    const destCoords = coordinatesMap[destName] || [-6.3090, 106.8824];
+
+    this.demoProgress = 0;
+    void this.ui.showToast('Simulasi perjalanan dimulai (Lokal)', 'success');
+
+    this.demoInterval = setInterval(() => {
+      this.demoProgress += 4; // Bergerak 4% setiap tick (total 25 tick)
+
+      if (this.demoProgress > 100) {
+        this.demoProgress = 100;
+        clearInterval(this.demoInterval);
+        this.isDemoSimulationActive = false;
+        void this.ui.showToast('Simulasi selesai! Bus telah tiba di tujuan.', 'success');
+        if (this.trip) {
+          this.trip.status = 'completed';
+        }
+        return;
+      }
+
+      const currentLat = originCoords[0] + (destCoords[0] - originCoords[0]) * (this.demoProgress / 100);
+      const currentLng = originCoords[1] + (destCoords[1] - originCoords[1]) * (this.demoProgress / 100);
+
+      this.location = {
+        latitude: currentLat,
+        longitude: currentLng
+      };
+
+      if (this.trip) {
+        this.trip.status = 'on-going';
+      }
+
+      this.updateMarker(currentLat, currentLng);
+    }, 2000);
+  }
+
+  stopDemoSimulation() {
+    this.isDemoSimulationActive = false;
+    if (this.demoInterval) clearInterval(this.demoInterval);
+    void this.ui.showToast('Simulasi dihentikan. Menghubungkan ke GPS asli...', 'info');
+    this.startPolling();
+    this.startStatusPolling();
   }
 
   initMap() {

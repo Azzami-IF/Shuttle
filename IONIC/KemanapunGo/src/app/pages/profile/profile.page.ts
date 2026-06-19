@@ -33,7 +33,7 @@ export class ProfilePage {
 
   ionViewWillEnter() {
     console.log('Profile will enter');
-    this.homeRoute = this.auth.getRole() === 'driver' ? '/driver-dashboard' : '/dashboard';
+    this.homeRoute = this.auth.getHomeRoute();
   }
 
   async openLanguageSelection() {
@@ -114,9 +114,7 @@ export class ProfilePage {
 
     this.auth.logout().subscribe({
       next: () => {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const loginPath = user.role === 'driver' ? '/driver-login' : '/login';
-        this.router.navigate([loginPath], { replaceUrl: true });
+        this.router.navigate(['/login'], { replaceUrl: true });
       },
       error: (err) => {
         console.error('Logout failed', err);

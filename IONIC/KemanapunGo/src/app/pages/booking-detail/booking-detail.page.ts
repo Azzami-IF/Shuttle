@@ -4,6 +4,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
 import { LanguageService } from '../../services/language.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: false,
@@ -20,6 +21,7 @@ export class BookingDetailPage {
   selectedBooking: any = null;
   lang$ = this.languageService.lang$;
   bankDetails: any = null;
+  storageUrl = environment.apiUrl.replace('/api', '/storage/');
 
   constructor(
     private api: ApiService,

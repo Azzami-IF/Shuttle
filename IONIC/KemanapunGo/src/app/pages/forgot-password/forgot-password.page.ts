@@ -13,19 +13,13 @@ import { UiService } from '../../services/ui.service';
 export class ForgotPasswordPage {
   email = '';
   isLoading = false;
-  source: 'client' | 'driver' = 'client';
 
   constructor(
     private auth: AuthService,
     private router: Router,
     private ui: UiService,
     private route: ActivatedRoute
-  ) {
-    const src = this.route.snapshot.queryParamMap.get('source');
-    if (src === 'driver') {
-      this.source = 'driver';
-    }
-  }
+  ) {}
 
   submit(event: Event) {
     event.preventDefault();
@@ -42,8 +36,7 @@ export class ForgotPasswordPage {
         void this.ui.showToast(res?.message || 'Link reset password telah dikirim ke email Anda.', 'success');
         this.router.navigate(['/reset-password'], {
           queryParams: {
-            email: this.email,
-            source: this.source,
+            email: this.email
           }
         });
       },
@@ -56,6 +49,6 @@ export class ForgotPasswordPage {
   }
 
   goBack() {
-    this.router.navigate([this.source === 'driver' ? '/driver-login' : '/login']);
+    this.router.navigate(['/login']);
   }
 }
