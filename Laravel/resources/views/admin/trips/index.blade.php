@@ -247,6 +247,86 @@
                 map.fitBounds(group.getBounds().pad(0.1));
             }
         }
+
+        // Real-time location polling every 5 seconds
+        setInterval(function() {
+            fetch("{{ route('admin.trips.locations') }}")
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(trip => {
+                        // Update internal data map
+                        tripDataMap[trip.id] = trip;
+
+                        if (trip.locations.length > 0) {
+                            const latestLoc = trip.locations[trip.locations.length - 1];
+
+                            // Update marker position
+                            if (tripMarkers[trip.id]) {
+                                tripMarkers[trip.id].setLatLng(latestLoc);
+                                
+                                // Update popup content dynamically
+                                tripMarkers[trip.id].getPopup().setContent(`
+                                    <div class="text-xs p-1">
+                                        <b class="text-sm">Armada: ${trip.vehicle}</b><br>
+                                        <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
+                                        <b>Driver:</b> ${trip.driver}<br>
+                                        <b>Status:</b> ${trip.status.toUpperCase()}<br>
+                                        <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
+                                    </div>
+                                `);
+                            } else {
+                                // Create new marker if it didn't exist
+                                const busIcon = L.divIcon({
+                                    className: 'custom-bus-icon',
+                                    html: `<div style="background-color:#18281e; color:white; padding:6px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px rgba(0,0,0,0.4); text-align:center;">
+                                             <span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>
+                                           </div>`,
+                                    iconSize: [28, 28],
+                                    iconAnchor: [14, 14]
+                                });
+
+                                const marker = L.marker(latestLoc, { icon: busIcon })
+                                    .addTo(map)
+                                    .bindPopup(`
+                                        <div class="text-xs p-1">
+                                            <b class="text-sm">Armada: ${trip.vehicle}</b><br>
+                                            <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
+                                            <b>Driver:</b> ${trip.driver}<br>
+                                            <b>Status:</b> ${trip.status.toUpperCase()}<br>
+                                            <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
+                                        </div>
+                                    `);
+                                
+                                marker.on('click', () => {
+                                    showPassengerPanel(trip.id);
+                                });
+                                tripMarkers[trip.id] = marker;
+                            }
+
+                            // Update polyline coordinates
+                            if (tripPolylines[trip.id]) {
+                                tripPolylines[trip.id].setLatLngs(trip.locations);
+                            } else {
+                                const polyline = L.polyline(trip.locations, { color: '#0d9488', weight: 4, opacity: 0.9 }).addTo(map);
+                                tripPolylines[trip.id] = polyline;
+                            }
+                        }
+                    });
+
+                    // Refresh active passenger panel if it is currently open
+                    const activePanelIdElement = document.getElementById('panel-trip-id');
+                    if (activePanelIdElement && activePanelIdElement.textContent) {
+                        const activePanelId = activePanelIdElement.textContent;
+                        if (activePanelId && !document.getElementById('passenger-panel').classList.contains('hidden')) {
+                            const tripIdNum = parseInt(activePanelId.replace('#TRP', ''), 10);
+                            if (tripIdNum && tripDataMap[tripIdNum]) {
+                                showPassengerPanel(tripIdNum);
+                            }
+                        }
+                    }
+                })
+                .catch(err => console.error("Error polling locations:", err));
+        }, 5000);
     });
 
     function showPassengerPanel(tripId) {

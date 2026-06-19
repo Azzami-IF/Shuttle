@@ -346,4 +346,82 @@ class AdminController extends Controller
         $trips = $query->latest()->get();
         return view('admin.trips.index', compact('trips'));
     }
+
+    public function editSchedule(Schedule $schedule)
+    {
+        $vehicles = Vehicle::all();
+        $drivers = User::where('role', 'driver')->get();
+        return view('admin.schedules.edit', compact('schedule', 'vehicles', 'drivers'));
+    }
+
+    public function updateSchedule(Request $request, Schedule $schedule)
+    {
+        $request->validate([
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'driver_id' => 'required|exists:users,id',
+            'origin' => 'required',
+            'destination' => 'required',
+            'departure_time' => 'required|date',
+        ]);
+
+        $vehicle = Vehicle::find($request->vehicle_id);
+        $oldVehicleId = $schedule->vehicle_id;
+
+        // Check if there are bookings before changing vehicle capacity/type
+        if ($oldVehicleId != $vehicle->id) {
+            $hasBookings = Booking::where('schedule_id', $schedule->id)->where('status', '!=', 'cancelled')->exists();
+            if ($hasBookings) {
+                return redirect()->back()->withErrors(['vehicle_id' => 'Cannot change vehicle because this schedule already has active bookings.']);
+            }
+
+            // Recreate seats if no active bookings exist
+            Seat::where('schedule_id', $schedule->id)->delete();
+            for ($i = 1; $i <= $vehicle->capacity; $i++) {
+                Seat::create([
+                    'schedule_id' => $schedule->id,
+                    'seat_number' => (string)$i,
+                    'status' => 'available',
+                ]);
+            }
+        }
+
+        $schedule->update($request->all());
+
+        return redirect()->route('admin.schedules')->with('success', 'Schedule updated successfully');
+    }
+
+    public function activeTripsLocations(Request $request)
+    {
+        $trips = Trip::with([
+            'schedule.vehicle',
+            'schedule.driver',
+            'schedule.bookings' => function($q) {
+                $q->where('status', '!=', 'cancelled')->with('user');
+            },
+            'locations'
+        ])->whereIn('status', ['boarding', 'on-going', 'delayed', 'arrived'])->get();
+
+        $data = $trips->map(function ($t) {
+            return [
+                'id' => $t->id,
+                'origin' => $t->schedule?->origin,
+                'destination' => $t->schedule?->destination,
+                'driver' => $t->schedule?->driver?->name ?? 'Driver',
+                'vehicle' => $t->schedule?->vehicle?->license_plate ?? '',
+                'status' => $t->status,
+                'locations' => $t->locations->map(function ($loc) {
+                    return [$loc->latitude, $loc->longitude];
+                })->toArray(),
+                'passengers' => $t->schedule->bookings->map(function ($booking) {
+                    return [
+                        'name' => $booking->user?->name ?? 'User',
+                        'seat' => $booking->seat_number,
+                        'phone' => $booking->user?->phone ?? '',
+                    ];
+                })->toArray()
+            ];
+        });
+
+        return response()->json($data);
+    }
 }
