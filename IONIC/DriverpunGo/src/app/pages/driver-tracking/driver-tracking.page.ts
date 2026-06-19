@@ -98,7 +98,88 @@ export class DriverTrackingPage implements OnInit, OnDestroy, AfterViewInit {
       if (this.trip && this.trip.schedule_id) {
         this.loadPassengers();
       }
+      
+      if (this.trip && this.trip.schedule) {
+        this.plotTerminalsOnMap();
+      }
     });
+  }
+
+  originMarker: L.Marker | null = null;
+  destMarker: L.Marker | null = null;
+
+  async plotTerminalsOnMap() {
+    if (!this.map || !this.trip?.schedule) return;
+
+    const schedule = this.trip.schedule;
+    
+    // Default to searching for the exact text first, if it fails, try adding the city name
+    const originQuery = schedule.origin_terminal ? `${schedule.origin_terminal} ${schedule.origin}, Indonesia` : `Terminal ${schedule.origin}, Indonesia`;
+    const destQuery = schedule.destination_terminal ? `${schedule.destination_terminal} ${schedule.destination}, Indonesia` : `Terminal ${schedule.destination}, Indonesia`;
+
+    const originCoords = await this.geocode(originQuery) || await this.geocode(`${schedule.origin}, Indonesia`);
+    const destCoords = await this.geocode(destQuery) || await this.geocode(`${schedule.destination}, Indonesia`);
+
+    const originIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    const destIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    if (originCoords) {
+      if (this.originMarker) this.originMarker.remove();
+      this.originMarker = L.marker(originCoords, { icon: originIcon }).addTo(this.map)
+        .bindPopup(`<b>Asal:</b><br>${schedule.origin_terminal || schedule.origin}`);
+    }
+    if (destCoords) {
+      if (this.destMarker) this.destMarker.remove();
+      this.destMarker = L.marker(destCoords, { icon: destIcon }).addTo(this.map)
+        .bindPopup(`<b>Tujuan:</b><br>${schedule.destination_terminal || schedule.destination}`);
+    }
+
+    if (originCoords && destCoords) {
+      const markers: L.Layer[] = [];
+      if (this.marker) markers.push(this.marker);
+      if (this.originMarker) markers.push(this.originMarker);
+      if (this.destMarker) markers.push(this.destMarker);
+      
+      // Draw a dotted line connecting origin and destination to visualize the route
+      const routeLine = L.polyline([originCoords, destCoords], { color: '#3b82f6', weight: 4, dashArray: '10, 10' }).addTo(this.map);
+      markers.push(routeLine);
+
+      const group = new L.FeatureGroup(markers);
+      // Wait a moment for map to initialize properly before fitting bounds
+      setTimeout(() => {
+        if (this.map) {
+          this.map.fitBounds(group.getBounds(), { padding: [50, 50] });
+        }
+      }, 500);
+    }
+  }
+
+  async geocode(query: string): Promise<[number, number] | null> {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      if (data && data.length > 0) {
+        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      }
+    } catch (e) {
+      console.error('Geocoding error', e);
+    }
+    return null;
   }
 
   async startLocationUpdates() {
