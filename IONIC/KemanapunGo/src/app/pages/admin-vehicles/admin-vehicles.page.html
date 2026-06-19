@@ -1,35 +1,35 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Manage Vehicles</ion-title>
+  <ion-toolbar color="primary" class="pt-safe">
+    <ion-title>Manajemen Armada</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="openCreateModal()" color="primary">
-        <ion-icon name="add" slot="start"></ion-icon>
-        New Vehicle
+      <ion-button (click)="openCreateModal()" color="light">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Armada Baru
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="admin-vehicles-content">
   <ion-refresher slot="fixed" (ionRefresh)="loadVehicles(1); $event.target.complete()">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
   <div class="vehicles-container">
     <!-- Error Message -->
-    <ion-card *ngIf="error" class="error-card">
+    <ion-card *ngIf="error" class="error-card glass-panel">
       <ion-card-content>{{ error }}</ion-card-content>
     </ion-card>
 
     <!-- Search Filter -->
-    <ion-card class="search-card">
+    <ion-card class="search-card glass-panel">
       <ion-card-content>
-        <ion-item>
-          <ion-label position="floating">Search by registration or model</ion-label>
+        <ion-item lines="none" class="search-item">
+          <ion-icon name="search-outline" slot="start"></ion-icon>
           <ion-input
             [(ngModel)]="searchQuery"
             (ionChange)="onSearchChange()"
-            placeholder="Enter search term">
+            placeholder="Cari nama armada atau plat nomor...">
           </ion-input>
         </ion-item>
       </ion-card-content>
@@ -37,67 +37,63 @@
 
     <!-- Loading -->
     <div *ngIf="loading" class="loading-container">
-      <ion-spinner></ion-spinner>
-      <p>Loading vehicles...</p>
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Memuat data armada...</p>
     </div>
 
     <!-- Vehicles List -->
-    <ion-card *ngIf="!loading && vehicles.length > 0" class="vehicles-card">
+    <ion-card *ngIf="!loading && vehicles.length > 0" class="vehicles-card glass-panel">
       <ion-card-header>
-        <ion-card-title>Vehicles ({{ pagination.total }})</ion-card-title>
+        <ion-card-title>Daftar Kendaraan ({{ pagination.total }})</ion-card-title>
       </ion-card-header>
       <ion-list>
         <ion-item *ngFor="let vehicle of vehicles" class="vehicle-item">
-          <ion-icon [name]="getTypeIcon(vehicle.vehicle_type)" slot="start" color="primary"></ion-icon>
+          <ion-icon [name]="getTypeIcon(vehicle.capacity > 8 ? 'van' : 'car')" slot="start" color="primary"></ion-icon>
           <ion-label>
             <div class="vehicle-title">
-              {{ vehicle.make }} {{ vehicle.model }}
-              <span class="year">({{ vehicle.year }})</span>
+              {{ vehicle.name }}
             </div>
             <div class="vehicle-meta">
-              <span>{{ vehicle.registration_number }}</span>
+              <span class="plate">{{ vehicle.license_plate }}</span>
               <span class="dot">·</span>
-              <span>{{ vehicle.capacity }} seats</span>
+              <span class="seats">{{ vehicle.capacity }} Kursi</span>
             </div>
           </ion-label>
-          <ion-badge [color]="getStatusBadgeColor(vehicle.status)" slot="start">
-            {{ vehicle.status }}
-          </ion-badge>
-          <ion-button
-            slot="end"
-            fill="clear"
-            size="small"
-            (click)="openEditModal(vehicle)"
-            color="primary">
-            <ion-icon name="create"></ion-icon>
-          </ion-button>
-          <ion-button
-            slot="end"
-            fill="clear"
-            size="small"
-            (click)="deleteVehicle(vehicle)"
-            color="danger">
-            <ion-icon name="trash"></ion-icon>
-          </ion-button>
+          <div class="actions" slot="end">
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="openEditModal(vehicle)"
+              color="primary">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="deleteVehicle(vehicle)"
+              color="danger">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
         </ion-item>
       </ion-list>
     </ion-card>
 
     <!-- Empty State -->
-    <ion-card *ngIf="!loading && vehicles.length === 0" class="empty-card">
+    <ion-card *ngIf="!loading && vehicles.length === 0" class="empty-card glass-panel">
       <ion-card-content class="empty-content">
-        <ion-icon name="car-outline"></ion-icon>
-        <h2>No Vehicles Found</h2>
-        <p>Start by creating a new vehicle</p>
+        <span class="material-symbols-outlined" style="font-size: 64px; color: #c4cdc1; margin-bottom: 12px;">directions_bus</span>
+        <h2>Belum Ada Kendaraan</h2>
+        <p>Silakan buat data armada pertama Anda untuk memulai.</p>
         <ion-button (click)="openCreateModal()" color="primary">
-          <ion-icon name="add" slot="start"></ion-icon>
-          Add Vehicle
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Tambah Kendaraan
         </ion-button>
       </ion-card-content>
     </ion-card>
 
     <!-- Pagination -->
-    <ion-card *ngIf="!loading && pagination.last_page > 1" class="pagination-card">
+    <ion-card *ngIf="!loading && pagination.last_page > 1" class="pagination-card glass-panel">
       <ion-card-content>
         <div class="pagination-controls">
           <ion-button
@@ -105,16 +101,16 @@
             [disabled]="pagination.current_page === 1"
             fill="outline">
             <ion-icon name="chevron-back" slot="start"></ion-icon>
-            Previous
+            Sebelumnya
           </ion-button>
           <span class="page-info">
-            Page {{ pagination.current_page }} of {{ pagination.last_page }}
+            Halaman {{ pagination.current_page }} dari {{ pagination.last_page }}
           </span>
           <ion-button
             (click)="nextPage()"
             [disabled]="pagination.current_page === pagination.last_page"
             fill="outline">
-            Next
+            Selanjutnya
             <ion-icon name="chevron-forward" slot="end"></ion-icon>
           </ion-button>
         </div>

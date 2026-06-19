@@ -8,15 +8,9 @@ import { takeUntil } from 'rxjs/operators';
 
 interface Vehicle {
   id: number;
-  registration_number: string;
-  vehicle_type: string;
-  make: string;
-  model: string;
-  year: number;
+  license_plate: string;
+  name: string;
   capacity: number;
-  driver_id: number | null;
-  status: string;
-  last_service_date: string;
   created_at: string;
 }
 
@@ -71,12 +65,9 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
 
   initializeForm() {
     this.vehicleForm = this.fb.group({
-      registration_number: ['', Validators.required],
-      vehicle_type: ['car', Validators.required],
-      make: ['', Validators.required],
-      model: ['', Validators.required],
-      year: [new Date().getFullYear(), Validators.required],
-      capacity: [4, [Validators.required, Validators.min(1)]]
+      name: ['', Validators.required],
+      license_plate: ['', Validators.required],
+      capacity: [12, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -102,7 +93,7 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
           this.loading = false;
         },
         error: (err) => {
-          this.error = 'Failed to load vehicles';
+          this.error = 'Gagal memuat data armada';
           console.error(err);
           this.loading = false;
         }
@@ -128,18 +119,15 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
 
   async openCreateModal() {
     this.editingVehicle = null;
-    this.vehicleForm.reset({ vehicle_type: 'car', year: new Date().getFullYear(), capacity: 4 });
+    this.vehicleForm.reset({ capacity: 12 });
     await this.showFormModal();
   }
 
   async openEditModal(vehicle: Vehicle) {
     this.editingVehicle = vehicle;
     this.vehicleForm.patchValue({
-      registration_number: vehicle.registration_number,
-      vehicle_type: vehicle.vehicle_type,
-      make: vehicle.make,
-      model: vehicle.model,
-      year: vehicle.year,
+      name: vehicle.name,
+      license_plate: vehicle.license_plate,
       capacity: vehicle.capacity
     });
     await this.showFormModal();
@@ -178,7 +166,7 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
           this.loadVehicles(this.pagination.current_page);
         },
         error: (err) => {
-          this.error = `Failed to ${this.editingVehicle ? 'update' : 'create'} vehicle`;
+          this.error = `Gagal ${this.editingVehicle ? 'menyimpan perubahan' : 'menambah'} armada`;
           console.error(err);
         }
       });
@@ -186,15 +174,15 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
 
   async deleteVehicle(vehicle: Vehicle) {
     const alert = await this.alertCtrl.create({
-      header: 'Delete Vehicle',
-      message: `Are you sure you want to delete ${vehicle.registration_number}?`,
+      header: 'Hapus Armada',
+      message: `Apakah Anda yakin ingin menghapus armada ${vehicle.name} (${vehicle.license_plate})?`,
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Batal',
           role: 'cancel'
         },
         {
-          text: 'Delete',
+          text: 'Hapus',
           role: 'destructive',
           handler: () => {
             this.adminService.deleteVehicle(vehicle.id)
@@ -204,7 +192,7 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
                   this.loadVehicles(this.pagination.current_page);
                 },
                 error: (err) => {
-                  this.error = 'Failed to delete vehicle';
+                  this.error = 'Gagal menghapus armada';
                   console.error(err);
                 }
               });
@@ -216,22 +204,13 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  getStatusBadgeColor(status: string): string {
-    const colors: { [key: string]: string } = {
-      'active': 'success',
-      'maintenance': 'warning',
-      'inactive': 'medium'
-    };
-    return colors[status] || 'medium';
-  }
-
   getTypeIcon(type: string): string {
     const icons: { [key: string]: string } = {
-      'car': 'car',
-      'van': 'bus',
-      'truck': 'car-sport'
+      'car': 'car-outline',
+      'van': 'bus-outline',
+      'truck': 'car-sport-outline'
     };
-    return icons[type] || 'car';
+    return icons[type] || 'car-outline';
   }
 }
 
@@ -239,46 +218,30 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
   selector: 'app-vehicle-form-modal',
   template: `
     <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ vehicle ? 'Edit Vehicle' : 'Create Vehicle' }}</ion-title>
+      <ion-toolbar color="primary">
+        <ion-title>{{ vehicle ? 'Ubah Data Armada' : 'Tambah Armada Baru' }}</ion-title>
         <ion-buttons slot="start">
-          <ion-button (click)="dismiss()">Cancel</ion-button>
+          <ion-button (click)="dismiss()">Batal</ion-button>
         </ion-buttons>
         <ion-buttons slot="end">
-          <ion-button (click)="confirm()" [disabled]="!form.valid">Save</ion-button>
+          <ion-button (click)="confirm()" [disabled]="!form.valid">Simpan</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <form [formGroup]="form">
-        <ion-item>
-          <ion-label position="floating">Registration Number</ion-label>
-          <ion-input formControlName="registration_number" placeholder="e.g., ABC1234"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Vehicle Type</ion-label>
-          <ion-select formControlName="vehicle_type">
-            <ion-select-option value="car">Car</ion-select-option>
-            <ion-select-option value="van">Van</ion-select-option>
-            <ion-select-option value="truck">Truck</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Make</ion-label>
-          <ion-input formControlName="make" placeholder="e.g., Toyota"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Model</ion-label>
-          <ion-input formControlName="model" placeholder="e.g., Corolla"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Year</ion-label>
-          <ion-input formControlName="year" type="number" placeholder="2024"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating">Capacity</ion-label>
-          <ion-input formControlName="capacity" type="number" min="1" placeholder="4"></ion-input>
-        </ion-item>
+      <form [formGroup]="form" (submit)="confirm()">
+        <div class="input-group mb-4">
+          <label>Nama Armada</label>
+          <input type="text" formControlName="name" class="custom-input" placeholder="e.g., Kemanapun Express 01" required />
+        </div>
+        <div class="input-group mb-4">
+          <label>Plat Nomor</label>
+          <input type="text" formControlName="license_plate" class="custom-input" placeholder="e.g., B 1234 ABC" required />
+        </div>
+        <div class="input-group mb-6">
+          <label>Kapasitas Kursi</label>
+          <input type="number" formControlName="capacity" class="custom-input" min="1" placeholder="12" required />
+        </div>
       </form>
     </ion-content>
   `,
