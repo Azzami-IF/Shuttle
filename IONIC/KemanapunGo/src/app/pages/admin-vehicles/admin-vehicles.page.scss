@@ -3,6 +3,10 @@
 .admin-vehicles-content {
   --background: var(--ion-background-color);
   background: var(--ion-background-color);
+
+  &::part(scroll) {
+    padding-bottom: 110px;
+  }
 }
 
 .vehicles-container {
@@ -277,3 +281,7 @@
 
 .mb-4 { margin-bottom: 16px; }
 .mb-6 { margin-bottom: 24px; }
+
+.bottom-nav {
+  @extend .shared-bottom-nav;
+}

@@ -2,7 +2,10 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
+import { AuthService } from '../../services/auth.service';
+import { UiService } from '../../services/ui.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -32,6 +35,9 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
   private modalCtrl = inject(ModalController);
   private alertCtrl = inject(AlertController);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private ui = inject(UiService);
 
   vehicles: Vehicle[] = [];
   pagination: PaginationData = {
@@ -52,6 +58,22 @@ export class AdminVehiclesPage implements OnInit, OnDestroy {
 
   constructor() {
     this.initializeForm();
+  }
+
+  async confirmLogout() {
+    const confirmed = await this.ui.showConfirm('Keluar Akun', 'Apakah Anda yakin ingin keluar dari sesi admin?', 'Keluar');
+    if (confirmed) {
+      this.authService.logout().subscribe({
+        next: () => {
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error('Logout failed, forcing local logout', err);
+          this.authService.logoutDirect();
+          this.router.navigate(['/login']);
+        }
+      });
+    }
   }
 
   ngOnInit() {

@@ -1,8 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/schedule-list" text=""></ion-back-button>
-    </ion-buttons>
+
     <ion-title *ngIf="lang$ | async">{{ getTranslation('selectSeat') }}</ion-title>
   </ion-toolbar>
 </ion-header>
