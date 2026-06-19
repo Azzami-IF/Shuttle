@@ -118,7 +118,7 @@
               <div class="upload-proof-box">
                 <input type="file" #fileInput (change)="onFileSelected($event, item)" accept="image/*" hidden>
                 <div class="proof-preview" *ngIf="item.payment_proof" (click)="fileInput.click()">
-                  <img [src]="'http://127.0.0.1:8000/storage/' + item.payment_proof" alt="Bukti Transfer">
+                  <img [src]="storageUrl + item.payment_proof" alt="Bukti Transfer">
                   <div class="change-overlay">
                     <span class="material-symbols-outlined">edit</span>
                     Ganti

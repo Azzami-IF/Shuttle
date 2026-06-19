@@ -20,7 +20,8 @@ export class AuthGuard implements CanActivate {
     const role = this.auth.getRole() || JSON.parse(localStorage.getItem('user') || '{}')?.role;
 
     if (allowedRoles && role && !allowedRoles.includes(role)) {
-      this.router.navigate([redirectTo || (role === 'driver' ? '/driver-dashboard' : '/dashboard')], {
+      const fallback = role === 'admin' ? '/admin/dashboard' : '/dashboard';
+      this.router.navigate([redirectTo || fallback], {
         replaceUrl: true,
       });
       return false;

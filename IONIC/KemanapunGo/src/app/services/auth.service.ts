@@ -71,7 +71,8 @@ export class AuthService {
 
   getHomeRoute() {
     const role = this.getRole() || JSON.parse(localStorage.getItem('user') || '{}')?.role;
-    return role === 'driver' ? '/driver-dashboard' : '/dashboard';
+    if (role === 'admin') return '/admin/dashboard';
+    return '/dashboard';
   }
 
   updateProfile(data: any) {

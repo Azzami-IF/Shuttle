@@ -136,17 +136,7 @@
       </div>
     </section>
 
-    <!-- Driver Specific Card -->
-    <section class="search-card" *ngIf="user.role === 'driver'">
-      <div class="text-center py-4">
-        <h2 class="text-2xl font-bold text-white mb-1" *ngIf="lang$ | async">{{ getGreeting() }}, {{ user.name }}</h2>
-        <p class="text-white/80" *ngIf="lang$ | async">{{ getTranslation('welcome') }}</p>
-        <button class="search-btn" routerLink="/driver-trips">
-          <span class="material-symbols-outlined">route</span>
-          Lihat Perjalanan
-        </button>
-      </div>
-    </section>
+
 
     <!-- Quick Access Menu -->
     <section class="quick-menu">
@@ -201,24 +191,6 @@
     <button class="nav-item" routerLink="/profile">
       <span class="material-symbols-outlined">person</span>
       <span>{{ getTranslation('profile') }}</span>
-    </button>
-  </ng-container>
-  <ng-container *ngIf="user.role === 'driver'">
-    <button class="nav-item active" routerLink="/dashboard">
-      <span class="material-symbols-outlined">home</span>
-      <span>Home</span>
-    </button>
-    <button class="nav-item" routerLink="/driver-trips">
-      <span class="material-symbols-outlined">route</span>
-      <span>Trips</span>
-    </button>
-    <button class="nav-item" routerLink="/driver-history">
-      <span class="material-symbols-outlined">history</span>
-      <span>History</span>
-    </button>
-    <button class="nav-item" routerLink="/profile">
-      <span class="material-symbols-outlined">person</span>
-      <span>Profile</span>
     </button>
   </ng-container>
 </nav>

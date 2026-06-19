@@ -8,7 +8,7 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
     canActivate: [AuthGuard],
     data: {
-      roles: ['customer', 'driver'],
+      roles: ['customer', 'admin'],
       redirectTo: '/onboarding'
     }
   },
@@ -34,7 +34,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       roles: ['customer'],
-      redirectTo: '/driver-dashboard'
+      redirectTo: '/onboarding'
     }
   },
   {
@@ -43,7 +43,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       roles: ['customer'],
-      redirectTo: '/driver-dashboard'
+      redirectTo: '/onboarding'
     }
   },
   {
@@ -52,16 +52,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       roles: ['customer'],
-      redirectTo: '/driver-dashboard'
-    }
-  },
-  {
-    path: 'driver-trips',
-    loadChildren: () => import('./pages/driver-trips/driver-trips.module').then( m => m.DriverTripsPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['driver'],
-      redirectTo: '/dashboard'
+      redirectTo: '/onboarding'
     }
   },
   {
@@ -70,7 +61,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       roles: ['customer'],
-      redirectTo: '/driver-dashboard'
+      redirectTo: '/onboarding'
     }
   },
   {
@@ -79,7 +70,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       roles: ['customer'],
-      redirectTo: '/driver-dashboard'
+      redirectTo: '/onboarding'
     }
   },
   {
@@ -92,67 +83,17 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       roles: ['customer'],
-      redirectTo: '/driver-dashboard'
+      redirectTo: '/onboarding'
     }
-  },
-  {
-    path: 'driver-history',
-    loadChildren: () => import('./pages/driver-history/driver-history.module').then( m => m.DriverHistoryPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['driver'],
-      redirectTo: '/dashboard'
-    }
-  },
-  {
-    path: 'driver-dashboard',
-    loadChildren: () => import('./pages/driver-dashboard/driver-dashboard.module').then( m => m.DriverDashboardPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['driver'],
-      redirectTo: '/dashboard'
-    }
-  },
-  {
-    path: 'driver-tracking',
-    loadChildren: () => import('./pages/driver-tracking/driver-tracking.module').then( m => m.DriverTrackingPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['driver'],
-      redirectTo: '/dashboard'
-    }
-  },
-  {
-    path: 'driver-status',
-    redirectTo: 'driver-history',
-    pathMatch: 'full'
-  },
-  {
-    path: 'driver-vehicle',
-    loadChildren: () => import('./pages/driver-vehicle/driver-vehicle.module').then( m => m.DriverVehiclePageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['driver'],
-      redirectTo: '/dashboard'
-    }
-  },
-  {
-    path: 'driver-profile',
-    redirectTo: 'profile',
-    pathMatch: 'full'
   },
   {
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule),
     canActivate: [AuthGuard],
     data: {
-      roles: ['customer', 'driver'],
+      roles: ['customer', 'admin'],
       redirectTo: '/onboarding'
     }
-  },
-  {
-    path: 'driver-login',
-    loadChildren: () => import('./pages/driver-login/driver-login.module').then( m => m.DriverLoginPageModule)
   },
   {
     path: 'admin/dashboard',
@@ -230,11 +171,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'onboarding',
     pathMatch: 'full'
-  },  {
+  },  {
     path: 'privacy-policy',
     loadChildren: () => import('./pages/privacy-policy/privacy-policy.module').then( m => m.PrivacyPolicyPageModule)
   },
-
 ];
 
 @NgModule({
