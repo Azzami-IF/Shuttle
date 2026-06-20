@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.kemanapungo.id',
+  appId: 'app.driverpungo.id',
   appName: 'DriverpunGo',
   webDir: 'www',
   bundledWebRuntime: false,
