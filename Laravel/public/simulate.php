@@ -1,121 +1,136 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 define('LARAVEL_START', microtime(true));
 
-// Load composer autoloader
-require __DIR__.'/../vendor/autoload.php';
+// Setup global error handling to debug online issues
+try {
+    // Load composer autoloader
+    require __DIR__.'/../vendor/autoload.php';
 
-// Bootstrap Laravel
-$app = require_once __DIR__.'/../bootstrap/app.php';
+    // Bootstrap Laravel
+    $app = require_once __DIR__.'/../bootstrap/app.php';
 
-// Resolve console kernel to use Artisan
-$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+    // Resolve console kernel to use Artisan
+    $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
-use App\Models\Trip;
-use App\Models\Location;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-
-// Handle Actions (POST)
-$message = '';
-$messageType = 'success'; // success, error, info
-$outputLog = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
+    // Import models
+    $tripClass = 'App\Models\Trip';
+    $locationClass = 'App\Models\Location';
     
-    try {
-        if ($action === 'set_status' && isset($_POST['trip_id'], $_POST['status'])) {
-            $tripId = (int)$_POST['trip_id'];
-            $status = $_POST['status'];
-            $trip = Trip::find($tripId);
-            
-            if ($trip) {
-                if ($status === 'scheduled') {
-                    // Reset locations when setting back to scheduled
-                    $trip->locations()->delete();
-                    $trip->update([
-                        'status' => 'scheduled',
-                        'started_at' => null,
-                        'completed_at' => null
-                    ]);
-                    $message = "Trip #{$tripId} berhasil direset ke SCHEDULED (lokasi dihapus).";
-                } elseif ($status === 'on-going') {
-                    $trip->update([
-                        'status' => 'on-going',
-                        'started_at' => now(),
-                        'completed_at' => null
-                    ]);
-                    $message = "Trip #{$tripId} berhasil diubah ke ON-GOING.";
-                } elseif ($status === 'completed') {
-                    $trip->update([
-                        'status' => 'completed',
-                        'completed_at' => now()
-                    ]);
-                    $message = "Trip #{$tripId} berhasil diubah ke COMPLETED.";
+    // Handle Actions (POST)
+    $message = '';
+    $messageType = 'success'; // success, error, info
+    $outputLog = '';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $action = $_POST['action'] ?? '';
+        
+        try {
+            if ($action === 'set_status' && isset($_POST['trip_id'], $_POST['status'])) {
+                $tripId = (int)$_POST['trip_id'];
+                $status = $_POST['status'];
+                $trip = $tripClass::find($tripId);
+                
+                if ($trip) {
+                    if ($status === 'scheduled') {
+                        // Reset locations when setting back to scheduled
+                        $trip->locations()->delete();
+                        $trip->update([
+                            'status' => 'scheduled',
+                            'started_at' => null,
+                            'completed_at' => null
+                        ]);
+                        $message = "Trip #{$tripId} berhasil direset ke SCHEDULED (lokasi dihapus).";
+                    } elseif ($status === 'on-going') {
+                        $trip->update([
+                            'status' => 'on-going',
+                            'started_at' => now(),
+                            'completed_at' => null
+                        ]);
+                        $message = "Trip #{$tripId} berhasil diubah ke ON-GOING.";
+                    } elseif ($status === 'completed') {
+                        $trip->update([
+                            'status' => 'completed',
+                            'completed_at' => now()
+                        ]);
+                        $message = "Trip #{$tripId} berhasil diubah ke COMPLETED.";
+                    }
+                } else {
+                    $message = "Trip #{$tripId} tidak ditemukan.";
+                    $messageType = 'error';
                 }
-            } else {
-                $message = "Trip #{$tripId} tidak ditemukan.";
-                $messageType = 'error';
+            } 
+            
+            elseif ($action === 'run_tick') {
+                // Run artisan trips:simulate with 1s duration and 1s interval (runs exactly 1 tick)
+                $status = \Illuminate\Support\Facades\Artisan::call('trips:simulate', [
+                    '--duration' => 1,
+                    '--interval' => 1
+                ]);
+                $outputLog = \Illuminate\Support\Facades\Artisan::output();
+                $message = "Berhasil menjalankan 1 tick simulasi.";
+            } 
+            
+            elseif ($action === 'run_background') {
+                // Check if exec or shell_exec is enabled
+                if (function_exists('shell_exec')) {
+                    $artisanPath = base_path('artisan');
+                    // Run trips:simulate in the background for 1 hour (3600 seconds)
+                    $cmd = "php {$artisanPath} trips:simulate --duration=3600 --interval=3 > /dev/null 2>&1 &";
+                    shell_exec($cmd);
+                    $message = "Simulasi latar belakang (background) berhasil dimulai selama 1 Jam! Rute bus Anda akan diperbarui setiap 3 detik.";
+                    $messageType = 'info';
+                } else {
+                    $message = "Fungsi 'shell_exec' dinonaktifkan di server hosting Anda. Silakan gunakan tombol 'Jalankan 1 Tick' secara manual atau jalankan via cron job.";
+                    $messageType = 'error';
+                }
             }
-        } 
-        
-        elseif ($action === 'run_tick') {
-            // Run artisan trips:simulate with 1s duration and 1s interval (runs exactly 1 tick)
-            $status = Artisan::call('trips:simulate', [
-                '--duration' => 1,
-                '--interval' => 1
-            ]);
-            $outputLog = Artisan::output();
-            $message = "Berhasil menjalankan 1 tick simulasi.";
-        } 
-        
-        elseif ($action === 'run_background') {
-            // Check if exec or shell_exec is enabled
-            if (function_exists('shell_exec')) {
-                $artisanPath = base_path('artisan');
-                // Run trips:simulate in the background for 1 hour (3600 seconds)
-                $cmd = "php {$artisanPath} trips:simulate --duration=3600 --interval=3 > /dev/null 2>&1 &";
-                shell_exec($cmd);
-                $message = "Simulasi latar belakang (background) berhasil dimulai selama 1 Jam! Rute bus Anda akan diperbarui setiap 3 detik.";
-                $messageType = 'info';
-            } else {
-                $message = "Fungsi 'shell_exec' dinonaktifkan di server hosting Anda. Silakan gunakan tombol 'Jalankan 1 Tick' secara manual atau jalankan via cron job.";
-                $messageType = 'error';
+            
+            elseif ($action === 'kill_simulation') {
+                if (function_exists('shell_exec')) {
+                    // Kill any running php artisan trips:simulate processes
+                    // In Linux, we can kill by searching process name
+                    shell_exec("pkill -f 'trips:simulate'");
+                    $message = "Mencoba mematikan semua proses simulator 'trips:simulate' di server.";
+                    $messageType = 'info';
+                } else {
+                    $message = "Fungsi 'shell_exec' dinonaktifkan di server hosting Anda.";
+                    $messageType = 'error';
+                }
             }
+        } catch (\Exception $e) {
+            $message = "Error: " . $e->getMessage();
+            $messageType = 'error';
         }
-        
-        elseif ($action === 'kill_simulation') {
-            if (function_exists('shell_exec')) {
-                // Kill any running php artisan trips:simulate processes
-                // In Linux, we can kill by searching process name
-                shell_exec("pkill -f 'trips:simulate'");
-                $message = "Mencoba mematikan semua proses simulator 'trips:simulate' di server.";
-                $messageType = 'info';
-            } else {
-                $message = "Fungsi 'shell_exec' dinonaktifkan di server hosting Anda.";
-                $messageType = 'error';
-            }
-        }
-    } catch (\Exception $e) {
-        $message = "Error: " . $e->getMessage();
-        $messageType = 'error';
     }
+
+    // Fetch current active trips
+    $activeTrips = $tripClass::with(['schedule.driver', 'schedule.vehicle'])
+        ->whereIn('status', ['scheduled', 'on-going'])
+        ->orderBy('status', 'desc')
+        ->orderBy('id', 'asc')
+        ->get();
+
+    // Fetch completed trips for logs
+    $completedTrips = $tripClass::with(['schedule.driver', 'schedule.vehicle'])
+        ->where('status', 'completed')
+        ->orderBy('updated_at', 'desc')
+        ->limit(5)
+        ->get();
+
+} catch (\Throwable $err) {
+    echo "<div style='font-family: sans-serif; padding: 20px; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; border-radius: 8px;'>";
+    echo "<h2 style='margin-top: 0;'>System Initialization Error</h2>";
+    echo "<p><strong>Message:</strong> " . htmlspecialchars($err->getMessage()) . "</p>";
+    echo "<p><strong>File:</strong> " . htmlspecialchars($err->getFile()) . " (Line " . $err->getLine() . ")</p>";
+    echo "<p><strong>Trace:</strong></p>";
+    echo "<pre style='background: #fef2f2; padding: 10px; border: 1px solid #fecaca; border-radius: 4px; overflow-x: auto; font-family: monospace; font-size: 13px;'>" . htmlspecialchars($err->getTraceAsString()) . "</pre>";
+    echo "</div>";
+    exit;
 }
-
-// Fetch current active trips
-$activeTrips = Trip::with(['schedule.driver', 'schedule.vehicle'])
-    ->whereIn('status', ['scheduled', 'on-going'])
-    ->orderBy('status', 'desc')
-    ->orderBy('id', 'asc')
-    ->get();
-
-// Fetch completed trips for logs
-$completedTrips = Trip::with(['schedule.driver', 'schedule.vehicle'])
-    ->where('status', 'completed')
-    ->orderBy('updated_at', 'desc')
-    ->limit(5)
-    ->get();
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
