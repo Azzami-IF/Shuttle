@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -11,6 +11,11 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   user$ = this.auth.user$;
   lang$ = this.languageService.lang$;
   homeRoute = '/dashboard';
@@ -21,19 +26,14 @@ export class ProfilePage {
   passwordData = { old_password: '', new_password: '' };
   isLoading = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService,
-    private languageService: LanguageService
-  ) {
+  constructor() {
     const savedLanguage = this.languageService.getCurrentLang();
     this.currentLanguageLabel = savedLanguage === 'en' ? 'English' : 'Indonesia';
   }
 
   ionViewWillEnter() {
     console.log('Profile will enter');
-    this.homeRoute = this.auth.getRole() === 'driver' ? '/driver-dashboard' : '/dashboard';
+    this.homeRoute = this.auth.getHomeRoute();
   }
 
   async openLanguageSelection() {
@@ -114,9 +114,7 @@ export class ProfilePage {
 
     this.auth.logout().subscribe({
       next: () => {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const loginPath = user.role === 'driver' ? '/driver-login' : '/login';
-        this.router.navigate([loginPath], { replaceUrl: true });
+        this.router.navigate(['/login'], { replaceUrl: true });
       },
       error: (err) => {
         console.error('Logout failed', err);

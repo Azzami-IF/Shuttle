@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
 import { LanguageService } from '../../services/language.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: false,
@@ -12,6 +13,12 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./booking-detail.page.scss'],
 })
 export class BookingDetailPage {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   bookings: any[] = [];
   searchTerm: string = '';
   homeRoute = '/dashboard';
@@ -19,15 +26,11 @@ export class BookingDetailPage {
   ticketModalOpen = false;
   selectedBooking: any = null;
   lang$ = this.languageService.lang$;
+  user$ = this.auth.user$;
   bankDetails: any = null;
+  storageUrl = environment.apiUrl.replace('/api', '/storage/');
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private auth: AuthService,
-    private ui: UiService,
-    private languageService: LanguageService
-  ) { }
+  constructor() { }
 
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();
@@ -55,6 +58,7 @@ export class BookingDetailPage {
         const groupedMap = new Map<string, any>();
 
         res.forEach(booking => {
+          if (booking.status === 'cancelled') return;
           const key = booking.payment_code || `SINGLE-${booking.id}`;
           const seatPrice = parseFloat(booking.total_price) || parseFloat(booking.schedule?.price) || 85000;
           const uniqueCode = parseFloat(booking.unique_code) || 0;

@@ -131,8 +131,27 @@
     const tripDataMap = {};
     const tripMarkers = {};
     const tripPolylines = {};
+    const tripOriginMarkers = {};
+    const tripDestMarkers = {};
 
     document.addEventListener("DOMContentLoaded", function() {
+        const coordinatesMap = {
+            'jakarta': [-6.3090, 106.8824],
+            'terminal kampung rambutan': [-6.3090, 106.8824],
+            'bandung': [-6.9452, 107.5937],
+            'terminal leuwi panjang': [-6.9452, 107.5937],
+            'karawang': [-6.3073, 107.2913],
+            'sumedang': [-6.8524, 107.9234],
+            'subang': [-6.5715, 107.7587],
+            'purwakarta': [-6.5571, 107.4431],
+            'cikampek': [-6.4025, 107.4589],
+            'cirebon': [-6.7320, 108.5523],
+            'bogor': [-6.5971, 106.7932],
+            'depok': [-6.4025, 106.8227],
+            'bekasi': [-6.2383, 106.9756],
+            'tangerang': [-6.1702, 106.6403]
+        };
+
         // Initialize Map centered on West Java (between Jakarta and Bandung)
         map = L.map('admin-map').setView([-6.6, 107.2], 9);
 
@@ -158,9 +177,9 @@
                     passengers: [
                         @foreach($t->schedule->bookings as $booking)
                             {
-                                name: '{{ addslashes($booking->user->name) }}',
-                                seat: '{{ $booking->seat_number }}',
-                                phone: '{{ addslashes($booking->user->phone) }}'
+                                name: '{{ addslashes($booking->user?->name) }}',
+                                seat: '{{ $booking->seat?->seat_number ?? $booking->seat_id }}',
+                                phone: '{{ addslashes($booking->user?->phone) }}'
                             },
                         @endforeach
                     ]
@@ -185,16 +204,8 @@
 
                     const originName = trip.origin.toLowerCase().trim();
                     const destName = trip.destination.toLowerCase().trim();
-                    const coordinatesMap = {
-                        'jakarta': [-6.3090, 106.8824],
-                        'karawang': [-6.3073, 107.2913],
-                        'sumedang': [-6.8524, 107.9234],
-                        'bandung': [-6.9452, 107.5937],
-                        'subang': [-6.5715, 107.7587],
-                        'purwakarta': [-6.5571, 107.4431]
-                    };
-                    const originCoords = coordinatesMap[originName] || [-6.9452, 107.5937];
-                    const destCoords = coordinatesMap[destName] || [-6.3090, 106.8824];
+                    const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
+                    const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
 
                     fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
                         .then(res => res.json())
@@ -210,11 +221,37 @@
                     const polyline = L.polyline(trip.locations, { color: '#0d9488', weight: 4, opacity: 0.9 }).addTo(map);
                     tripPolylines[trip.id] = polyline;
 
+                    // Add Origin/Pickup Marker
+                    const originIcon = L.divIcon({
+                        className: 'route-marker-icon origin',
+                        html: `<div style="background-color:#0d9488; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                 Mulai (#${trip.id}): ${trip.origin}
+                               </div>`,
+                        iconSize: [80, 20],
+                        iconAnchor: [40, 10]
+                    });
+                    const originMarker = L.marker(originCoords, { icon: originIcon }).addTo(map);
+                    tripOriginMarkers[trip.id] = originMarker;
+                    markersGroup.push(originMarker);
+
+                    // Add Destination Marker
+                    const destIcon = L.divIcon({
+                        className: 'route-marker-icon destination',
+                        html: `<div style="background-color:#b91c1c; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                 Tujuan (#${trip.id}): ${trip.destination}
+                               </div>`,
+                        iconSize: [80, 20],
+                        iconAnchor: [40, 10]
+                    });
+                    const destMarker = L.marker(destCoords, { icon: destIcon }).addTo(map);
+                    tripDestMarkers[trip.id] = destMarker;
+                    markersGroup.push(destMarker);
+
                     const busIcon = L.divIcon({
                         className: 'custom-bus-icon',
                         html: `<div style="background-color:#18281e; color:white; padding:6px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px rgba(0,0,0,0.4); text-align:center;">
                                  <span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>
-                               </div>`,
+                                </div>`,
                         iconSize: [28, 28],
                         iconAnchor: [14, 14]
                     });
@@ -247,6 +284,116 @@
                 map.fitBounds(group.getBounds().pad(0.1));
             }
         }
+
+        // Real-time location polling every 5 seconds
+        setInterval(function() {
+            fetch("{{ route('admin.trips.locations') }}")
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(trip => {
+                        // Update internal data map
+                        tripDataMap[trip.id] = trip;
+
+                        if (trip.locations.length > 0) {
+                            const latestLoc = trip.locations[trip.locations.length - 1];
+
+                            // Update marker position
+                            if (tripMarkers[trip.id]) {
+                                tripMarkers[trip.id].setLatLng(latestLoc);
+                                
+                                // Update popup content dynamically
+                                tripMarkers[trip.id].getPopup().setContent(`
+                                    <div class="text-xs p-1">
+                                        <b class="text-sm">Armada: ${trip.vehicle}</b><br>
+                                        <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
+                                        <b>Driver:</b> ${trip.driver}<br>
+                                        <b>Status:</b> ${trip.status.toUpperCase()}<br>
+                                        <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
+                                    </div>
+                                `);
+                            } else {
+                                // Create new marker if it didn't exist
+                                const busIcon = L.divIcon({
+                                    className: 'custom-bus-icon',
+                                    html: `<div style="background-color:#18281e; color:white; padding:6px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px rgba(0,0,0,0.4); text-align:center;">
+                                             <span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>
+                                           </div>`,
+                                    iconSize: [28, 28],
+                                    iconAnchor: [14, 14]
+                                });
+
+                                const marker = L.marker(latestLoc, { icon: busIcon })
+                                    .addTo(map)
+                                    .bindPopup(`
+                                        <div class="text-xs p-1">
+                                            <b class="text-sm">Armada: ${trip.vehicle}</b><br>
+                                            <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
+                                            <b>Driver:</b> ${trip.driver}<br>
+                                            <b>Status:</b> ${trip.status.toUpperCase()}<br>
+                                            <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
+                                        </div>
+                                    `);
+                                
+                                marker.on('click', () => {
+                                    showPassengerPanel(trip.id);
+                                });
+                                tripMarkers[trip.id] = marker;
+
+                                // Draw origin and destination markers for the new trip dynamically!
+                                const originName = trip.origin.toLowerCase().trim();
+                                const destName = trip.destination.toLowerCase().trim();
+                                const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
+                                const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
+
+                                if (!tripOriginMarkers[trip.id]) {
+                                    const originIcon = L.divIcon({
+                                        className: 'route-marker-icon origin',
+                                        html: `<div style="background-color:#0d9488; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                                 Mulai (#${trip.id}): ${trip.origin}
+                                               </div>`,
+                                        iconSize: [80, 20],
+                                        iconAnchor: [40, 10]
+                                    });
+                                    tripOriginMarkers[trip.id] = L.marker(originCoords, { icon: originIcon }).addTo(map);
+                                }
+
+                                if (!tripDestMarkers[trip.id]) {
+                                    const destIcon = L.divIcon({
+                                        className: 'route-marker-icon destination',
+                                        html: `<div style="background-color:#b91c1c; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                                 Tujuan (#${trip.id}): ${trip.destination}
+                                               </div>`,
+                                        iconSize: [80, 20],
+                                        iconAnchor: [40, 10]
+                                    });
+                                    tripDestMarkers[trip.id] = L.marker(destCoords, { icon: destIcon }).addTo(map);
+                                }
+                            }
+
+                            // Update polyline coordinates
+                            if (tripPolylines[trip.id]) {
+                                tripPolylines[trip.id].setLatLngs(trip.locations);
+                            } else {
+                                const polyline = L.polyline(trip.locations, { color: '#0d9488', weight: 4, opacity: 0.9 }).addTo(map);
+                                tripPolylines[trip.id] = polyline;
+                            }
+                        }
+                    });
+
+                    // Refresh active passenger panel if it is currently open
+                    const activePanelIdElement = document.getElementById('panel-trip-id');
+                    if (activePanelIdElement && activePanelIdElement.textContent) {
+                        const activePanelId = activePanelIdElement.textContent;
+                        if (activePanelId && !document.getElementById('passenger-panel').classList.contains('hidden')) {
+                            const tripIdNum = parseInt(activePanelId.replace('#TRP', ''), 10);
+                            if (tripIdNum && tripDataMap[tripIdNum]) {
+                                showPassengerPanel(tripIdNum);
+                            }
+                        }
+                    }
+                })
+                .catch(err => console.error("Error polling locations:", err));
+        }, 5000);
     });
 
     function showPassengerPanel(tripId) {

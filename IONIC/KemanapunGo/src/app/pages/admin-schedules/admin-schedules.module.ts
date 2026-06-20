@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
-import { AdminSchedulesPage, ScheduleFormModal } from './admin-schedules.page';
+import { AdminSchedulesPage, ScheduleFormModalComponent } from './admin-schedules.page';
 
 const routes: Routes = [
   {
@@ -20,6 +20,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [AdminSchedulesPage, ScheduleFormModal]
+  declarations: [AdminSchedulesPage, ScheduleFormModalComponent]
 })
 export class AdminSchedulesPageModule {}

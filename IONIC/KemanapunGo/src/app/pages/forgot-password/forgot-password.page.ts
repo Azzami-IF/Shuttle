@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -11,21 +11,14 @@ import { UiService } from '../../services/ui.service';
   standalone: false,
 })
 export class ForgotPasswordPage {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private ui = inject(UiService);
+  private route = inject(ActivatedRoute);
+
   email = '';
   isLoading = false;
-  source: 'client' | 'driver' = 'client';
-
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private ui: UiService,
-    private route: ActivatedRoute
-  ) {
-    const src = this.route.snapshot.queryParamMap.get('source');
-    if (src === 'driver') {
-      this.source = 'driver';
-    }
-  }
+  constructor() {}
 
   submit(event: Event) {
     event.preventDefault();
@@ -42,8 +35,7 @@ export class ForgotPasswordPage {
         void this.ui.showToast(res?.message || 'Link reset password telah dikirim ke email Anda.', 'success');
         this.router.navigate(['/reset-password'], {
           queryParams: {
-            email: this.email,
-            source: this.source,
+            email: this.email
           }
         });
       },
@@ -56,6 +48,6 @@ export class ForgotPasswordPage {
   }
 
   goBack() {
-    this.router.navigate([this.source === 'driver' ? '/driver-login' : '/login']);
+    this.router.navigate(['/login']);
   }
 }

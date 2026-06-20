@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -9,7 +9,10 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class AppComponent {
-  constructor(private platform: Platform, private router: Router) {
+  private platform = inject(Platform);
+  private router = inject(Router);
+
+  constructor() {
     this.initializeBackButton();
   }
 

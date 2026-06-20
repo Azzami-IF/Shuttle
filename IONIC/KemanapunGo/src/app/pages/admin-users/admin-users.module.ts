@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
-import { AdminUsersPage, UserFormModal } from './admin-users.page';
+import { AdminUsersPage, UserFormModalComponent } from './admin-users.page';
 
 const routes: Routes = [
   {
@@ -20,6 +20,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [AdminUsersPage, UserFormModal]
+  declarations: [AdminUsersPage, UserFormModalComponent]
 })
 export class AdminUsersPageModule {}

@@ -43,6 +43,126 @@
 	--app-touch-target: 48px;
 }
 
+/* Modal fixes: page-scoped styles (component SCSS) don't apply to ion-modal overlay
+	 because modal content is rendered outside the page component. Provide global
+	 rules so modals (like change-password) render correctly. */
+ion-modal .modal-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+ion-modal .modal-wrapper .modal-content {
+	width: 100%;
+	max-width: 480px;
+	border-radius: 16px;
+	background: transparent;
+	box-shadow: 0 12px 36px rgba(24,40,30,0.12);
+	overflow: visible;
+}
+
+ion-modal .modal-wrapper .modal-content ion-content {
+	background: rgba(255,255,255,0.95);
+	border-radius: 12px;
+	padding: 16px;
+}
+
+/* Ensure inputs and modal buttons use full width inside modals */
+.custom-input {
+	width: 100% !important;
+	box-sizing: border-box;
+	padding: 12px 16px !important;
+	border-radius: 12px !important;
+}
+
+/* Default helpers for inputs paired with icons.
+	 These provide consistent icon positioning and ensure the input placeholder
+	 has enough left padding so it doesn't overlap the icon. Component-level
+	 styles may override specific sizes, but this gives a sensible global default. */
+.input-wrapper {
+	position: relative;
+}
+
+.input-wrapper .icon {
+	position: absolute;
+	left: 12px;
+	width: 28px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--outline);
+	font-size: 18px;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.input-wrapper .custom-input {
+	/* match component defaults (52px) plus a small gap; use !important to
+		 ensure this applies when pages import different global rules */
+	padding-left: 56px !important;
+}
+.btn-submit {
+	display: inline-block;
+	width: 100% !important;
+	padding: 12px 16px !important;
+	border-radius: 12px !important;
+	background: var(--ion-color-primary) !important;
+	color: #fff !important;
+	border: none !important;
+	font-weight: 700;
+}
+
+/* Enforce full-width within modal wrapper to avoid nested scoping issues */
+ion-modal .modal-wrapper .modal-content * {
+	max-width: 100% !important;
+	width: 100% !important;
+}
+
+ion-modal .modal-wrapper .modal-content .input-group {
+	width: 100% !important;
+}
+
+ion-modal .modal-wrapper .modal-content .modal-actions button {
+	width: 100% !important;
+}
+
+/* Ensure modal sizing and header styling for change-password modal */
+ion-modal {
+	--width: 100% !important;
+	--max-width: 480px !important;
+}
+
+ion-modal .modal-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+ion-modal .modal-wrapper .modal-content {
+	max-width: 480px !important;
+	width: 100% !important;
+	margin: 0 auto !important;
+	overflow: visible !important;
+}
+
+ion-modal ion-header, ion-modal ion-header ion-toolbar {
+	--background: var(--ion-color-primary) !important;
+	background: var(--ion-color-primary) !important;
+	color: #fff !important;
+}
+
+ion-modal ion-header ion-title, ion-modal ion-header ion-toolbar ion-title {
+	color: #fff !important;
+	font-weight: 700 !important;
+}
+
+ion-modal ion-header ion-button, ion-modal ion-header ion-toolbar ion-button {
+	color: #fff !important;
+}
+
+
 /* Safe Area Utility Classes */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0);

@@ -1,6 +1,16 @@
+@import "../../components/shared/design-system.scss";
+
 .schedules-container {
   padding: 16px;
-  background: #f5f5f5;
+  background: var(--ion-background-color);
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+
+  &::part(scroll) {
+    padding-bottom: 110px;
+  }
 }
 
 .error-card {
@@ -201,4 +211,8 @@
       }
     }
   }
+}
+
+.bottom-nav {
+  @extend .shared-bottom-nav;
 }

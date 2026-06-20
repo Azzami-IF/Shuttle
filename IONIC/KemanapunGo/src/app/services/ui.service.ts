@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ToastController, LoadingController, AlertController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UiService {
-  constructor(
-    private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController
-  ) {}
+  private toastCtrl = inject(ToastController);
+  private loadingCtrl = inject(LoadingController);
+  private alertCtrl = inject(AlertController);
+
+  constructor() {}
 
   private loadingElement: any;
 

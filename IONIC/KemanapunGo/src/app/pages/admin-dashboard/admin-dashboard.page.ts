@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
+import { AuthService } from '../../services/auth.service';
+import { UiService } from '../../services/ui.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -40,6 +42,11 @@ interface SystemHealth {
   standalone: false
 })
 export class AdminDashboardPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private ui = inject(UiService);
+
   stats: DashboardStats | null = null;
   bookingData: BookingData[] = [];
   revenueData: RevenueData[] = [];
@@ -49,10 +56,23 @@ export class AdminDashboardPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private adminService: AdminService,
-    private router: Router
-  ) { }
+  constructor() { }
+
+  async confirmLogout() {
+    const confirmed = await this.ui.showConfirm('Keluar Akun', 'Apakah Anda yakin ingin keluar dari sesi admin?', 'Keluar');
+    if (confirmed) {
+      this.authService.logout().subscribe({
+        next: () => {
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error('Logout failed, forcing local logout', err);
+          this.authService.logoutDirect();
+          this.router.navigate(['/login']);
+        }
+      });
+    }
+  }
 
   ngOnInit() {
     this.loadDashboardData();
