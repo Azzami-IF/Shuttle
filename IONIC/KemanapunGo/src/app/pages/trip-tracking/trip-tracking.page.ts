@@ -30,6 +30,28 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   eta: number = 0;
   homeRoute = '/dashboard';
 
+  coordinatesMap: { [key: string]: [number, number] } = {
+    'jakarta': [-6.3090, 106.8824],
+    'terminal kampung rambutan': [-6.3090, 106.8824],
+    'bandung': [-6.9452, 107.5937],
+    'terminal leuwi panjang': [-6.9452, 107.5937],
+    'karawang': [-6.3073, 107.2913],
+    'sumedang': [-6.8524, 107.9234],
+    'subang': [-6.5715, 107.7587],
+    'purwakarta': [-6.5571, 107.4431],
+    'cikampek': [-6.4025, 107.4589],
+    'cirebon': [-6.7320, 108.5523],
+    'bogor': [-6.5971, 106.7932],
+    'depok': [-6.4025, 106.8227],
+    'bekasi': [-6.2383, 106.9756],
+    'tangerang': [-6.1702, 106.6403],
+    'malang': [-7.9839, 112.6214],
+    'surabaya': [-7.2504, 112.7688],
+    'semarang': [-6.9667, 110.4167]
+  };
+
+  demoRouteCoords: [number, number][] = [];
+
   constructor() {}
 
   isDemoSimulationActive: boolean = false;
@@ -70,31 +92,41 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     const originName = (this.trip?.schedule?.origin || '').toLowerCase().trim();
     const destName = (this.trip?.schedule?.destination || '').toLowerCase().trim();
 
-    const coordinatesMap: { [key: string]: [number, number] } = {
-      'jakarta': [-6.3090, 106.8824],
-      'terminal kampung rambutan': [-6.3090, 106.8824],
-      'bandung': [-6.9452, 107.5937],
-      'terminal leuwi panjang': [-6.9452, 107.5937],
-      'karawang': [-6.3073, 107.2913],
-      'sumedang': [-6.8524, 107.9234],
-      'subang': [-6.5715, 107.7587],
-      'purwakarta': [-6.5571, 107.4431],
-      'cikampek': [-6.4025, 107.4589],
-      'cirebon': [-6.7320, 108.5523],
-      'bogor': [-6.5971, 106.7932],
-      'depok': [-6.4025, 106.8227],
-      'tangerang': [-6.1702, 106.6403],
-      'bekasi': [-6.2383, 106.9756]
-    };
-
-    const originCoords = coordinatesMap[originName] || [-6.9452, 107.5937];
-    const destCoords = coordinatesMap[destName] || [-6.3090, 106.8824];
+    const originCoords = this.coordinatesMap[originName] || this.coordinatesMap['bandung'];
+    const destCoords = this.coordinatesMap[destName] || this.coordinatesMap['jakarta'];
 
     this.demoProgress = 0;
     void this.ui.showToast('Simulasi perjalanan dimulai (Lokal)', 'success');
 
+    fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.routes && data.routes.length > 0) {
+          this.demoRouteCoords = data.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]);
+        } else {
+          this.demoRouteCoords = [];
+          for (let i = 0; i <= 100; i++) {
+            const lat = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
+            const lng = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
+            this.demoRouteCoords.push([lat, lng]);
+          }
+        }
+        this.runDemoInterval();
+      })
+      .catch(() => {
+        this.demoRouteCoords = [];
+        for (let i = 0; i <= 100; i++) {
+          const lat = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
+          const lng = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
+          this.demoRouteCoords.push([lat, lng]);
+        }
+        this.runDemoInterval();
+      });
+  }
+
+  runDemoInterval() {
     this.demoInterval = setInterval(() => {
-      this.demoProgress += 4; // Bergerak 4% setiap tick (total 25 tick)
+      this.demoProgress += 1; // Bergerak 1% setiap tick (total 100 tick)
 
       if (this.demoProgress > 100) {
         this.demoProgress = 100;
@@ -107,19 +139,22 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
         return;
       }
 
-      const currentLat = originCoords[0] + (destCoords[0] - originCoords[0]) * (this.demoProgress / 100);
-      const currentLng = originCoords[1] + (destCoords[1] - originCoords[1]) * (this.demoProgress / 100);
+      const idx = Math.min(
+        this.demoRouteCoords.length - 1,
+        Math.floor((this.demoProgress / 100) * (this.demoRouteCoords.length - 1))
+      );
+      const currentPoint = this.demoRouteCoords[idx];
 
       this.location = {
-        latitude: currentLat,
-        longitude: currentLng
+        latitude: currentPoint[0],
+        longitude: currentPoint[1]
       };
 
       if (this.trip) {
         this.trip.status = 'on-going';
       }
 
-      this.updateMarker(currentLat, currentLng);
+      this.updateMarker(currentPoint[0], currentPoint[1]);
     }, 2000);
   }
 
@@ -165,28 +200,8 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     const originName = (this.trip.schedule.origin || '').toLowerCase().trim();
     const destName = (this.trip.schedule.destination || '').toLowerCase().trim();
 
-    const coordinatesMap: { [key: string]: [number, number] } = {
-      'jakarta': [-6.3090, 106.8824],
-      'terminal kampung rambutan': [-6.3090, 106.8824],
-      'bandung': [-6.9452, 107.5937],
-      'terminal leuwi panjang': [-6.9452, 107.5937],
-      'karawang': [-6.3073, 107.2913],
-      'sumedang': [-6.8524, 107.9234],
-      'subang': [-6.5715, 107.7587],
-      'purwakarta': [-6.5571, 107.4431],
-      'cikampek': [-6.4025, 107.4589],
-      'malang': [-7.9839, 112.6214],
-      'surabaya': [-7.2504, 112.7688],
-      'semarang': [-6.9667, 110.4167],
-      'cirebon': [-6.7320, 108.5523],
-      'bogor': [-6.5971, 106.7932],
-      'depok': [-6.4025, 106.8227],
-      'tangerang': [-6.1702, 106.6403],
-      'bekasi': [-6.2383, 106.9756]
-    };
-
-    const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
-    const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
+    const originCoords = this.coordinatesMap[originName] || this.coordinatesMap['bandung'];
+    const destCoords = this.coordinatesMap[destName] || this.coordinatesMap['jakarta'];
 
     // Add Origin Marker
     const originIcon = L.divIcon({
@@ -326,18 +341,25 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
 
     const now = new Date().getTime();
     
-    if (this.location && this.location.latitude && this.trip?.schedule?.destination) {
+    if (this.location && this.location.latitude && this.trip?.schedule?.destination && this.trip?.schedule?.origin) {
+       const originCoords = this.getDestinationCoords(this.trip.schedule.origin);
        const destCoords = this.getDestinationCoords(this.trip.schedule.destination);
-       if (destCoords) {
-         const dist = this.getDistanceFromLatLonInKm(this.location.latitude, this.location.longitude, destCoords[0], destCoords[1]);
-         // Asumsi kecepatan rata-rata bus 40km/h (0.66 km/menit)
-         const remainingMinutes = Math.ceil(dist / 0.66);
+       if (originCoords && destCoords) {
+         const totalDist = this.getDistanceFromLatLonInKm(originCoords[0], originCoords[1], destCoords[0], destCoords[1]);
+         const distRemaining = this.getDistanceFromLatLonInKm(this.location.latitude, this.location.longitude, destCoords[0], destCoords[1]);
+         
+         // Estimasi durasi total perjalanan yang realistis (kecepatan rata-rata 50 km/jam)
+         // Durasi dalam menit = (totalDist / 50) * 60
+         const expectedDuration = (totalDist / 50) * 60;
+         
+         // Hitung sisa menit secara proporsional terhadap progres sisa jarak fisik
+         const remainingMinutes = Math.ceil((distRemaining / totalDist) * expectedDuration);
          return remainingMinutes;
        }
     }
 
     if (this.trip.status === 'on-going') {
-      return null; // Menunggu perhitungan lokasi...
+      return null;
     }
 
     // Fallback statis jika lokasi belum ada
@@ -351,26 +373,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
 
   getDestinationCoords(destName: string): [number, number] | null {
     const name = destName.toLowerCase().trim();
-    const map: { [key: string]: [number, number] } = {
-      'jakarta': [-6.3090, 106.8824],
-      'terminal kampung rambutan': [-6.3090, 106.8824],
-      'bandung': [-6.9452, 107.5937],
-      'terminal leuwi panjang': [-6.9452, 107.5937],
-      'karawang': [-6.3073, 107.2913],
-      'sumedang': [-6.8524, 107.9234],
-      'subang': [-6.5715, 107.7587],
-      'purwakarta': [-6.5571, 107.4431],
-      'cikampek': [-6.4025, 107.4589],
-      'malang': [-7.9839, 112.6214],
-      'surabaya': [-7.2504, 112.7688],
-      'semarang': [-6.9667, 110.4167],
-      'cirebon': [-6.7320, 108.5523],
-      'bogor': [-6.5971, 106.7932],
-      'depok': [-6.4025, 106.8227],
-      'tangerang': [-6.1702, 106.6403],
-      'bekasi': [-6.2383, 106.9756]
-    };
-    return map[name] || null;
+    return this.coordinatesMap[name] || null;
   }
 
   getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {

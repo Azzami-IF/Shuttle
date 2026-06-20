@@ -9,6 +9,8 @@ use App\Models\Seat;
 use App\Models\Trip;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,6 +19,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable foreign keys and truncate transactional tables
+        Schema::disableForeignKeyConstraints();
+        DB::table('locations')->truncate();
+        DB::table('trips')->truncate();
+        DB::table('bookings')->truncate();
+        DB::table('seats')->truncate();
+        DB::table('schedules')->truncate();
+        Schema::enableForeignKeyConstraints();
+
         // Admin
         User::updateOrCreate(
             ['email' => 'admin@shuttle.com'],
@@ -37,43 +48,49 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Drivers
-        $drivers = [];
-        $driversData = [
-            ['email' => 'driver1@shuttle.com', 'name' => 'Ahmad Driver'],
-            ['email' => 'driver2@shuttle.com', 'name' => 'Budiman Driver'],
-            ['email' => 'driver3@shuttle.com', 'name' => 'Cecep Driver'],
-            ['email' => 'driver4@shuttle.com', 'name' => 'Dani Driver'],
-            ['email' => 'driver5@shuttle.com', 'name' => 'Eka Driver'],
-        ];
-        foreach ($driversData as $d) {
-            $drivers[] = User::updateOrCreate(
-                ['email' => $d['email']],
-                [
-                    'name' => $d['name'],
-                    'password' => Hash::make('password'),
-                    'role' => 'driver',
-                ]
-            );
+        // Drivers (ambil yang ada di database atau buat jika kosong)
+        $drivers = User::where('role', 'driver')->get();
+        if ($drivers->isEmpty()) {
+            $driversData = [
+                ['email' => 'driver1@shuttle.com', 'name' => 'Ahmad Driver'],
+                ['email' => 'driver2@shuttle.com', 'name' => 'Budiman Driver'],
+                ['email' => 'driver3@shuttle.com', 'name' => 'Cecep Driver'],
+                ['email' => 'driver4@shuttle.com', 'name' => 'Dani Driver'],
+                ['email' => 'driver5@shuttle.com', 'name' => 'Eka Driver'],
+            ];
+            foreach ($driversData as $d) {
+                User::updateOrCreate(
+                    ['email' => $d['email']],
+                    [
+                        'name' => $d['name'],
+                        'password' => Hash::make('password'),
+                        'role' => 'driver',
+                    ]
+                );
+            }
+            $drivers = User::where('role', 'driver')->get();
         }
 
-        // Vehicles
-        $vehicles = [];
-        $vehiclesData = [
-            ['license_plate' => 'B 1234 ABC', 'name' => 'Kemanapun Express 01', 'capacity' => 12],
-            ['license_plate' => 'D 5678 XYZ', 'name' => 'Kemanapun Express 02', 'capacity' => 12],
-            ['license_plate' => 'F 9012 EFG', 'name' => 'Kemanapun Express 03', 'capacity' => 10],
-            ['license_plate' => 'T 3456 HIJ', 'name' => 'Kemanapun Express 04', 'capacity' => 10],
-            ['license_plate' => 'Z 7890 KLM', 'name' => 'Kemanapun Express 05', 'capacity' => 8],
-        ];
-        foreach ($vehiclesData as $v) {
-            $vehicles[] = Vehicle::updateOrCreate(
-                ['license_plate' => $v['license_plate']],
-                [
-                    'name' => $v['name'],
-                    'capacity' => $v['capacity'],
-                ]
-            );
+        // Vehicles (ambil yang ada di database atau buat jika kosong)
+        $vehicles = Vehicle::all();
+        if ($vehicles->isEmpty()) {
+            $vehiclesData = [
+                ['license_plate' => 'B 1234 ABC', 'name' => 'Kemanapun Express 01', 'capacity' => 12],
+                ['license_plate' => 'D 5678 XYZ', 'name' => 'Kemanapun Express 02', 'capacity' => 12],
+                ['license_plate' => 'F 9012 EFG', 'name' => 'Kemanapun Express 03', 'capacity' => 10],
+                ['license_plate' => 'T 3456 HIJ', 'name' => 'Kemanapun Express 04', 'capacity' => 10],
+                ['license_plate' => 'Z 7890 KLM', 'name' => 'Kemanapun Express 05', 'capacity' => 8],
+            ];
+            foreach ($vehiclesData as $v) {
+                Vehicle::updateOrCreate(
+                    ['license_plate' => $v['license_plate']],
+                    [
+                        'name' => $v['name'],
+                        'capacity' => $v['capacity'],
+                    ]
+                );
+            }
+            $vehicles = Vehicle::all();
         }
 
         // Route templates to generate
@@ -87,9 +104,13 @@ class DatabaseSeeder extends Seeder
             ['origin' => 'Bandung', 'destination' => 'Cirebon', 'price' => 100000, 'hours' => 14],
         ];
 
+        // Konversi collection ke array agar mudah di-index secara berputar
+        $driversArray = $drivers->all();
+        $vehiclesArray = $vehicles->all();
+
         foreach ($routesList as $index => $r) {
-            $vehicle = $vehicles[$index % count($vehicles)];
-            $driver = $drivers[$index % count($drivers)];
+            $vehicle = $vehiclesArray[$index % count($vehiclesArray)];
+            $driver = $driversArray[$index % count($driversArray)];
             
             $schedule = Schedule::create([
                 'vehicle_id' => $vehicle->id,
