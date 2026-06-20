@@ -1,6 +1,10 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-
+    <ion-buttons slot="start">
+      <button class="back-btn" (click)="goBack()" style="background: transparent; color: white; border: none; padding: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+    </ion-buttons>
     <ion-title *ngIf="lang$ | async">{{ getTranslation('selectSeat') }}</ion-title>
   </ion-toolbar>
 </ion-header>

@@ -120,4 +120,8 @@ export class SeatSelectionPage implements OnInit {
       }
     });
   }
+
+  goBack() {
+    window.history.back();
+  }
 }

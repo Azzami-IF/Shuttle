@@ -51,10 +51,15 @@ class SimulateTrips extends Command
                 $this->comment("Menunggu trip aktif (status: scheduled atau on-going)...");
             } else {
                 foreach ($trips as $trip) {
-                    // Otomatis aktifkan trip scheduled ke on-going agar simulasi berjalan
+                    // Otomatis aktifkan trip scheduled ke on-going jika waktu keberangkatan sudah lewat/tiba
                     if ($trip->status === 'scheduled') {
-                        $trip->update(['status' => 'on-going']);
-                        $this->info("Trip #{$trip->id} ({$trip->schedule->origin} ➔ {$trip->schedule->destination}) otomatis diaktifkan menjadi ON-GOING!");
+                        if (\Carbon\Carbon::parse($trip->schedule->departure_time)->isPast()) {
+                            $trip->update(['status' => 'on-going']);
+                            $this->info("Trip #{$trip->id} ({$trip->schedule->origin} ➔ {$trip->schedule->destination}) otomatis diaktifkan menjadi ON-GOING!");
+                        } else {
+                            // Jangan simulasikan perjalanan yang belum berangkat
+                            continue;
+                        }
                     }
 
                     $originName = strtolower(trim($trip->schedule->origin));
