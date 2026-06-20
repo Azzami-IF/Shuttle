@@ -15,6 +15,7 @@ try {
 
     // Resolve console kernel to use Artisan
     $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+    $kernel->bootstrap();
 
     // Import models
     $tripClass = 'App\Models\Trip';
