@@ -396,7 +396,7 @@ class AdminController extends Controller
             'schedule.vehicle',
             'schedule.driver',
             'schedule.bookings' => function($q) {
-                $q->where('status', '!=', 'cancelled')->with('user');
+                $q->where('status', '!=', 'cancelled')->with(['user', 'seat']);
             },
             'locations'
         ])->whereIn('status', ['boarding', 'on-going', 'delayed', 'arrived'])->get();
@@ -415,7 +415,7 @@ class AdminController extends Controller
                 'passengers' => $t->schedule->bookings->map(function ($booking) {
                     return [
                         'name' => $booking->user?->name ?? 'User',
-                        'seat' => $booking->seat_number,
+                        'seat' => $booking->seat?->seat_number ?? $booking->seat_id,
                         'phone' => $booking->user?->phone ?? '',
                     ];
                 })->toArray()

@@ -177,9 +177,9 @@
                     passengers: [
                         @foreach($t->schedule->bookings as $booking)
                             {
-                                name: '{{ addslashes($booking->user->name) }}',
-                                seat: '{{ $booking->seat_number }}',
-                                phone: '{{ addslashes($booking->user->phone) }}'
+                                name: '{{ addslashes($booking->user?->name) }}',
+                                seat: '{{ $booking->seat?->seat_number ?? $booking->seat_id }}',
+                                phone: '{{ addslashes($booking->user?->phone) }}'
                             },
                         @endforeach
                     ]
