@@ -131,8 +131,27 @@
     const tripDataMap = {};
     const tripMarkers = {};
     const tripPolylines = {};
+    const tripOriginMarkers = {};
+    const tripDestMarkers = {};
 
     document.addEventListener("DOMContentLoaded", function() {
+        const coordinatesMap = {
+            'jakarta': [-6.3090, 106.8824],
+            'terminal kampung rambutan': [-6.3090, 106.8824],
+            'bandung': [-6.9452, 107.5937],
+            'terminal leuwi panjang': [-6.9452, 107.5937],
+            'karawang': [-6.3073, 107.2913],
+            'sumedang': [-6.8524, 107.9234],
+            'subang': [-6.5715, 107.7587],
+            'purwakarta': [-6.5571, 107.4431],
+            'cikampek': [-6.4025, 107.4589],
+            'cirebon': [-6.7320, 108.5523],
+            'bogor': [-6.5971, 106.7932],
+            'depok': [-6.4025, 106.8227],
+            'bekasi': [-6.2383, 106.9756],
+            'tangerang': [-6.1702, 106.6403]
+        };
+
         // Initialize Map centered on West Java (between Jakarta and Bandung)
         map = L.map('admin-map').setView([-6.6, 107.2], 9);
 
@@ -185,22 +204,6 @@
 
                     const originName = trip.origin.toLowerCase().trim();
                     const destName = trip.destination.toLowerCase().trim();
-                    const coordinatesMap = {
-                        'jakarta': [-6.3090, 106.8824],
-                        'terminal kampung rambutan': [-6.3090, 106.8824],
-                        'bandung': [-6.9452, 107.5937],
-                        'terminal leuwi panjang': [-6.9452, 107.5937],
-                        'karawang': [-6.3073, 107.2913],
-                        'sumedang': [-6.8524, 107.9234],
-                        'subang': [-6.5715, 107.7587],
-                        'purwakarta': [-6.5571, 107.4431],
-                        'cikampek': [-6.4025, 107.4589],
-                        'cirebon': [-6.7320, 108.5523],
-                        'bogor': [-6.5971, 106.7932],
-                        'depok': [-6.4025, 106.8227],
-                        'bekasi': [-6.2383, 106.9756],
-                        'tangerang': [-6.1702, 106.6403]
-                    };
                     const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
                     const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
 
@@ -218,11 +221,37 @@
                     const polyline = L.polyline(trip.locations, { color: '#0d9488', weight: 4, opacity: 0.9 }).addTo(map);
                     tripPolylines[trip.id] = polyline;
 
+                    // Add Origin/Pickup Marker
+                    const originIcon = L.divIcon({
+                        className: 'route-marker-icon origin',
+                        html: `<div style="background-color:#0d9488; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                 Mulai (#${trip.id}): ${trip.origin}
+                               </div>`,
+                        iconSize: [80, 20],
+                        iconAnchor: [40, 10]
+                    });
+                    const originMarker = L.marker(originCoords, { icon: originIcon }).addTo(map);
+                    tripOriginMarkers[trip.id] = originMarker;
+                    markersGroup.push(originMarker);
+
+                    // Add Destination Marker
+                    const destIcon = L.divIcon({
+                        className: 'route-marker-icon destination',
+                        html: `<div style="background-color:#b91c1c; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                 Tujuan (#${trip.id}): ${trip.destination}
+                               </div>`,
+                        iconSize: [80, 20],
+                        iconAnchor: [40, 10]
+                    });
+                    const destMarker = L.marker(destCoords, { icon: destIcon }).addTo(map);
+                    tripDestMarkers[trip.id] = destMarker;
+                    markersGroup.push(destMarker);
+
                     const busIcon = L.divIcon({
                         className: 'custom-bus-icon',
                         html: `<div style="background-color:#18281e; color:white; padding:6px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px rgba(0,0,0,0.4); text-align:center;">
                                  <span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>
-                               </div>`,
+                                </div>`,
                         iconSize: [28, 28],
                         iconAnchor: [14, 14]
                     });
@@ -309,6 +338,36 @@
                                     showPassengerPanel(trip.id);
                                 });
                                 tripMarkers[trip.id] = marker;
+
+                                // Draw origin and destination markers for the new trip dynamically!
+                                const originName = trip.origin.toLowerCase().trim();
+                                const destName = trip.destination.toLowerCase().trim();
+                                const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
+                                const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
+
+                                if (!tripOriginMarkers[trip.id]) {
+                                    const originIcon = L.divIcon({
+                                        className: 'route-marker-icon origin',
+                                        html: `<div style="background-color:#0d9488; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                                 Mulai (#${trip.id}): ${trip.origin}
+                                               </div>`,
+                                        iconSize: [80, 20],
+                                        iconAnchor: [40, 10]
+                                    });
+                                    tripOriginMarkers[trip.id] = L.marker(originCoords, { icon: originIcon }).addTo(map);
+                                }
+
+                                if (!tripDestMarkers[trip.id]) {
+                                    const destIcon = L.divIcon({
+                                        className: 'route-marker-icon destination',
+                                        html: `<div style="background-color:#b91c1c; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                                 Tujuan (#${trip.id}): ${trip.destination}
+                                               </div>`,
+                                        iconSize: [80, 20],
+                                        iconAnchor: [40, 10]
+                                    });
+                                    tripDestMarkers[trip.id] = L.marker(destCoords, { icon: destIcon }).addTo(map);
+                                }
                             }
 
                             // Update polyline coordinates
