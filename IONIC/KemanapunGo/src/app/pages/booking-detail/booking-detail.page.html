@@ -273,6 +273,12 @@
         </div>
 
         <div class="ticket-actions-row ion-margin-top">
+          <!-- Button Lacak Perjalanan (Hanya muncul jika trip sedang aktif/dapat dilacak) -->
+          <ion-button expand="block" shape="round" color="secondary" *ngIf="isTrackable(selectedBooking)" (click)="viewTracking(selectedBooking); closeTicket()">
+            <span class="material-symbols-outlined ion-margin-end">explore</span>
+            Lacak Posisi Bus
+          </ion-button>
+
           <ion-button expand="block" shape="round" color="dark" (click)="copyTicketNumber()">
             <span class="material-symbols-outlined ion-margin-end">content_copy</span>
             Salin Kode Booking
