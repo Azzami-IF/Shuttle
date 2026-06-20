@@ -187,14 +187,22 @@
                     const destName = trip.destination.toLowerCase().trim();
                     const coordinatesMap = {
                         'jakarta': [-6.3090, 106.8824],
+                        'terminal kampung rambutan': [-6.3090, 106.8824],
+                        'bandung': [-6.9452, 107.5937],
+                        'terminal leuwi panjang': [-6.9452, 107.5937],
                         'karawang': [-6.3073, 107.2913],
                         'sumedang': [-6.8524, 107.9234],
-                        'bandung': [-6.9452, 107.5937],
                         'subang': [-6.5715, 107.7587],
-                        'purwakarta': [-6.5571, 107.4431]
+                        'purwakarta': [-6.5571, 107.4431],
+                        'cikampek': [-6.4025, 107.4589],
+                        'cirebon': [-6.7320, 108.5523],
+                        'bogor': [-6.5971, 106.7932],
+                        'depok': [-6.4025, 106.8227],
+                        'bekasi': [-6.2383, 106.9756],
+                        'tangerang': [-6.1702, 106.6403]
                     };
-                    const originCoords = coordinatesMap[originName] || [-6.9452, 107.5937];
-                    const destCoords = coordinatesMap[destName] || [-6.3090, 106.8824];
+                    const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
+                    const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
 
                     fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
                         .then(res => res.json())

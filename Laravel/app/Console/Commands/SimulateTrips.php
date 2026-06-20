@@ -25,7 +25,9 @@ class SimulateTrips extends Command
 
         $coordinates = [
             'jakarta' => [-6.3090, 106.8824],
+            'terminal kampung rambutan' => [-6.3090, 106.8824],
             'bandung' => [-6.9452, 107.5937],
+            'terminal leuwi panjang' => [-6.9452, 107.5937],
             'karawang' => [-6.3073, 107.2913],
             'sumedang' => [-6.8524, 107.9234],
             'subang' => [-6.5715, 107.7587],
@@ -35,6 +37,7 @@ class SimulateTrips extends Command
             'bogor' => [-6.5971, 106.7932],
             'depok' => [-6.4025, 106.8227],
             'bekasi' => [-6.2383, 106.9756],
+            'tangerang' => [-6.1702, 106.6403],
         ];
 
         while (true) {
@@ -101,8 +104,8 @@ class SimulateTrips extends Command
                         $totalPoints = count($routeCoords);
                         $locationCount = $trip->locations()->count();
                         
-                        // Selesaikan perjalanan dalam kisaran ~25-30 ticks
-                        $step = max(1, (int)($totalPoints / 25));
+                        // Selesaikan perjalanan dalam kisaran ~100 ticks untuk pergerakan lebih halus
+                        $step = max(1, (int)($totalPoints / 100));
                         $index = $locationCount * $step;
 
                         if ($index >= $totalPoints - 1) {
