@@ -8,13 +8,19 @@ use Illuminate\Console\Command;
 
 class SimulateTrips extends Command
 {
-    protected $signature = 'trips:simulate {--interval=3 : Interval update dalam detik}';
+    protected $signature = 'trips:simulate {--interval=3 : Interval update dalam detik} {--duration= : Durasi simulasi berjalan dalam detik sebelum berhenti}';
     protected $description = 'Simulasikan pergerakan bus real-time untuk trip yang sedang berlangsung (on-going)';
 
     public function handle()
     {
         $interval = (int) $this->option('interval');
+        $duration = $this->option('duration') ? (int) $this->option('duration') : null;
+        $endTime = $duration ? time() + $duration : null;
+
         $this->info("Memulai simulasi pergerakan bus (Update setiap {$interval} detik)...");
+        if ($duration) {
+            $this->info("Simulasi akan otomatis berhenti setelah {$duration} detik.");
+        }
         $this->info("Tekan Ctrl+C untuk menghentikan.");
 
         $coordinates = [
@@ -32,6 +38,12 @@ class SimulateTrips extends Command
         ];
 
         while (true) {
+            // Cek batas durasi jika ditentukan
+            if ($endTime && time() >= $endTime) {
+                $this->info("Durasi simulasi selesai. Keluar secara otomatis.");
+                break;
+            }
+
             // Ambil semua trip yang statusnya 'on-going' atau 'scheduled'
             $trips = Trip::whereIn('status', ['on-going', 'scheduled'])->with('schedule')->get();
 
@@ -56,43 +68,88 @@ class SimulateTrips extends Command
                         continue;
                     }
 
-                    // Ambil lokasi terakhir
-                    $lastLoc = $trip->locations()->latest()->first();
-
-                    if (!$lastLoc) {
-                        // Jika belum ada lokasi, buat di posisi asal
-                        $currentLat = $originCoords[0];
-                        $currentLng = $originCoords[1];
-                    } else {
-                        $currentLat = $lastLoc->latitude;
-                        $currentLng = $lastLoc->longitude;
-                    }
-
+                    $originLat = $originCoords[0];
+                    $originLng = $originCoords[1];
                     $destLat = $destCoords[0];
                     $destLng = $destCoords[1];
 
-                    // Cek jarak ke tujuan
-                    $distance = sqrt(pow($destLat - $currentLat, 2) + pow($destLng - $currentLng, 2));
-
-                    if ($distance < 0.005) {
-                        // Sudah sampai tujuan
-                        $trip->update(['status' => 'completed']);
-                        $this->info("Trip #{$trip->id} ({$trip->schedule->origin} -> {$trip->schedule->destination}) telah TIBA di tujuan!");
-                        continue;
+                    // Coba ambil rute jalan raya dari OSRM
+                    $routeCoords = [];
+                    try {
+                        $url = "https://router.project-osrm.org/route/v1/driving/{$originLng},{$originLat};{$destLng},{$destLat}?overview=full&geometries=geojson";
+                        $ctx = stream_context_create([
+                            "http" => [
+                                "header" => "User-Agent: ShuttleAppSimulation/1.0\r\n",
+                                "timeout" => 3
+                            ]
+                        ]);
+                        $response = @file_get_contents($url, false, $ctx);
+                        if ($response) {
+                            $data = json_decode($response, true);
+                            $routeCoords = $data['routes'][0]['geometry']['coordinates'] ?? [];
+                        }
+                    } catch (\Exception $e) {
+                        // ignore and fallback to straight line
                     }
 
-                    // Hitung langkah (bergerak 8% lebih dekat ke tujuan tiap detik/tick)
-                    $nextLat = $currentLat + ($destLat - $currentLat) * 0.08;
-                    $nextLng = $currentLng + ($destLng - $currentLng) * 0.08;
+                    if (!empty($routeCoords)) {
+                        $totalPoints = count($routeCoords);
+                        $locationCount = $trip->locations()->count();
+                        
+                        // Selesaikan perjalanan dalam kisaran ~25-30 ticks
+                        $step = max(1, (int)($totalPoints / 25));
+                        $index = $locationCount * $step;
 
-                    // Simpan lokasi baru
-                    Location::create([
-                        'trip_id' => $trip->id,
-                        'latitude' => $nextLat,
-                        'longitude' => $nextLng,
-                    ]);
+                        if ($index >= $totalPoints - 1) {
+                            // Sudah sampai tujuan
+                            Location::create([
+                                'trip_id' => $trip->id,
+                                'latitude' => $destLat,
+                                'longitude' => $destLng,
+                            ]);
+                            $trip->update(['status' => 'completed']);
+                            $this->info("Trip #{$trip->id} ({$trip->schedule->origin} -> {$trip->schedule->destination}) telah TIBA di tujuan!");
+                        } else {
+                            // Simpan titik koordinat jalan raya (OSRM mengembalikan format [lng, lat])
+                            $point = $routeCoords[$index];
+                            Location::create([
+                                'trip_id' => $trip->id,
+                                'latitude' => $point[1],
+                                'longitude' => $point[0],
+                            ]);
+                            $this->info("Trip #{$trip->id} [{$trip->schedule->origin} -> {$trip->schedule->destination}]: Update lokasi jalan raya ({$point[1]}, {$point[0]})");
+                        }
+                    } else {
+                        // FALLBACK: Perhitungan garis lurus jika gagal fetch OSRM
+                        $lastLoc = $trip->locations()->latest()->first();
 
-                    $this->info("Trip #{$trip->id} [{$trip->schedule->origin} -> {$trip->schedule->destination}]: Update lokasi ({$nextLat}, {$nextLng})");
+                        if (!$lastLoc) {
+                            $currentLat = $originLat;
+                            $currentLng = $originLng;
+                        } else {
+                            $currentLat = $lastLoc->latitude;
+                            $currentLng = $lastLoc->longitude;
+                        }
+
+                        $distance = sqrt(pow($destLat - $currentLat, 2) + pow($destLng - $currentLng, 2));
+
+                        if ($distance < 0.005) {
+                            $trip->update(['status' => 'completed']);
+                            $this->info("Trip #{$trip->id} ({$trip->schedule->origin} -> {$trip->schedule->destination}) telah TIBA di tujuan!");
+                            continue;
+                        }
+
+                        $nextLat = $currentLat + ($destLat - $currentLat) * 0.08;
+                        $nextLng = $currentLng + ($destLng - $currentLng) * 0.08;
+
+                        Location::create([
+                            'trip_id' => $trip->id,
+                            'latitude' => $nextLat,
+                            'longitude' => $nextLng,
+                        ]);
+
+                        $this->info("Trip #{$trip->id} [{$trip->schedule->origin} -> {$trip->schedule->destination}]: Update lokasi garis lurus ({$nextLat}, {$nextLng})");
+                    }
                 }
             }
 
