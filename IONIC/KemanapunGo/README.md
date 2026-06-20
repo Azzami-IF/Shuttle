@@ -37,3 +37,16 @@ Build Produksi
 --------------
    npm run build
    npx cap sync
+
+Demo Kredensial
+---------------
+- Customer demo: `customer@example.com` / `password`
+
+Useful npm scripts
+------------------
+- `npm start`    : starts Ionic dev server (alias to `ionic serve`)
+- `npm run build`: production build
+
+Continuous Integration
+----------------------
+Tidak ada CI workflow terdeteksi; tambahkan GitHub Actions jika Anda ingin build/test otomatis.

@@ -83,3 +83,13 @@ Petunjuk singkat untuk menjalankan backend Shuttle secara lokal:
 Catatan: API default development mengikat ke `http://localhost:8000`.
 
 Lihat README utama di root repo untuk kredensial demo dan catatan tambahan.
+
+Demo Kredensial
+---------------
+- Admin: `admin@example.com` / `password`
+- Driver: `driver@example.com` / `password`
+- Customer: `customer@example.com` / `password`
+
+Continuous Integration
+----------------------
+Tidak ada workflow CI yang terdeteksi dalam repo ini. Anda dapat menambahkan GitHub Actions di `.github/workflows/` untuk build/test otomatis.
