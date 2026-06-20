@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://api.ambatu.my.id/api'
+  apiUrl: 'http://api.ambatu.my.id/api'
 };
 
 /*
