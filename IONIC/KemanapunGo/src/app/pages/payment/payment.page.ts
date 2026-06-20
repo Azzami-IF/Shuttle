@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -12,6 +12,13 @@ import { LanguageService } from '../../services/language.service';
   styleUrls: ['./payment.page.scss'],
 })
 export class PaymentPage implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+  private ui = inject(UiService);
+  private languageService = inject(LanguageService);
+
   bookingId: string | null = null;
   booking: any = null;
   relatedBookings: any[] = [];
@@ -37,14 +44,7 @@ export class PaymentPage implements OnInit, OnDestroy {
   proofPreview: string | null = null;
   isUploading = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private api: ApiService,
-    private router: Router,
-    private auth: AuthService,
-    private ui: UiService,
-    private languageService: LanguageService
-  ) { }
+  constructor() {}
 
   ngOnInit() {
     this.homeRoute = this.auth.getHomeRoute();
@@ -492,6 +492,6 @@ export class PaymentPage implements OnInit, OnDestroy {
   }
 
   goBack() {
-    window.history.back();
+    this.router.navigate(['/booking-detail'], { replaceUrl: true });
   }
 }

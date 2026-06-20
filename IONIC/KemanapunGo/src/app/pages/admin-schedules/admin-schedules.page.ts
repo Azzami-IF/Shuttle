@@ -1,8 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
+import { AuthService } from '../../services/auth.service';
+import { UiService } from '../../services/ui.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -36,6 +39,14 @@ interface PaginationData {
   standalone: false
 })
 export class AdminSchedulesPage implements OnInit, OnDestroy {
+  private adminService = inject(AdminService);
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private ui = inject(UiService);
+
   schedules: Schedule[] = [];
   pagination: PaginationData = {
     current_page: 1,
@@ -53,13 +64,24 @@ export class AdminSchedulesPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private adminService: AdminService,
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private fb: FormBuilder
-  ) {
+  constructor() {
     this.initializeForm();
+  }
+
+  async confirmLogout() {
+    const confirmed = await this.ui.showConfirm('Keluar Akun', 'Apakah Anda yakin ingin keluar dari sesi admin?', 'Keluar');
+    if (confirmed) {
+      this.authService.logout().subscribe({
+        next: () => {
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error('Logout failed, forcing local logout', err);
+          this.authService.logoutDirect();
+          this.router.navigate(['/login']);
+        }
+      });
+    }
   }
 
   ngOnInit() {
@@ -138,7 +160,7 @@ export class AdminSchedulesPage implements OnInit, OnDestroy {
 
   private async showFormModal() {
     const modal = await this.modalCtrl.create({
-      component: ScheduleFormModal,
+      component: ScheduleFormModalComponent,
       componentProps: {
         form: this.scheduleForm,
         schedule: this.editingSchedule
@@ -280,11 +302,13 @@ export class AdminSchedulesPage implements OnInit, OnDestroy {
   `,
   standalone: false
 })
-export class ScheduleFormModal {
+export class ScheduleFormModalComponent {
+  private modalCtrl = inject(ModalController);
+
   form!: FormGroup;
   schedule: Schedule | null = null;
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor() { }
 
   dismiss() {
     this.modalCtrl.dismiss(null, 'cancel');

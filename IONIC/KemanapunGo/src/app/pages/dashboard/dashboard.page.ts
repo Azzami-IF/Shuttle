@@ -24,6 +24,37 @@ export class DashboardPage {
     date: new Date().toISOString().substring(0, 10)
   };
 
+  promos = [
+    {
+      title: 'Hemat Akhir Pekan',
+      discount: 'Diskon 20%',
+      desc: 'Gunakan kode: WEEKENDHEBAT',
+      color: 'linear-gradient(135deg, #18281e 0%, #536349 100%)'
+    },
+    {
+      title: 'Rute Baru Karawang!',
+      discount: 'Tarif Spesial',
+      desc: 'Karawang - Bandung mulai Rp 50rb',
+      color: 'linear-gradient(135deg, #536349 0%, #8e9e82 100%)'
+    },
+    {
+      title: 'Pasti Nyaman & Aman',
+      discount: 'Fasilitas Premium',
+      desc: 'Free WiFi, AC dingin, & USB Charger',
+      color: 'linear-gradient(135deg, #1b3324 0%, #152219 100%)'
+    }
+  ];
+
+  popularRoutes = [
+    { origin: 'Jakarta', destination: 'Bandung', price: 120000, gradient: 'linear-gradient(135deg, #18281e 0%, #2f3e35 100%)' },
+    { origin: 'Bandung', destination: 'Jakarta', price: 120000, gradient: 'linear-gradient(135deg, #536349 0%, #64735b 100%)' },
+    { origin: 'Karawang', destination: 'Bandung', price: 95000, gradient: 'linear-gradient(135deg, #2d3e33 0%, #536349 100%)' },
+    { origin: 'Bekasi', destination: 'Bandung', price: 110000, gradient: 'linear-gradient(135deg, #1c2620 0%, #3e5346 100%)' }
+  ];
+
+  activePromoIndex = 0;
+  promoInterval: any;
+
   constructor(
     private auth: AuthService,
     private api: ApiService,
@@ -36,6 +67,92 @@ export class DashboardPage {
     this.currentUser = this.getResolvedUser();
     if (this.currentUser?.role === 'customer') {
       this.loadSchedulePreview();
+      this.startPromoRotation();
+    }
+  }
+
+  ionViewWillLeave() {
+    this.stopPromoRotation();
+  }
+
+  startPromoRotation() {
+    this.stopPromoRotation();
+    this.promoInterval = setInterval(() => {
+      this.activePromoIndex = (this.activePromoIndex + 1) % this.promos.length;
+    }, 4000);
+  }
+
+  stopPromoRotation() {
+    if (this.promoInterval) {
+      clearInterval(this.promoInterval);
+    }
+  }
+
+  setActivePromo(index: number) {
+    this.activePromoIndex = index;
+    this.startPromoRotation();
+  }
+
+  isDragging = false;
+  dragDeltaX = 0;
+  transitionStyle = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
+  private touchStartX = 0;
+
+  onTouchStart(event: TouchEvent) {
+    this.stopPromoRotation();
+    this.isDragging = true;
+    this.touchStartX = event.touches[0].clientX;
+    this.dragDeltaX = 0;
+    this.transitionStyle = 'none';
+  }
+
+  onTouchMove(event: TouchEvent) {
+    if (!this.isDragging) return;
+    const currentX = event.touches[0].clientX;
+    this.dragDeltaX = currentX - this.touchStartX;
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    if (!this.isDragging) return;
+    this.isDragging = false;
+    this.transitionStyle = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
+
+    const threshold = 60;
+    if (Math.abs(this.dragDeltaX) > threshold) {
+      if (this.dragDeltaX > 0) {
+        this.activePromoIndex = (this.activePromoIndex - 1 + this.promos.length) % this.promos.length;
+      } else {
+        this.activePromoIndex = (this.activePromoIndex + 1) % this.promos.length;
+      }
+    }
+    this.dragDeltaX = 0;
+    this.startPromoRotation();
+  }
+
+  onMouseDown(event: MouseEvent) {
+    this.stopPromoRotation();
+    this.isDragging = true;
+    this.touchStartX = event.clientX;
+    this.dragDeltaX = 0;
+    this.transitionStyle = 'none';
+  }
+
+  onMouseMove(event: MouseEvent) {
+    if (!this.isDragging) return;
+    const currentX = event.clientX;
+    this.dragDeltaX = currentX - this.touchStartX;
+  }
+
+  onMouseUp(event: MouseEvent) {
+    this.onTouchEnd(event as any);
+  }
+
+  onMouseLeave() {
+    if (this.isDragging) {
+      this.isDragging = false;
+      this.transitionStyle = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
+      this.dragDeltaX = 0;
+      this.startPromoRotation();
     }
   }
 
@@ -65,6 +182,11 @@ export class DashboardPage {
     if (hour < 15) return isId ? `${g} Siang` : `${g} Afternoon`;
     if (hour < 18) return isId ? `${g} Sore` : `${g} Afternoon`;
     return isId ? `${g} Malam` : `${g} Evening`;
+  }
+
+  stripEmoji(name: string): string {
+    if (!name) return '';
+    return name.replace(/👋/g, '').trim();
   }
 
   getTranslation(key: string): string {
@@ -134,6 +256,12 @@ export class DashboardPage {
         date: this.searchData.date
       }
     });
+  }
+
+  selectPopularRoute(route: any) {
+    this.searchData.origin = route.origin;
+    this.searchData.destination = route.destination;
+    this.searchTickets();
   }
 
   viewSchedule(id: number) {

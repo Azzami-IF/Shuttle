@@ -19,7 +19,7 @@ class TripController extends Controller
             return response()->json(Trip::whereHas('schedule', function ($query) use ($user) {
                 $query->where('driver_id', $user->id);
             })->with(['schedule.vehicle', 'schedule.driver', 'schedule.bookings' => function($q) {
-                $q->whereIn('status', ['booked', 'completed', 'paid']);
+                $q->where('status', '!=', 'cancelled');
             }])->get());
         }
         return response()->json(Trip::with(['schedule.vehicle', 'schedule.driver'])->get());
@@ -37,7 +37,7 @@ class TripController extends Controller
             return response()->json(['message' => 'Trip already started or completed'], 422);
         }
 
-        $passengerCount = $trip->schedule->bookings()->whereIn('status', ['booked', 'completed', 'paid'])->count();
+        $passengerCount = $trip->schedule->bookings()->where('status', '!=', 'cancelled')->count();
         if ($passengerCount === 0) {
             $trip->update([
                 'status' => 'cancelled_empty',

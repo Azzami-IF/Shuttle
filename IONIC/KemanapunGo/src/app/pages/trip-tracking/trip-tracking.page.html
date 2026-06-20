@@ -1,11 +1,14 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button [defaultHref]="homeRoute" text=""></ion-back-button>
-    </ion-buttons>
+
     <ion-title>Live Tracking</ion-title>
-    <ion-buttons slot="end" *ngIf="trip?.status">
-      <span [class]="'badge ' + getStatusBadgeClass(trip.status)" style="margin-right: 8px;">
+    <ion-buttons slot="end">
+      <!-- Demo simulator trigger button -->
+      <button (click)="startDemoSimulation()" style="background: linear-gradient(135deg, #f39c12, #e74c3c); color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; display: flex; align-items: center; gap: 4px; margin-right: 8px; cursor: pointer;">
+        <span class="material-symbols-outlined" style="font-size: 14px;">{{ isDemoSimulationActive ? 'stop' : 'play_arrow' }}</span>
+        {{ isDemoSimulationActive ? 'Stop' : 'Simulate' }}
+      </button>
+      <span [class]="'badge ' + getStatusBadgeClass(trip?.status)" style="margin-right: 8px;" *ngIf="trip?.status">
         {{ getStatusLabel(trip.status) }}
       </span>
     </ion-buttons>

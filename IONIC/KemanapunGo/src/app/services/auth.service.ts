@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
 import { tap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
@@ -7,10 +7,12 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
+  private api = inject(ApiService);
+
   private userSubject = new BehaviorSubject<any>(null);
   public user$ = this.userSubject.asObservable();
 
-  constructor(private api: ApiService) {
+  constructor() {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       this.userSubject.next(JSON.parse(savedUser));
@@ -71,7 +73,8 @@ export class AuthService {
 
   getHomeRoute() {
     const role = this.getRole() || JSON.parse(localStorage.getItem('user') || '{}')?.role;
-    return role === 'driver' ? '/driver-dashboard' : '/dashboard';
+    if (role === 'admin') return '/admin/dashboard';
+    return '/dashboard';
   }
 
   updateProfile(data: any) {

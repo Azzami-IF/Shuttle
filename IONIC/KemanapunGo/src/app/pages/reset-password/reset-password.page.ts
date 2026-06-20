@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
@@ -10,6 +10,11 @@ import { UiService } from '../../services/ui.service';
   standalone: false,
 })
 export class ResetPasswordPage implements OnInit {
+  private route = inject(ActivatedRoute);
+  private auth = inject(AuthService);
+  private ui = inject(UiService);
+  private router = inject(Router);
+
   form = {
     token: '',
     email: '',
@@ -21,22 +26,13 @@ export class ResetPasswordPage implements OnInit {
   showConfirmPassword = false;
   source: 'client' | 'driver' = 'client';
 
-  constructor(
-    private route: ActivatedRoute,
-    private auth: AuthService,
-    private ui: UiService,
-    private router: Router
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
     const email = this.route.snapshot.queryParamMap.get('email');
-    const source = this.route.snapshot.queryParamMap.get('source');
     this.form.token = token ?? '';
     this.form.email = email ?? '';
-    if (source === 'driver') {
-      this.source = 'driver';
-    }
   }
 
   submit(event: Event) {
@@ -62,7 +58,7 @@ export class ResetPasswordPage implements OnInit {
       next: (res: any) => {
         this.isLoading = false;
         void this.ui.showToast(res?.message || 'Password berhasil direset', 'success');
-        this.router.navigate([this.source === 'driver' ? '/driver-login' : '/login'], { replaceUrl: true });
+        this.router.navigate(['/login'], { replaceUrl: true });
       },
       error: (err: any) => {
         this.isLoading = false;
@@ -73,6 +69,6 @@ export class ResetPasswordPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([this.source === 'driver' ? '/driver-login' : '/login']);
+    this.router.navigate(['/login']);
   }
 }

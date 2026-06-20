@@ -209,7 +209,7 @@
               Salin Nomor Rekening
             </ion-button>
 
-            <ion-button expand="block" shape="round" color="dark" (click)="uploadProofAndConfirm()" [disabled]="isUploading">
+            <ion-button expand="block" shape="round" color="dark" (click)="uploadProofAndConfirm()" [disabled]="!selectedFile || isUploading">
               {{ isUploading ? 'Mengirim...' : 'Konfirmasi Sudah Bayar' }}
             </ion-button>
           </ng-container>

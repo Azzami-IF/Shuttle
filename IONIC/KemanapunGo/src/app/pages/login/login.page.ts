@@ -64,10 +64,6 @@ export class LoginPage {
     this.router.navigate(['/onboarding'], { replaceUrl: true });
   }
 
-  goToDriverLogin() {
-    this.router.navigate(['/driver-login']);
-  }
-
   continueAsGuest() {
     this.router.navigate(['/dashboard']);
   }
