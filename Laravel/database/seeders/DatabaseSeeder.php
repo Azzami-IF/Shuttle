@@ -39,14 +39,26 @@ class DatabaseSeeder extends Seeder
         );
 
         // Customers
-        User::updateOrCreate(
-            ['email' => 'alice@gmail.com'],
-            [
-                'name' => 'Alice Customer',
-                'password' => Hash::make('password'),
-                'role' => 'customer',
-            ]
-        );
+        $customerData = [
+            ['email' => 'alice@gmail.com', 'name' => 'Alice Customer'],
+            ['email' => 'bob@gmail.com', 'name' => 'Bob Customer'],
+            ['email' => 'charlie@gmail.com', 'name' => 'Charlie Customer'],
+            ['email' => 'david@gmail.com', 'name' => 'David Customer'],
+            ['email' => 'eva@gmail.com', 'name' => 'Eva Customer'],
+        ];
+
+        $customers = [];
+        foreach ($customerData as $c) {
+            $user = User::updateOrCreate(
+                ['email' => $c['email']],
+                [
+                    'name' => $c['name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'customer',
+                ]
+            );
+            $customers[] = $user;
+        }
 
         // Drivers (ambil yang ada di database atau buat jika kosong)
         $drivers = User::where('role', 'driver')->get();
@@ -122,12 +134,14 @@ class DatabaseSeeder extends Seeder
             ]);
 
             // Seats for schedule
+            $seats = [];
             for ($i = 1; $i <= $vehicle->capacity; $i++) {
-                Seat::create([
+                $seat = Seat::create([
                     'schedule_id' => $schedule->id,
                     'seat_number' => (string)$i,
                     'status' => 'available',
                 ]);
+                $seats[] = $seat;
             }
 
             // Trip for schedule
@@ -135,6 +149,27 @@ class DatabaseSeeder extends Seeder
                 'schedule_id' => $schedule->id,
                 'status' => 'scheduled',
             ]);
+
+            // Buat booking tiket palsu (2-4 booking per jadwal) agar bus terisi penumpang
+            $numBookings = rand(2, 4);
+            $paymentCode = 'TRF' . strtoupper(bin2hex(random_bytes(4)));
+            $uniqueCode = rand(100, 999);
+            
+            $shuffledSeats = array_slice($seats, 0, $numBookings);
+            foreach ($shuffledSeats as $seatIndex => $seat) {
+                $customer = $customers[$seatIndex % count($customers)];
+                
+                \App\Models\Booking::create([
+                    'user_id' => $customer->id,
+                    'schedule_id' => $schedule->id,
+                    'seat_id' => $seat->id,
+                    'status' => 'booked',
+                    'payment_code' => $paymentCode,
+                    'unique_code' => $uniqueCode,
+                ]);
+
+                $seat->update(['status' => 'booked']);
+            }
         }
     }
 }
