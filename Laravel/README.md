@@ -56,3 +56,30 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+## Project Setup (local)
+
+Petunjuk singkat untuk menjalankan backend Shuttle secara lokal:
+
+1. Salin file lingkungan:
+
+	cp .env.example .env
+
+2. Pasang dependensi:
+
+	composer install
+
+3. Buat key aplikasi dan setup database:
+
+	php artisan key:generate
+	php artisan migrate --seed
+
+4. Jalankan server pengembangan:
+
+	php artisan serve --host=0.0.0.0 --port=8000
+
+Catatan: API default development mengikat ke `http://localhost:8000`.
+
+Lihat README utama di root repo untuk kredensial demo dan catatan tambahan.
