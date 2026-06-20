@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   standalone: false,
@@ -15,6 +16,7 @@ export class DriverDashboardPage {
   private api = inject(ApiService);
   private router = inject(Router);
   private ui = inject(UiService);
+  private alertCtrl = inject(AlertController);
 
   user$ = this.auth.user$;
   upcomingTrips: any[] = [];
@@ -32,10 +34,20 @@ export class DriverDashboardPage {
   }
 
   async showHelpDesk() {
-    await this.ui.showAlert(
-      'Bantuan Help Desk 24/7',
-      'Jika Anda mengalami kendala operasional, masalah pada kendaraan, atau kondisi darurat di jalan, silakan hubungi tim Support kami:\n\n📞 0812-3456-7890\n✉️ support@driverpungo.com\n\nTim kami siap membantu Anda 24 jam sehari.'
-    );
+    const alert = await this.alertCtrl.create({
+      header: 'Bantuan Help Desk 24/7',
+      message: 'Jika Anda mengalami kendala operasional, masalah pada kendaraan, atau kondisi darurat di jalan, silakan hubungi tim Support kami:\n\n📞 +62 851-5896-7790\n✉️ supportdriverpungo@gmail.com\n\nTim kami siap membantu Anda 24 jam sehari.',
+      buttons: [
+        { text: 'Tutup', role: 'cancel' },
+        {
+          text: 'Chat WhatsApp',
+          handler: () => {
+            window.open('https://wa.me/6285158967790', '_system');
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   async showManual() {

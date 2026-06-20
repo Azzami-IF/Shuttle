@@ -18,6 +18,6 @@ export class DriverHelpPage implements OnInit {
   }
 
   openEmail() {
-    window.open('mailto:support@driverpungo.com?subject=Bantuan%20DriverpunGo', '_blank');
+    window.open('mailto:supportdriverpungo@gmail.com?subject=Bantuan%20DriverpunGo', '_blank');
   }
 }
