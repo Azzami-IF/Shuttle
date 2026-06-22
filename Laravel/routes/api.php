@@ -44,6 +44,20 @@ Route::get('/clear-cache', function() {
     }
 });
 
+// Database Migration Helper for cPanel
+Route::get('/run-migration', function() {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        return response()->json([
+            'message' => 'Migration and Config Clear completed successfully!',
+            'output' => \Illuminate\Support\Facades\Artisan::output()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
 // Debug helper for simulation on cPanel
 Route::get('/debug-simulation', function(\Illuminate\Http\Request $request) {
     if ($request->query('token') !== 'sec-secret-123') {

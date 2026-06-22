@@ -77,6 +77,43 @@
       <span class="material-symbols-outlined bg-icon">timer</span>
     </div>
 
+    <!-- Route stops timeline stepper -->
+    <section class="stops-section" *ngIf="trip && getStops().length > 0">
+      <div class="section-header">
+        <h3>Pemberhentian Rute</h3>
+        <span class="count">{{ getStops().length }} Halte</span>
+      </div>
+
+      <div class="stops-timeline">
+        <!-- Origin Node -->
+        <div class="stop-node-item" [class]="getStopStatus(trip.schedule.pickup_lng, trip.schedule.pickup_lat, 'origin')">
+          <div class="node-indicator"></div>
+          <div class="node-details">
+            <span class="name">{{ trip.schedule.pickup_name || trip.schedule.origin }}</span>
+            <span class="status-lbl">Titik Mulai</span>
+          </div>
+        </div>
+
+        <!-- Stop Nodes -->
+        <div class="stop-node-item" *ngFor="let stop of getStops()" [class]="getStopStatus(stop.coords[0], stop.coords[1], 'stop')">
+          <div class="node-indicator"></div>
+          <div class="node-details">
+            <span class="name">{{ stop.name }}</span>
+            <span class="status-lbl">{{ getStopStatusLabel(stop.coords[0], stop.coords[1]) }}</span>
+          </div>
+        </div>
+
+        <!-- Destination Node -->
+        <div class="stop-node-item" [class]="getStopStatus(trip.schedule.drop_off_lng, trip.schedule.drop_off_lat, 'destination')">
+          <div class="node-indicator"></div>
+          <div class="node-details">
+            <span class="name">{{ trip.schedule.drop_off_name || trip.schedule.destination }}</span>
+            <span class="status-lbl">Titik Selesai</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Passenger List -->
     <section class="passenger-section">
       <div class="section-header">

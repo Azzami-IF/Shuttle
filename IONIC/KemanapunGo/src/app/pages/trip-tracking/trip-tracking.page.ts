@@ -1,10 +1,13 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { UiService } from '../../services/ui.service';
+import { Geolocation } from '@capacitor/geolocation';
+import { environment } from '../../../environments/environment';
+import { EchoService } from '../../services/echo.service';
 
-declare var L: any;
+declare var mapboxgl: any;
 
 @Component({
   standalone: false,
@@ -18,6 +21,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   private ui = inject(UiService);
   private router = inject(Router);
   private auth = inject(AuthService);
+  private echo = inject(EchoService);
 
   tripId: any;
   trip: any;
@@ -29,6 +33,11 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   previousStatus: string = '';
   eta: number = 0;
   homeRoute = '/dashboard';
+  userLocationWatchId: string | null = null;
+  userMarker: any = null;
+  originMarker: any = null;
+  destMarker: any = null;
+  stopMarkers: any[] = [];
 
   coordinatesMap: { [key: string]: [number, number] } = {
     'jakarta': [-6.3090, 106.8824],
@@ -52,6 +61,29 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
 
   demoRouteCoords: [number, number][] = [];
 
+  routeStops: { [key: string]: { name: string, coords: [number, number] }[] } = {
+    'depok-bandung': [
+      { name: 'Pool Karawang', coords: [107.2913, -6.3073] },
+      { name: 'Pool Purwakarta', coords: [107.4431, -6.5571] }
+    ],
+    'bogor-bandung': [
+      { name: 'Pool Cianjur', coords: [107.1396, -6.8242] },
+      { name: 'Pool Padalarang', coords: [107.4721, -6.8406] }
+    ],
+    'jakarta-bandung': [
+      { name: 'Pool Bekasi', coords: [106.9756, -6.2383] },
+      { name: 'Pool Karawang', coords: [107.2913, -6.3073] }
+    ]
+  };
+
+  getStops() {
+    if (!this.trip?.schedule) return [];
+    const origin = this.trip.schedule.origin.toLowerCase().trim();
+    const destination = this.trip.schedule.destination.toLowerCase().trim();
+    const key = `${origin}-${destination}`;
+    return this.routeStops[key] || [];
+  }
+
   constructor() {}
 
   isDemoSimulationActive: boolean = false;
@@ -66,17 +98,21 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.initMap();
-    setTimeout(() => {
-      if (this.map) {
-        this.map.invalidateSize();
-      }
-    }, 500);
   }
 
   ngOnDestroy() {
     if (this.pollingInterval) clearInterval(this.pollingInterval);
     if (this.statusPollingInterval) clearInterval(this.statusPollingInterval);
     if (this.demoInterval) clearInterval(this.demoInterval);
+    if (this.userLocationWatchId) {
+      void Geolocation.clearWatch({ id: this.userLocationWatchId });
+    }
+    if (this.trip?.schedule_id) {
+      this.echo.getEcho().leave(`schedules.${this.trip.schedule_id}`);
+    }
+    if (this.map) {
+      this.map.remove();
+    }
   }
 
   startDemoSimulation() {
@@ -89,26 +125,31 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     if (this.pollingInterval) clearInterval(this.pollingInterval);
     if (this.statusPollingInterval) clearInterval(this.statusPollingInterval);
 
-    const originName = (this.trip?.schedule?.origin || '').toLowerCase().trim();
-    const destName = (this.trip?.schedule?.destination || '').toLowerCase().trim();
-
-    const originCoords = this.coordinatesMap[originName] || this.coordinatesMap['bandung'];
-    const destCoords = this.coordinatesMap[destName] || this.coordinatesMap['jakarta'];
+    const originCoords: [number, number] = [
+      this.trip?.schedule?.pickup_lng ? parseFloat(this.trip.schedule.pickup_lng) : 106.8227,
+      this.trip?.schedule?.pickup_lat ? parseFloat(this.trip.schedule.pickup_lat) : -6.4025
+    ];
+    const destCoords: [number, number] = [
+      this.trip?.schedule?.drop_off_lng ? parseFloat(this.trip.schedule.drop_off_lng) : 107.5937,
+      this.trip?.schedule?.drop_off_lat ? parseFloat(this.trip.schedule.drop_off_lat) : -6.9452
+    ];
 
     this.demoProgress = 0;
     void this.ui.showToast('Simulasi perjalanan dimulai (Lokal)', 'success');
 
-    fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
+    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords[0]},${originCoords[1]};${destCoords[0]},${destCoords[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+    fetch(directionsUrl)
       .then(res => res.json())
       .then(data => {
         if (data.routes && data.routes.length > 0) {
-          this.demoRouteCoords = data.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]);
+          this.demoRouteCoords = data.routes[0].geometry.coordinates; // Mapbox is [lng, lat]
         } else {
           this.demoRouteCoords = [];
           for (let i = 0; i <= 100; i++) {
-            const lat = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
-            const lng = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
-            this.demoRouteCoords.push([lat, lng]);
+            const lng = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
+            const lat = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
+            this.demoRouteCoords.push([lng, lat]);
           }
         }
         this.runDemoInterval();
@@ -116,20 +157,18 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
       .catch(() => {
         this.demoRouteCoords = [];
         for (let i = 0; i <= 100; i++) {
-          const lat = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
-          const lng = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
-          this.demoRouteCoords.push([lat, lng]);
+          const lng = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
+          const lat = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
+          this.demoRouteCoords.push([lng, lat]);
         }
         this.runDemoInterval();
       });
   }
 
   runDemoInterval() {
+    let step = 0;
     this.demoInterval = setInterval(() => {
-      this.demoProgress += 1; // Bergerak 1% setiap tick (total 100 tick)
-
-      if (this.demoProgress > 100) {
-        this.demoProgress = 100;
+      if (step >= this.demoRouteCoords.length) {
         clearInterval(this.demoInterval);
         this.isDemoSimulationActive = false;
         void this.ui.showToast('Simulasi selesai! Bus telah tiba di tujuan.', 'success');
@@ -139,44 +178,54 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
         return;
       }
 
-      const idx = Math.min(
-        this.demoRouteCoords.length - 1,
-        Math.floor((this.demoProgress / 100) * (this.demoRouteCoords.length - 1))
-      );
-      const currentPoint = this.demoRouteCoords[idx];
+      const currentPoint = this.demoRouteCoords[step];
 
       this.location = {
-        latitude: currentPoint[0],
-        longitude: currentPoint[1]
+        latitude: currentPoint[1],
+        longitude: currentPoint[0]
       };
 
       if (this.trip) {
         this.trip.status = 'on-going';
       }
 
-      this.updateMarker(currentPoint[0], currentPoint[1]);
-    }, 2000);
+      this.updateMarker(currentPoint[1], currentPoint[0]);
+      step += 1;
+    }, 150); // Move coordinate-by-coordinate every 150ms for a smooth gliding effect
   }
 
   stopDemoSimulation() {
     this.isDemoSimulationActive = false;
     if (this.demoInterval) clearInterval(this.demoInterval);
     void this.ui.showToast('Simulasi dihentikan. Menghubungkan ke GPS asli...', 'info');
-    this.startPolling();
+    this.fetchLatestLocationOnce();
+    this.subscribeToRealTimeUpdates();
     this.startStatusPolling();
   }
 
   initMap() {
-    // Default center (e.g., Jakarta)
-    this.map = L.map('map').setView([-6.2088, 106.8456], 13);
+    const mapElement = document.getElementById('map');
+    if (!mapElement) return;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(this.map);
+    mapboxgl.accessToken = environment.mapboxToken;
 
-    this.drawRoute();
-    this.startPolling();
-    this.startStatusPolling();
+    this.map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v11', // Light theme
+      center: [106.8227, -6.4025], // Default center Depok
+      zoom: 12,
+      pitch: 45, // 3D tilt for a premium, immersive look
+      bearing: -10
+    });
+
+    this.map.addControl(new mapboxgl.NavigationControl());
+
+    this.map.on('load', () => {
+      this.drawRoute();
+      this.fetchLatestLocationOnce();
+      this.startStatusPolling();
+      void this.startUserLocationTracking();
+    });
   }
 
   loadTrip() {
@@ -185,6 +234,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
         this.trip = res;
         this.previousStatus = res.status;
         this.drawRoute();
+        this.subscribeToRealTimeUpdates();
       },
       error: (err) => {
         console.error('Error loading trip', err);
@@ -197,87 +247,191 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   drawRoute() {
     if (!this.map || !this.trip?.schedule) return;
 
-    const originName = (this.trip.schedule.origin || '').toLowerCase().trim();
-    const destName = (this.trip.schedule.destination || '').toLowerCase().trim();
+    const schedule = this.trip.schedule;
+    
+    // Resolve origin coordinates with fallback
+    let originCoords: [number, number] = [106.8227, -6.4025];
+    if (schedule.pickup_lng && schedule.pickup_lat) {
+      originCoords = [parseFloat(schedule.pickup_lng), parseFloat(schedule.pickup_lat)];
+    } else {
+      const mapped = this.getDestinationCoords(schedule.origin);
+      if (mapped) {
+        originCoords = [mapped[1], mapped[0]]; // Swap to [lng, lat]
+      }
+    }
 
-    const originCoords = this.coordinatesMap[originName] || this.coordinatesMap['bandung'];
-    const destCoords = this.coordinatesMap[destName] || this.coordinatesMap['jakarta'];
+    // Resolve destination coordinates with fallback
+    let destCoords: [number, number] = [107.5937, -6.9452];
+    if (schedule.drop_off_lng && schedule.drop_off_lat) {
+      destCoords = [parseFloat(schedule.drop_off_lng), parseFloat(schedule.drop_off_lat)];
+    } else {
+      const mapped = this.getDestinationCoords(schedule.destination);
+      if (mapped) {
+        destCoords = [mapped[1], mapped[0]]; // Swap to [lng, lat]
+      }
+    }
+
+    // Clear previous markers
+    if (this.originMarker) this.originMarker.remove();
+    if (this.destMarker) this.destMarker.remove();
+    this.stopMarkers.forEach(m => m.remove());
+    this.stopMarkers = [];
 
     // Add Origin Marker
-    const originIcon = L.divIcon({
-      className: 'route-marker-icon origin',
-      html: `<div style="background-color:#536349; color:white; padding:6px 10px; border-radius:12px; font-weight:bold; font-size:11px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 5px rgba(0,0,0,0.3);">
-               Asal: ${this.trip.schedule.origin}
-             </div>`,
-      iconSize: [80, 24],
-      iconAnchor: [40, 12]
-    });
-    L.marker(originCoords, { icon: originIcon }).addTo(this.map);
+    const elOrigin = document.createElement('div');
+    elOrigin.className = 'route-marker-icon origin';
+    elOrigin.innerHTML = `<div style="background-color:#536349; color:white; padding:6px 10px; border-radius:12px; font-weight:bold; font-size:11px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 5px rgba(0,0,0,0.3);">
+                            Asal: ${schedule.pickup_name || schedule.origin}
+                          </div>`;
+    this.originMarker = new mapboxgl.Marker({ element: elOrigin })
+      .setLngLat(originCoords)
+      .addTo(this.map);
 
     // Add Destination Marker
-    const destIcon = L.divIcon({
-      className: 'route-marker-icon destination',
-      html: `<div style="background-color:#d9534f; color:white; padding:6px 10px; border-radius:12px; font-weight:bold; font-size:11px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 5px rgba(0,0,0,0.3);">
-               Tujuan: ${this.trip.schedule.destination}
-             </div>`,
-      iconSize: [80, 24],
-      iconAnchor: [40, 12]
+    const elDest = document.createElement('div');
+    elDest.className = 'route-marker-icon destination';
+    elDest.innerHTML = `<div style="background-color:#d9534f; color:white; padding:6px 10px; border-radius:12px; font-weight:bold; font-size:11px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 5px rgba(0,0,0,0.3);">
+                            Tujuan: ${schedule.drop_off_name || schedule.destination}
+                          </div>`;
+    this.destMarker = new mapboxgl.Marker({ element: elDest })
+      .setLngLat(destCoords)
+      .addTo(this.map);
+
+    // Add Intermediate Stops on Map
+    const stops = this.getStops();
+    stops.forEach((stop) => {
+      const elStop = document.createElement('div');
+      elStop.className = 'route-marker-icon stop';
+      elStop.innerHTML = `<div style="background-color:#f59e0b; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:9px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                              Singgah: ${stop.name}
+                            </div>`;
+      const stopMarker = new mapboxgl.Marker({ element: elStop })
+        .setLngLat(stop.coords)
+        .addTo(this.map);
+      this.stopMarkers.push(stopMarker);
     });
-    L.marker(destCoords, { icon: destIcon }).addTo(this.map);
 
-    const lng1 = originCoords[1];
-    const lat1 = originCoords[0];
-    const lng2 = destCoords[1];
-    const lat2 = destCoords[0];
+    // Construct waypoint string for routing
+    let waypointStr = `${originCoords[0]},${originCoords[1]}`;
+    stops.forEach(stop => {
+      waypointStr += `;${stop.coords[0]},${stop.coords[1]}`;
+    });
+    waypointStr += `;${destCoords[0]},${destCoords[1]}`;
 
-    fetch(`https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`)
+    // Draw planned route using Mapbox Directions API
+    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypointStr}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+    fetch(directionsUrl)
       .then(res => res.json())
       .then(data => {
         if (data.routes && data.routes.length > 0) {
-          const coords = data.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]);
-          L.polyline(coords, {
-            color: '#536349', weight: 4, opacity: 0.7, dashArray: '5, 10'
-          }).addTo(this.map);
-          this.map.fitBounds(L.polyline(coords).getBounds(), { padding: [50, 50] });
+          const coords = data.routes[0].geometry.coordinates; // Mapbox is [lng, lat]
+          
+          if (this.map.getSource('route-source')) {
+            this.map.getSource('route-source').setData({
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: coords
+              }
+            });
+          } else {
+            this.map.addSource('route-source', {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'LineString',
+                  coordinates: coords
+                }
+              }
+            });
+
+            this.map.addLayer({
+              id: 'route-layer',
+              type: 'line',
+              source: 'route-source',
+              layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+              },
+              paint: {
+                'line-color': '#1a73e8', // Solid Google Maps blue
+                'line-width': 5,
+                'line-opacity': 0.8
+              }
+            });
+          }
+
+          // Fit bounds
+          const bounds = new mapboxgl.LngLatBounds();
+          coords.forEach((coord: [number, number]) => bounds.extend(coord));
+          this.map.fitBounds(bounds, { padding: 50 });
         }
+      })
+      .catch(err => {
+        console.error('Error drawing route via Mapbox Directions API:', err);
       });
   }
 
-  startPolling() {
-    this.pollingInterval = setInterval(() => {
-      this.api.get(`trips/${this.tripId}/latest-location`).subscribe({
-        next: (res) => {
-          if (res && res.latitude && res.longitude) {
-            this.location = res;
-            this.updateMarker(res.latitude, res.longitude);
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching location', err);
-          // Don't show error on every poll for location data
+  fetchLatestLocationOnce() {
+    this.api.get(`trips/${this.tripId}/latest-location`).subscribe({
+      next: (res) => {
+        if (res && res.latitude && res.longitude) {
+          this.location = res;
+          this.updateMarker(res.latitude, res.longitude);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching initial location', err);
+      }
+    });
+  }
+
+  subscribeToRealTimeUpdates() {
+    if (!this.trip?.schedule_id) return;
+    const scheduleId = this.trip.schedule_id;
+
+    // Connect and listen on private WebSockets channel
+    this.echo.getEcho()
+      .private(`schedules.${scheduleId}`)
+      .listen('.App\\Events\\DriverLocationUpdated', (e: any) => {
+        console.log('Real-time location received:', e);
+        if (e && e.latitude && e.longitude) {
+          this.location = {
+            latitude: e.latitude,
+            longitude: e.longitude
+          };
+          this.updateMarker(e.latitude, e.longitude);
         }
       });
-    }, 5000); // Every 5 seconds
   }
 
   updateMarker(lat: number, lng: number) {
     if (!this.map) return;
 
     if (!this.shuttleMarker) {
-      const busIcon = L.divIcon({
-        className: 'custom-div-icon',
-        html: `<div style="background-color:#18281e; color:white; padding:8px; border-radius:50%; border:2px solid white; box-shadow:0 0 10px rgba(0,0,0,0.5);">
-                 <i class="material-symbols-outlined" style="font-size:20px;">directions_bus</i>
-               </div>`,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20]
-      });
-      this.shuttleMarker = L.marker([lat, lng], { icon: busIcon }).addTo(this.map);
+      const elBus = document.createElement('div');
+      elBus.className = 'custom-div-icon';
+      elBus.innerHTML = `<div style="background-color:#1a73e8; color:white; padding:8px; border-radius:50%; border:3px solid white; box-shadow:0 4px 15px rgba(26,115,232,0.4); display:flex; align-items:center; justify-content:center; transition: all 0.25s ease;">
+                           <span class="material-symbols-outlined" style="font-size:22px; display:block;">directions_bus</span>
+                         </div>`;
+      this.shuttleMarker = new mapboxgl.Marker({ element: elBus })
+        .setLngLat([lng, lat])
+        .addTo(this.map);
+      
+      this.map.panTo([lng, lat]);
     } else {
-      this.shuttleMarker.setLatLng([lat, lng]);
+      this.shuttleMarker.setLngLat([lng, lat]);
+      
+      // Auto-center camera only if the marker goes out of the current viewport to avoid camera shaking
+      const bounds = this.map.getBounds();
+      if (!bounds.contains([lng, lat])) {
+        this.map.panTo([lng, lat]);
+      }
     }
-
-    this.map.panTo([lat, lng]);
   }
 
   startStatusPolling() {
@@ -292,10 +446,9 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
         },
         error: (err) => {
           console.error('Error polling trip status', err);
-          // Don't show error on every poll, just log it
         }
       });
-    }, 5000); // Every 5 seconds
+    }, 5000);
   }
 
   showStatusNotification(status: string) {
@@ -348,11 +501,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
          const totalDist = this.getDistanceFromLatLonInKm(originCoords[0], originCoords[1], destCoords[0], destCoords[1]);
          const distRemaining = this.getDistanceFromLatLonInKm(this.location.latitude, this.location.longitude, destCoords[0], destCoords[1]);
          
-         // Estimasi durasi total perjalanan yang realistis (kecepatan rata-rata 50 km/jam)
-         // Durasi dalam menit = (totalDist / 50) * 60
          const expectedDuration = (totalDist / 50) * 60;
-         
-         // Hitung sisa menit secara proporsional terhadap progres sisa jarak fisik
          const remainingMinutes = Math.ceil((distRemaining / totalDist) * expectedDuration);
          return remainingMinutes;
        }
@@ -362,9 +511,8 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
       return null;
     }
 
-    // Fallback statis jika lokasi belum ada
     const departure = new Date(this.trip.schedule.departure_time).getTime();
-    const duration = 120; // Assume 2 hours default
+    const duration = 120;
     const estimatedArrival = departure + (duration * 60 * 1000);
     const remaining = Math.max(0, estimatedArrival - now);
 
@@ -376,8 +524,36 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     return this.coordinatesMap[name] || null;
   }
 
+  getStopStatus(stopCoords: [number, number]): string {
+    if (!this.location || !this.location.latitude) return 'pending';
+    const dist = this.getDistanceFromLatLonInKm(this.location.latitude, this.location.longitude, stopCoords[1], stopCoords[0]);
+    if (dist < 1.0) {
+      return 'arrived';
+    }
+    // Check if driver already passed it
+    const destName = this.trip?.schedule?.destination;
+    if (destName) {
+      const destCoords = this.getDestinationCoords(destName);
+      if (destCoords) {
+        const distCurrentToDest = this.getDistanceFromLatLonInKm(this.location.latitude, this.location.longitude, destCoords[0], destCoords[1]);
+        const distStopToDest = this.getDistanceFromLatLonInKm(stopCoords[1], stopCoords[0], destCoords[0], destCoords[1]);
+        if (distCurrentToDest < distStopToDest - 1.0) {
+          return 'passed';
+        }
+      }
+    }
+    return 'pending';
+  }
+
+  getStopStatusLabel(stopCoords: [number, number]): string {
+    const status = this.getStopStatus(stopCoords);
+    if (status === 'arrived') return 'Mendekati / Berhenti';
+    if (status === 'passed') return 'Sudah Dilewati';
+    return 'Menunggu Kedatangan';
+  }
+
   getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 6371; // Radius of the earth in km
+    const R = 6371;
     const dLat = this.deg2rad(lat2-lat1);  
     const dLon = this.deg2rad(lon2-lon1); 
     const a = 
@@ -391,6 +567,49 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
 
   deg2rad(deg: number) {
     return deg * (Math.PI/180);
+  }
+
+  async startUserLocationTracking() {
+    try {
+      const permissions = await Geolocation.checkPermissions();
+      let status = permissions.location;
+      if (status !== 'granted') {
+        const req = await Geolocation.requestPermissions();
+        status = req.location;
+      }
+
+      if (status === 'granted') {
+        this.userLocationWatchId = await Geolocation.watchPosition(
+          { enableHighAccuracy: true, timeout: 10000 },
+          (position, err) => {
+            if (position && position.coords) {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              this.updateUserMarker(lat, lng);
+            }
+          }
+        );
+      }
+    } catch (e) {
+      console.warn('Geolocation watch failed or not supported', e);
+    }
+  }
+
+  updateUserMarker(lat: number, lng: number) {
+    if (!this.map) return;
+
+    if (!this.userMarker) {
+      const elUser = document.createElement('div');
+      elUser.className = 'user-location-marker-icon';
+      elUser.innerHTML = `<div style="background-color:#2563eb; width:16px; height:16px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px #2563eb; position:relative; display:flex; justify-content:center; align-items:center;">
+                             <div style="background-color:rgba(37,99,235,0.3); width:36px; height:36px; border-radius:50%; position:absolute; animation: pulse 2s infinite;"></div>
+                           </div>`;
+      this.userMarker = new mapboxgl.Marker({ element: elUser })
+        .setLngLat([lng, lat])
+        .addTo(this.map);
+    } else {
+      this.userMarker.setLngLat([lng, lat]);
+    }
   }
 
   formatETATime(minutes: number | null): string {

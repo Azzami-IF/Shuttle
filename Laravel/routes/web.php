@@ -6,6 +6,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/run-migration', function () {
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    return 'Migration and Config Clear Success!';
+});
+
 Route::view('/privacy-policy', 'privacy')->name('privacy');
 
 // Default password reset route name used by Laravel password broker.

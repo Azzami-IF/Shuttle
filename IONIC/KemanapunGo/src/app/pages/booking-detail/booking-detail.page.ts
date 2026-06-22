@@ -220,7 +220,7 @@ export class BookingDetailPage {
 
   isTrackable(booking: any): boolean {
     if (!booking.schedule?.trip) return false;
-    const trackableStatuses = ['boarding', 'on-going', 'arrived', 'delayed', 'completed'];
+    const trackableStatuses = ['scheduled', 'boarding', 'on-going', 'arrived', 'delayed', 'completed'];
     return trackableStatuses.includes(booking.schedule.trip.status);
   }
 

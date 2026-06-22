@@ -1,6 +1,8 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="homeRoute"></ion-back-button>
+    </ion-buttons>
     <ion-title>Live Tracking</ion-title>
     <ion-buttons slot="end">
       <!-- Demo simulator trigger button -->
@@ -37,6 +39,47 @@
       <div class="location text-right">
         <span class="city">{{ trip.schedule?.destination }}</span>
         <span class="label">Tujuan</span>
+      </div>
+    </div>
+
+    <!-- Stops timeline stepper -->
+    <div class="stops-timeline-container" *ngIf="trip && getStops().length > 0">
+      <div class="stops-header">Detail Pemberhentian Rute</div>
+      <div class="timeline-stepper">
+        <!-- Origin Node -->
+        <div class="timeline-node-item active-passed">
+          <div class="marker-dot-container">
+            <div class="marker-dot origin-dot"></div>
+            <div class="marker-line"></div>
+          </div>
+          <div class="marker-info">
+            <span class="stop-title">{{ trip.schedule?.pickup_name || trip.schedule?.origin }}</span>
+            <span class="stop-desc">Titik Keberangkatan</span>
+          </div>
+        </div>
+
+        <!-- Stop Nodes -->
+        <div class="timeline-node-item" *ngFor="let stop of getStops()" [class]="getStopStatus(stop.coords)">
+          <div class="marker-dot-container">
+            <div class="marker-dot stop-dot"></div>
+            <div class="marker-line"></div>
+          </div>
+          <div class="marker-info">
+            <span class="stop-title">{{ stop.name }}</span>
+            <span class="stop-desc">{{ getStopStatusLabel(stop.coords) }}</span>
+          </div>
+        </div>
+
+        <!-- Destination Node -->
+        <div class="timeline-node-item" [class]="trip?.status === 'arrived' || trip?.status === 'completed' ? 'active-passed' : 'pending'">
+          <div class="marker-dot-container">
+            <div class="marker-dot dest-dot"></div>
+          </div>
+          <div class="marker-info">
+            <span class="stop-title">{{ trip.schedule?.drop_off_name || trip.schedule?.destination }}</span>
+            <span class="stop-desc">Tujuan Akhir</span>
+          </div>
+        </div>
       </div>
     </div>
 
