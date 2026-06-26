@@ -180,7 +180,7 @@ export class BookingDetailPage {
     const formData = new FormData();
     formData.append('image', file);
 
-    this.api.post(`bookings/${booking.id}/upload-proof`, formData).subscribe({
+    this.api.postFormData(`bookings/${booking.id}/upload-proof`, formData).subscribe({
       next: (res: any) => {
         void this.ui.hideLoading();
         booking.payment_proof = res.payment_proof;
