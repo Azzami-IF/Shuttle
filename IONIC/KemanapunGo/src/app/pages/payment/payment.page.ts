@@ -53,7 +53,7 @@ export class PaymentPage implements OnInit, OnDestroy {
     const queryMap = this.route.snapshot.queryParamMap;
 
     this.bookingId = paramMap.get('id') || queryMap.get('id');
-    this.paymentCode = queryMap.get('payment_code');
+    this.paymentCode = paramMap.get('payment_code') || queryMap.get('payment_code') || history.state?.payment_code || null;
     const stage = paramMap.get('stage') || queryMap.get('stage');
 
     if (stage === 'va-detail') {
@@ -94,11 +94,7 @@ export class PaymentPage implements OnInit, OnDestroy {
     this.loadingBooking = true;
     this.loadError = '';
 
-    const bookingUrl = this.paymentCode
-      ? `bookings/${this.bookingId}?payment_code=${encodeURIComponent(this.paymentCode)}`
-      : `bookings/${this.bookingId}`;
-
-    this.api.get(bookingUrl).subscribe({
+    this.api.get(this.getBookingUrl()).subscribe({
       next: (res) => {
         this.booking = res;
         
@@ -343,10 +339,16 @@ export class PaymentPage implements OnInit, OnDestroy {
     });
   }
 
+  private getBookingUrl(): string {
+    return this.paymentCode
+      ? `bookings/${this.bookingId}?payment_code=${encodeURIComponent(this.paymentCode)}`
+      : `bookings/${this.bookingId}`;
+  }
+
   checkPaymentStatus() {
     if (!this.bookingId) return;
 
-    this.api.get(`bookings/${this.bookingId}`).subscribe({
+    this.api.get(this.getBookingUrl()).subscribe({
       next: (res: any) => {
         const rawStatus = String(res?.status || '').toLowerCase();
         console.log('DEBUG STATUS:', rawStatus);
