@@ -20,6 +20,7 @@ export class PaymentPage implements OnInit, OnDestroy {
   private languageService = inject(LanguageService);
 
   bookingId: string | null = null;
+  paymentCode: string | null = null;
   booking: any = null;
   relatedBookings: any[] = [];
   loadingBooking = true;
@@ -52,6 +53,7 @@ export class PaymentPage implements OnInit, OnDestroy {
     const queryMap = this.route.snapshot.queryParamMap;
 
     this.bookingId = paramMap.get('id') || queryMap.get('id');
+    this.paymentCode = paramMap.get('payment_code') || queryMap.get('payment_code') || history.state?.payment_code || null;
     const stage = paramMap.get('stage') || queryMap.get('stage');
 
     if (stage === 'va-detail') {
@@ -65,7 +67,7 @@ export class PaymentPage implements OnInit, OnDestroy {
       this.startCountdown(new Date(navVaData.expiresAt));
     }
 
-    if (!this.bookingId) {
+    if (!this.bookingId && !this.paymentCode) {
       this.loadingBooking = false;
       this.loadError = 'Data booking tidak ditemukan. Silakan ulangi proses pemesanan.';
       return;
@@ -92,29 +94,20 @@ export class PaymentPage implements OnInit, OnDestroy {
     this.loadingBooking = true;
     this.loadError = '';
 
-    this.api.get(`bookings/${this.bookingId}`).subscribe({
-      next: (res) => {
-        this.booking = res;
-        
-        // NEW: Load all bookings with the same payment code to aggregate them
-        if (res.payment_code) {
-          this.api.get(`bookings?payment_code=${res.payment_code}`).subscribe({
-            next: (related: any[]) => {
-              this.relatedBookings = related || [];
-              this.loadingBooking = false;
-              this.autoFillNominal();
-            },
-            error: () => {
-              this.relatedBookings = [res];
-              this.loadingBooking = false;
-              this.autoFillNominal();
-            }
-          });
-        } else {
-          this.relatedBookings = [res];
+    this.api.get(this.getBookingUrl()).subscribe({
+      next: (res: any) => {
+        const payload = res?.bookings && Array.isArray(res.bookings) ? res.bookings[0] : res;
+        this.booking = payload || null;
+        this.relatedBookings = res?.bookings && Array.isArray(res.bookings) ? res.bookings : (payload ? [payload] : []);
+
+        if (!this.booking) {
           this.loadingBooking = false;
-          this.autoFillNominal();
+          this.loadError = 'Data booking tidak ditemukan.';
+          return;
         }
+
+        this.loadingBooking = false;
+        this.autoFillNominal();
 
         if (this.screen === 'detail' && !this.vaData) {
           this.createError = 'Detail Virtual Account belum tersedia. Silakan buat VA baru.';
@@ -296,7 +289,7 @@ export class PaymentPage implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('image', this.selectedFile);
 
-    this.api.post(`bookings/${this.bookingId}/upload-proof`, formData).subscribe({
+    this.api.postFormData(`bookings/${this.bookingId}/upload-proof`, formData).subscribe({
       next: () => {
         // After upload, auto trigger confirm payment for ALL related bookings
         const confirmRequests = this.relatedBookings.map(b => 
@@ -336,12 +329,21 @@ export class PaymentPage implements OnInit, OnDestroy {
     });
   }
 
+  private getBookingUrl(): string {
+    if (this.paymentCode) {
+      return `payment/bookings/${encodeURIComponent(this.paymentCode)}`;
+    }
+
+    return this.bookingId ? `bookings/${this.bookingId}` : '';
+  }
+
   checkPaymentStatus() {
     if (!this.bookingId) return;
 
-    this.api.get(`bookings/${this.bookingId}`).subscribe({
+    this.api.get(this.getBookingUrl()).subscribe({
       next: (res: any) => {
-        const rawStatus = String(res?.status || '').toLowerCase();
+        const bookingPayload = res?.bookings && Array.isArray(res.bookings) ? res.bookings[0] : res;
+        const rawStatus = String(bookingPayload?.status || '').toLowerCase();
         console.log('DEBUG STATUS:', rawStatus);
 
         if (rawStatus === 'booked' || rawStatus === 'paid' || rawStatus === 'confirmed') {
