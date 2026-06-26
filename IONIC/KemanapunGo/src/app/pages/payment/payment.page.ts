@@ -67,7 +67,7 @@ export class PaymentPage implements OnInit, OnDestroy {
       this.startCountdown(new Date(navVaData.expiresAt));
     }
 
-    if (!this.bookingId) {
+    if (!this.bookingId && !this.paymentCode) {
       this.loadingBooking = false;
       this.loadError = 'Data booking tidak ditemukan. Silakan ulangi proses pemesanan.';
       return;
@@ -95,29 +95,19 @@ export class PaymentPage implements OnInit, OnDestroy {
     this.loadError = '';
 
     this.api.get(this.getBookingUrl()).subscribe({
-      next: (res) => {
-        this.booking = res;
-        
-        // NEW: Load all bookings with the same payment code to aggregate them
-        const paymentCode = this.paymentCode || res.payment_code;
-        if (paymentCode) {
-          this.api.get(`bookings?payment_code=${encodeURIComponent(paymentCode)}`).subscribe({
-            next: (related: any[]) => {
-              this.relatedBookings = related || [];
-              this.loadingBooking = false;
-              this.autoFillNominal();
-            },
-            error: () => {
-              this.relatedBookings = [res];
-              this.loadingBooking = false;
-              this.autoFillNominal();
-            }
-          });
-        } else {
-          this.relatedBookings = [res];
+      next: (res: any) => {
+        const payload = res?.bookings && Array.isArray(res.bookings) ? res.bookings[0] : res;
+        this.booking = payload || null;
+        this.relatedBookings = res?.bookings && Array.isArray(res.bookings) ? res.bookings : (payload ? [payload] : []);
+
+        if (!this.booking) {
           this.loadingBooking = false;
-          this.autoFillNominal();
+          this.loadError = 'Data booking tidak ditemukan.';
+          return;
         }
+
+        this.loadingBooking = false;
+        this.autoFillNominal();
 
         if (this.screen === 'detail' && !this.vaData) {
           this.createError = 'Detail Virtual Account belum tersedia. Silakan buat VA baru.';
@@ -340,9 +330,11 @@ export class PaymentPage implements OnInit, OnDestroy {
   }
 
   private getBookingUrl(): string {
-    return this.paymentCode
-      ? `bookings/${this.bookingId}?payment_code=${encodeURIComponent(this.paymentCode)}`
-      : `bookings/${this.bookingId}`;
+    if (this.paymentCode) {
+      return `payment/bookings/${encodeURIComponent(this.paymentCode)}`;
+    }
+
+    return this.bookingId ? `bookings/${this.bookingId}` : '';
   }
 
   checkPaymentStatus() {
@@ -350,7 +342,8 @@ export class PaymentPage implements OnInit, OnDestroy {
 
     this.api.get(this.getBookingUrl()).subscribe({
       next: (res: any) => {
-        const rawStatus = String(res?.status || '').toLowerCase();
+        const bookingPayload = res?.bookings && Array.isArray(res.bookings) ? res.bookings[0] : res;
+        const rawStatus = String(bookingPayload?.status || '').toLowerCase();
         console.log('DEBUG STATUS:', rawStatus);
 
         if (rawStatus === 'booked' || rawStatus === 'paid' || rawStatus === 'confirmed') {

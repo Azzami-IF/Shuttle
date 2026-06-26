@@ -128,6 +128,8 @@ Route::get('/debug-simulation', function(\Illuminate\Http\Request $request) {
 });
 
 
+Route::get('payment/bookings/{paymentCode}', [\App\Http\Controllers\BookingController::class, 'showByPaymentCode']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/profile/update', [AuthController::class, 'updateProfile']);
