@@ -116,7 +116,7 @@ class BookingController extends Controller
 
     public function confirmPayment(Request $request, Booking $booking)
     {
-        if ($request->user()->id !== $booking->user_id && $request->user()->role !== 'admin') {
+        if ($request->user()->id != $booking->user_id && $request->user()->role !== 'admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -134,7 +134,7 @@ class BookingController extends Controller
 
     public function show(Request $request, Booking $booking)
     {
-        if ($request->user()->id !== $booking->user_id && $request->user()->role !== 'admin') {
+        if ($request->user()->id != $booking->user_id && $request->user()->role !== 'admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -143,7 +143,7 @@ class BookingController extends Controller
 
     public function cancel(Request $request, Booking $booking)
     {
-        if ($request->user()->id !== $booking->user_id && $request->user()->role !== 'admin') {
+        if ($request->user()->id != $booking->user_id && $request->user()->role !== 'admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
