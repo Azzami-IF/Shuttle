@@ -11,19 +11,25 @@
 
 <ion-content class="dashboard-page">
 
-  <main *ngIf="(user$ | async) || getResolvedUser() as user; else guestState">
+  <main>
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-wrapper">
-        <div class="hero-text-block">
-          <p class="greeting">{{ getGreeting() }},</p>
-          <h2 class="user-name">{{ stripEmoji(user.name) }}</h2>
+        <div class="hero-text-block" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <div>
+            <p class="greeting">{{ getGreeting() }},</p>
+            <h2 class="user-name">{{ currentUser ? stripEmoji(currentUser.name) : 'Tamu KemanapunGo' }}</h2>
+          </div>
+          <button *ngIf="!currentUser" class="btn btn-sm btn-primary" routerLink="/login" style="margin: 0; box-shadow: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; cursor: pointer;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">login</span>
+            Masuk
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- Route Selection Card (Customer Only) -->
-    <section class="search-card" *ngIf="user.role === 'customer'">
+    <!-- Route Selection Card (Customer or Guest) -->
+    <section class="search-card" *ngIf="!currentUser || currentUser.role === 'customer'">
       <div class="route-picker">
         <div class="point">
           <div class="indicator">
@@ -76,7 +82,7 @@
     </section>
 
     <!-- Promo Slider Section -->
-    <section class="promo-section" *ngIf="user.role === 'customer'">
+    <section class="promo-section" *ngIf="!currentUser || currentUser.role === 'customer'">
       <div class="section-header">
         <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--ion-text-color);">Promo Spesial</h3>
       </div>
@@ -112,7 +118,7 @@
       </div>
     </section>
 
-    <section class="next-schedule-card" *ngIf="user.role === 'customer'">
+    <section class="next-schedule-card" *ngIf="!currentUser || currentUser.role === 'customer'">
       <div class="card-head">
         <div>
           <span class="eyebrow" *ngIf="lang$ | async">{{ getTranslation('closestSchedule') }}</span>
@@ -170,7 +176,7 @@
     </section>
 
     <!-- Rute Terpopuler -->
-    <section class="popular-routes-section" *ngIf="user.role === 'customer'">
+    <section class="popular-routes-section" *ngIf="!currentUser || currentUser.role === 'customer'">
       <h3>Rute Terpopuler</h3>
       <div class="routes-grid">
         <div 
@@ -187,8 +193,6 @@
       </div>
     </section>
 
-
-
     <!-- Quick Access Menu -->
     <section class="quick-menu">
       <button class="menu-item" routerLink="/schedule-list">
@@ -197,7 +201,7 @@
         </div>
         <span>{{ getTranslation('schedule') }}</span>
       </button>
-      <button class="menu-item" routerLink="/booking-detail" *ngIf="user.role === 'customer'">
+      <button class="menu-item" routerLink="/booking-detail" *ngIf="!currentUser || currentUser.role === 'customer'">
         <div class="icon-box secondary">
           <span class="material-symbols-outlined">confirmation_number</span>
         </div>
@@ -212,7 +216,7 @@
     </section>
 
     <!-- Keunggulan Kami -->
-    <section class="info-section" *ngIf="user.role === 'customer'">
+    <section class="info-section" *ngIf="!currentUser || currentUser.role === 'customer'">
       <div class="info-grid">
         <div class="info-banner">
           <div class="content">
@@ -250,35 +254,21 @@
   </main>
 </ion-content>
 
-<ng-template #guestState>
-  <div class="dashboard-empty-state">
-    <span class="material-symbols-outlined">person_off</span>
-    <h3>Sesi belum tersedia</h3>
-    <p>Silakan masuk kembali agar dashboard dan jadwal perjalanan dapat dimuat.</p>
-    <button class="search-btn" routerLink="/login">
-      <span class="material-symbols-outlined">login</span>
-      Ke Halaman Login
-    </button>
-  </div>
-</ng-template>
-
-<nav class="bottom-nav" *ngIf="(user$ | async) as user">
-  <ng-container *ngIf="user.role === 'customer'">
-    <button class="nav-item active">
-      <span class="material-symbols-outlined">home</span>
-      <span>{{ getTranslation('home') }}</span>
-    </button>
-    <button class="nav-item" routerLink="/schedule-list">
-      <span class="material-symbols-outlined">directions_bus</span>
-      <span>{{ getTranslation('schedule') }}</span>
-    </button>
-    <button class="nav-item" routerLink="/booking-detail">
-      <span class="material-symbols-outlined">confirmation_number</span>
-      <span>{{ getTranslation('bookings') }}</span>
-    </button>
-    <button class="nav-item" routerLink="/profile">
-      <span class="material-symbols-outlined">person</span>
-      <span>{{ getTranslation('profile') }}</span>
-    </button>
-  </ng-container>
+<nav class="bottom-nav" *ngIf="!currentUser || currentUser.role === 'customer'">
+  <button class="nav-item active" routerLink="/dashboard">
+    <span class="material-symbols-outlined">home</span>
+    <span>{{ getTranslation('home') }}</span>
+  </button>
+  <button class="nav-item" routerLink="/schedule-list">
+    <span class="material-symbols-outlined">directions_bus</span>
+    <span>{{ getTranslation('schedule') }}</span>
+  </button>
+  <button class="nav-item" routerLink="/booking-detail">
+    <span class="material-symbols-outlined">confirmation_number</span>
+    <span>{{ getTranslation('bookings') }}</span>
+  </button>
+  <button class="nav-item" routerLink="/profile">
+    <span class="material-symbols-outlined">person</span>
+    <span>{{ getTranslation('profile') }}</span>
+  </button>
 </nav>

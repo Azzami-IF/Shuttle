@@ -29,6 +29,7 @@ export class PaymentPage implements OnInit, OnDestroy {
 
   nominalValue = 0;
   nominalDisplay = 'Rp 0';
+  selectedMethod: 'manual' | 'dompetx' = 'manual';
   isCreatingVa = false;
 
   screen: 'input' | 'detail' = 'input';
@@ -200,6 +201,28 @@ export class PaymentPage implements OnInit, OnDestroy {
 
     this.nominalValue = Number(digitsOnly);
     this.nominalDisplay = this.formatCurrency(this.nominalValue);
+  }
+
+  payWithDompetX() {
+    if (!this.bookingId) return;
+    this.isCreatingVa = true;
+    this.createError = '';
+
+    this.api.post(`payments/dompetx/checkout/${this.bookingId}`, {}).subscribe({
+      next: (res: any) => {
+        this.isCreatingVa = false;
+        if (res && res.payment_link) {
+          sessionStorage.removeItem('pending_booking');
+          window.location.href = res.payment_link;
+        } else {
+          this.createError = 'Gagal memproses pembayaran DompetX. Tautan pembayaran tidak diterima.';
+        }
+      },
+      error: (err: any) => {
+        this.isCreatingVa = false;
+        this.createError = this.ui.getErrorMessage(err, 'Gagal memproses pembayaran dengan DompetX.');
+      }
+    });
   }
 
   createVirtualAccount() {
