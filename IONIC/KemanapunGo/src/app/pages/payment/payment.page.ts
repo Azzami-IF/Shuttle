@@ -20,6 +20,7 @@ export class PaymentPage implements OnInit, OnDestroy {
   private languageService = inject(LanguageService);
 
   bookingId: string | null = null;
+  paymentCode: string | null = null;
   booking: any = null;
   relatedBookings: any[] = [];
   loadingBooking = true;
@@ -52,6 +53,7 @@ export class PaymentPage implements OnInit, OnDestroy {
     const queryMap = this.route.snapshot.queryParamMap;
 
     this.bookingId = paramMap.get('id') || queryMap.get('id');
+    this.paymentCode = queryMap.get('payment_code');
     const stage = paramMap.get('stage') || queryMap.get('stage');
 
     if (stage === 'va-detail') {
@@ -92,13 +94,18 @@ export class PaymentPage implements OnInit, OnDestroy {
     this.loadingBooking = true;
     this.loadError = '';
 
-    this.api.get(`bookings/${this.bookingId}`).subscribe({
+    const bookingUrl = this.paymentCode
+      ? `bookings/${this.bookingId}?payment_code=${encodeURIComponent(this.paymentCode)}`
+      : `bookings/${this.bookingId}`;
+
+    this.api.get(bookingUrl).subscribe({
       next: (res) => {
         this.booking = res;
         
         // NEW: Load all bookings with the same payment code to aggregate them
-        if (res.payment_code) {
-          this.api.get(`bookings?payment_code=${res.payment_code}`).subscribe({
+        const paymentCode = this.paymentCode || res.payment_code;
+        if (paymentCode) {
+          this.api.get(`bookings?payment_code=${encodeURIComponent(paymentCode)}`).subscribe({
             next: (related: any[]) => {
               this.relatedBookings = related || [];
               this.loadingBooking = false;
@@ -296,7 +303,7 @@ export class PaymentPage implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('image', this.selectedFile);
 
-    this.api.post(`bookings/${this.bookingId}/upload-proof`, formData).subscribe({
+    this.api.postFormData(`bookings/${this.bookingId}/upload-proof`, formData).subscribe({
       next: () => {
         // After upload, auto trigger confirm payment for ALL related bookings
         const confirmRequests = this.relatedBookings.map(b => 

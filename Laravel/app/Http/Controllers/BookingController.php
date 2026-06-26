@@ -17,7 +17,9 @@ class BookingController extends Controller
         $user = $request->user();
         $query = Booking::with(['user', 'schedule.trip', 'schedule.vehicle', 'schedule.driver', 'seat']);
 
-        if ($user->role === 'customer') {
+        if ($request->has('payment_code')) {
+            $query->where('payment_code', $request->get('payment_code'));
+        } elseif ($user->role === 'customer') {
             $query->where('user_id', $user->id);
         } elseif ($user->role === 'driver') {
             $query->whereHas('schedule', function ($q) use ($user) {
@@ -135,7 +137,10 @@ class BookingController extends Controller
     public function show(Request $request, Booking $booking)
     {
         if ($request->user()->id !== $booking->user_id && $request->user()->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            $paymentCode = $request->query('payment_code');
+            if (!$paymentCode || $paymentCode !== $booking->payment_code) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
         }
 
         return response()->json($booking->load(['user', 'schedule', 'seat']));
