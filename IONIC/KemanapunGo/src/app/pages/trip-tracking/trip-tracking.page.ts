@@ -130,6 +130,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     this.map.addControl(new mapboxgl.NavigationControl());
 
     this.map.on('load', () => {
+      this.map.resize(); // Force resize on load to fix any remaining gap issues
       this.drawRoute();
       this.fetchLatestLocationOnce();
       this.startStatusPolling();
