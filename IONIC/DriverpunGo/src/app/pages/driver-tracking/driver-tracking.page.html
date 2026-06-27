@@ -65,6 +65,10 @@
           <span class="material-symbols-outlined">my_location</span>
           {{ getTranslation('updateLocation') }}
         </button>
+        <button type="button" class="update-btn" (click)="toggleBotSimulation()" style="margin-top: 10px; background: var(--ion-color-tertiary, #673ab7); color: white;" *ngIf="trip?.status === 'on-going'">
+          <span class="material-symbols-outlined">{{ isBotRunning ? 'stop_circle' : 'smart_toy' }}</span>
+          {{ isBotRunning ? 'Hentikan Bot' : 'Mulai Bot Simulasi' }}
+        </button>
       </div>
     </section>
 

@@ -28,7 +28,7 @@ class TripController extends Controller
     public function start(Request $request, Trip $trip)
     {
         $user = $request->user();
-        if ($user->role !== 'driver' || $trip->schedule->driver_id !== $user->id) {
+        if ($user->role !== 'driver' || $trip->schedule->driver_id != $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -59,7 +59,7 @@ class TripController extends Controller
     public function complete(Request $request, Trip $trip)
     {
         $user = $request->user();
-        if ($user->role !== 'driver' || $trip->schedule->driver_id !== $user->id) {
+        if ($user->role !== 'driver' || $trip->schedule->driver_id != $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -86,7 +86,7 @@ class TripController extends Controller
     public function updateStatus(Request $request, Trip $trip)
     {
         $user = $request->user();
-        if ($user->role !== 'driver' || $trip->schedule->driver_id !== $user->id) {
+        if ($user->role !== 'driver' || $trip->schedule->driver_id != $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -134,7 +134,7 @@ class TripController extends Controller
         
         // Drivers can view their own trips
         if ($user->role === 'driver') {
-            if ($trip->schedule->driver_id !== $user->id) {
+            if ($trip->schedule->driver_id != $user->id) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
             return response()->json($trip->load(['schedule.vehicle', 'schedule.driver', 'locations']));

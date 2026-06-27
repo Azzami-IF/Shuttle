@@ -86,10 +86,6 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
 
   constructor() {}
 
-  isDemoSimulationActive: boolean = false;
-  demoInterval: any;
-  demoProgress: number = 0;
-
   ionViewWillEnter() {
     this.homeRoute = this.auth.getHomeRoute();
     this.tripId = this.route.snapshot.paramMap.get('id');
@@ -103,7 +99,6 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     if (this.pollingInterval) clearInterval(this.pollingInterval);
     if (this.statusPollingInterval) clearInterval(this.statusPollingInterval);
-    if (this.demoInterval) clearInterval(this.demoInterval);
     if (this.userLocationWatchId) {
       void Geolocation.clearWatch({ id: this.userLocationWatchId });
     }
@@ -115,93 +110,7 @@ export class TripTrackingPage implements OnDestroy, AfterViewInit {
     }
   }
 
-  startDemoSimulation() {
-    if (this.isDemoSimulationActive) {
-      this.stopDemoSimulation();
-      return;
-    }
 
-    this.isDemoSimulationActive = true;
-    if (this.pollingInterval) clearInterval(this.pollingInterval);
-    if (this.statusPollingInterval) clearInterval(this.statusPollingInterval);
-
-    const originCoords: [number, number] = [
-      this.trip?.schedule?.pickup_lng ? parseFloat(this.trip.schedule.pickup_lng) : 106.8227,
-      this.trip?.schedule?.pickup_lat ? parseFloat(this.trip.schedule.pickup_lat) : -6.4025
-    ];
-    const destCoords: [number, number] = [
-      this.trip?.schedule?.drop_off_lng ? parseFloat(this.trip.schedule.drop_off_lng) : 107.5937,
-      this.trip?.schedule?.drop_off_lat ? parseFloat(this.trip.schedule.drop_off_lat) : -6.9452
-    ];
-
-    this.demoProgress = 0;
-    void this.ui.showToast('Simulasi perjalanan dimulai (Lokal)', 'success');
-
-    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${originCoords[0]},${originCoords[1]};${destCoords[0]},${destCoords[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
-
-    fetch(directionsUrl)
-      .then(res => res.json())
-      .then(data => {
-        if (data.routes && data.routes.length > 0) {
-          this.demoRouteCoords = data.routes[0].geometry.coordinates; // Mapbox is [lng, lat]
-        } else {
-          this.demoRouteCoords = [];
-          for (let i = 0; i <= 100; i++) {
-            const lng = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
-            const lat = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
-            this.demoRouteCoords.push([lng, lat]);
-          }
-        }
-        this.runDemoInterval();
-      })
-      .catch(() => {
-        this.demoRouteCoords = [];
-        for (let i = 0; i <= 100; i++) {
-          const lng = originCoords[0] + (destCoords[0] - originCoords[0]) * (i / 100);
-          const lat = originCoords[1] + (destCoords[1] - originCoords[1]) * (i / 100);
-          this.demoRouteCoords.push([lng, lat]);
-        }
-        this.runDemoInterval();
-      });
-  }
-
-  runDemoInterval() {
-    let step = 0;
-    this.demoInterval = setInterval(() => {
-      if (step >= this.demoRouteCoords.length) {
-        clearInterval(this.demoInterval);
-        this.isDemoSimulationActive = false;
-        void this.ui.showToast('Simulasi selesai! Bus telah tiba di tujuan.', 'success');
-        if (this.trip) {
-          this.trip.status = 'completed';
-        }
-        return;
-      }
-
-      const currentPoint = this.demoRouteCoords[step];
-
-      this.location = {
-        latitude: currentPoint[1],
-        longitude: currentPoint[0]
-      };
-
-      if (this.trip) {
-        this.trip.status = 'on-going';
-      }
-
-      this.updateMarker(currentPoint[1], currentPoint[0]);
-      step += 1;
-    }, 150); // Move coordinate-by-coordinate every 150ms for a smooth gliding effect
-  }
-
-  stopDemoSimulation() {
-    this.isDemoSimulationActive = false;
-    if (this.demoInterval) clearInterval(this.demoInterval);
-    void this.ui.showToast('Simulasi dihentikan. Menghubungkan ke GPS asli...', 'info');
-    this.fetchLatestLocationOnce();
-    this.subscribeToRealTimeUpdates();
-    this.startStatusPolling();
-  }
 
   initMap() {
     const mapElement = document.getElementById('map');

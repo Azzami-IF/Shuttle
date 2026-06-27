@@ -41,6 +41,11 @@ export class DriverTrackingPage implements OnInit, OnDestroy, AfterViewInit {
   currentLng: number | null = null;
   stopMarkers: any[] = [];
 
+  isBotRunning: boolean = false;
+  botInterval: any = null;
+  botRouteCoordinates: [number, number][] = [];
+  currentBotIndex: number = 0;
+
   coordinatesMap: { [key: string]: [number, number] } = {
     'jakarta': [-6.3090, 106.8824],
     'terminal kampung rambutan': [-6.3090, 106.8824],
@@ -115,6 +120,7 @@ export class DriverTrackingPage implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.stopLocationUpdates();
     this.stopLocationPolling();
+    this.stopBotSimulation();
     if (this.map) {
       this.map.remove();
     }
@@ -324,6 +330,7 @@ export class DriverTrackingPage implements OnInit, OnDestroy, AfterViewInit {
       .then(data => {
         if (data.routes && data.routes.length > 0) {
           const coords = data.routes[0].geometry.coordinates;
+          this.botRouteCoordinates = coords;
 
           if (this.map.getSource('route-source')) {
             this.map.getSource('route-source').setData({
@@ -560,5 +567,65 @@ export class DriverTrackingPage implements OnInit, OnDestroy, AfterViewInit {
 
   deg2rad(deg: number) {
     return deg * (Math.PI/180);
+  }
+
+  toggleBotSimulation() {
+    if (this.isBotRunning) {
+      this.stopBotSimulation();
+    } else {
+      this.startBotSimulation();
+    }
+  }
+
+  startBotSimulation() {
+    if (!this.botRouteCoordinates || this.botRouteCoordinates.length === 0) {
+      this.ui.showToast('Rute belum tersedia untuk simulasi.', 'warning');
+      return;
+    }
+    
+    // Matikan GPS asli jika jalan
+    this.stopLocationUpdates();
+    
+    this.isBotRunning = true;
+    this.gpsStatus = 'Bot Simulasi Aktif';
+    this.ui.showToast('Bot Simulasi GPS Dimulai!', 'success');
+    
+    if (this.botInterval) clearInterval(this.botInterval);
+    
+    this.botInterval = setInterval(() => {
+      if (this.currentBotIndex >= this.botRouteCoordinates.length) {
+        this.stopBotSimulation();
+        this.ui.showToast('Bot Simulasi Selesai! Tujuan tercapai.', 'success');
+        return;
+      }
+      
+      const coord = this.botRouteCoordinates[this.currentBotIndex];
+      const lng = coord[0];
+      const lat = coord[1];
+      
+      this.currentLat = lat;
+      this.currentLng = lng;
+      
+      if (this.map && this.marker) {
+        this.marker.setLngLat([lng, lat]);
+        const bounds = this.map.getBounds();
+        if (!bounds.contains([lng, lat])) {
+          this.map.panTo([lng, lat]);
+        }
+      }
+      
+      this.syncLocationToServer(lat, lng);
+      
+      this.currentBotIndex += 3; // Maju 3 langkah setiap iterasi agar lebih cepat
+    }, 2500); // Tiap 2.5 detik
+  }
+
+  stopBotSimulation() {
+    this.isBotRunning = false;
+    this.gpsStatus = 'Bot Berhenti';
+    if (this.botInterval) {
+      clearInterval(this.botInterval);
+      this.botInterval = null;
+    }
   }
 }
