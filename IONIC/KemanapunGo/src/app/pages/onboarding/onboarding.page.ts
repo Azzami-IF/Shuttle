@@ -40,6 +40,10 @@ export class OnboardingPage implements OnInit {
     this.router.navigate(['/register']);
   }
 
+  goToGuest() {
+    this.router.navigate(['/dashboard']);
+  }
+
   toggleFooter() {
     this.footerExpanded = !this.footerExpanded;
     this.currentTranslate = this.footerExpanded ? 0 : this.maxTranslate;

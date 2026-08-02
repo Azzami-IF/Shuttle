@@ -49,6 +49,20 @@ export class LoginPage {
         }
 
         console.log('Login success', res);
+
+        const pending = sessionStorage.getItem('pending_booking');
+        if (pending) {
+          try {
+            const bookingData = JSON.parse(pending);
+            if (bookingData.scheduleId) {
+              this.router.navigate(['/seat-selection', { id: bookingData.scheduleId }], { replaceUrl: true });
+              return;
+            }
+          } catch (e) {
+            console.error('Error parsing pending booking on login', e);
+          }
+        }
+
         this.router.navigate(['/dashboard'], { replaceUrl: true });
       },
       error: (err) => {

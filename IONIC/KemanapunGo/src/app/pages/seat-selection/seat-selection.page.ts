@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
 import { LanguageService } from '../../services/language.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   standalone: false,
@@ -16,6 +17,7 @@ export class SeatSelectionPage implements OnInit {
   private router = inject(Router);
   private ui = inject(UiService);
   private languageService = inject(LanguageService);
+  private auth = inject(AuthService);
 
   scheduleId: any;
   schedule: any;
@@ -30,6 +32,18 @@ export class SeatSelectionPage implements OnInit {
   ngOnInit() {
     this.scheduleId = this.route.snapshot.paramMap.get('id');
     this.loadSchedule();
+
+    const pending = sessionStorage.getItem('pending_booking');
+    if (pending) {
+      try {
+        const bookingData = JSON.parse(pending);
+        if (bookingData.scheduleId == this.scheduleId) {
+          this.selectedSeatIds = bookingData.selectedSeatIds || [];
+        }
+      } catch (e) {
+        console.error('Error parsing pending booking', e);
+      }
+    }
   }
 
   loadSchedule() {
@@ -104,6 +118,17 @@ export class SeatSelectionPage implements OnInit {
 
   confirmBooking() {
     if (this.selectedSeatIds.length === 0) return;
+
+    if (!this.auth.isAuthenticated()) {
+      sessionStorage.setItem('pending_booking', JSON.stringify({
+        scheduleId: this.scheduleId,
+        selectedSeatIds: this.selectedSeatIds
+      }));
+      void this.ui.showToast('Silakan masuk (login) terlebih dahulu untuk melanjutkan pemesanan.', 'warning');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.loading = true;
     this.api.post('bookings', {
       schedule_id: this.scheduleId,

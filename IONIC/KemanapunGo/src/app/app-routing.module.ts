@@ -30,30 +30,15 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['customer'],
-      redirectTo: '/onboarding'
-    }
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule)
   },
   {
     path: 'schedule-list',
-    loadChildren: () => import('./pages/schedule-list/schedule-list.module').then( m => m.ScheduleListPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['customer'],
-      redirectTo: '/onboarding'
-    }
+    loadChildren: () => import('./pages/schedule-list/schedule-list.module').then( m => m.ScheduleListPageModule)
   },
   {
     path: 'seat-selection',
-    loadChildren: () => import('./pages/seat-selection/seat-selection.module').then( m => m.SeatSelectionPageModule),
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['customer'],
-      redirectTo: '/onboarding'
-    }
+    loadChildren: () => import('./pages/seat-selection/seat-selection.module').then( m => m.SeatSelectionPageModule)
   },
   {
     path: 'trip-tracking',

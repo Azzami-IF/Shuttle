@@ -3,9 +3,9 @@
 @section('title', 'Monitoring Perjalanan')
 
 @section('content')
-<!-- Include Leaflet Assets -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Include Mapbox GL JS Assets -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
 
 <div class="flex flex-col gap-6">
     <div>
@@ -130,34 +130,21 @@
     let map;
     const tripDataMap = {};
     const tripMarkers = {};
-    const tripPolylines = {};
     const tripOriginMarkers = {};
     const tripDestMarkers = {};
 
     document.addEventListener("DOMContentLoaded", function() {
-        const coordinatesMap = {
-            'jakarta': [-6.3090, 106.8824],
-            'terminal kampung rambutan': [-6.3090, 106.8824],
-            'bandung': [-6.9452, 107.5937],
-            'terminal leuwi panjang': [-6.9452, 107.5937],
-            'karawang': [-6.3073, 107.2913],
-            'sumedang': [-6.8524, 107.9234],
-            'subang': [-6.5715, 107.7587],
-            'purwakarta': [-6.5571, 107.4431],
-            'cikampek': [-6.4025, 107.4589],
-            'cirebon': [-6.7320, 108.5523],
-            'bogor': [-6.5971, 106.7932],
-            'depok': [-6.4025, 106.8227],
-            'bekasi': [-6.2383, 106.9756],
-            'tangerang': [-6.1702, 106.6403]
-        };
+        mapboxgl.accessToken = '{{ env('MAPBOX_ACCESS_TOKEN') }}';
 
-        // Initialize Map centered on West Java (between Jakarta and Bandung)
-        map = L.map('admin-map').setView([-6.6, 107.2], 9);
+        // Initialize Mapbox map
+        map = new mapboxgl.Map({
+            container: 'admin-map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [107.2, -6.6], // West Java center [lng, lat]
+            zoom: 8.5
+        });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+        map.addControl(new mapboxgl.NavigationControl());
 
         // Fetch active trips locations generated from backend php
         const activeTrips = [
@@ -169,9 +156,15 @@
                     driver: '{{ addslashes($t->schedule?->driver?->name) }}',
                     vehicle: '{{ addslashes($t->schedule?->vehicle?->license_plate) }}',
                     status: '{{ $t->status }}',
+                    pickup_name: '{{ addslashes($t->schedule?->pickup_name) }}',
+                    pickup_lat: {{ $t->schedule?->pickup_lat ?? -6.2088 }},
+                    pickup_lng: {{ $t->schedule?->pickup_lng ?? 106.8456 }},
+                    drop_off_name: '{{ addslashes($t->schedule?->drop_off_name) }}',
+                    drop_off_lat: {{ $t->schedule?->drop_off_lat ?? -6.9175 }},
+                    drop_off_lng: {{ $t->schedule?->drop_off_lng ?? 107.6191 }},
                     locations: [
                         @foreach($t->locations as $loc)
-                            [{{ $loc->latitude }}, {{ $loc->longitude }}],
+                            [{{ $loc->longitude }}, {{ $loc->latitude }}],
                         @endforeach
                     ],
                     passengers: [
@@ -187,103 +180,36 @@
             @endforeach
         ];
 
-        const markersGroup = [];
+        map.on('load', () => {
+            if (activeTrips.length === 0) {
+                // Add a default placeholder marker if map is empty
+                const elDepot = document.createElement('div');
+                elDepot.style.backgroundColor = '#18281e';
+                elDepot.style.color = 'white';
+                elDepot.style.padding = '6px';
+                elDepot.style.borderRadius = '50%';
+                elDepot.style.border = '2px solid white';
+                elDepot.style.boxShadow = '0 0 8px rgba(0,0,0,0.4)';
+                elDepot.style.textAlign = 'center';
+                elDepot.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>';
 
-        if (activeTrips.length === 0) {
-            // Add a default placeholder marker if map is empty
-            const placeholderMarker = L.marker([-6.9452, 107.5937])
-                .addTo(map)
-                .bindPopup("<b>Depot Pusat Bandung</b><br>Tidak ada armada bus aktif saat ini.")
-                .openPopup();
-        } else {
-            activeTrips.forEach(trip => {
-                tripDataMap[trip.id] = trip;
+                const popup = new mapboxgl.Popup({ offset: 25 })
+                    .setHTML('<b>Depot Pusat Bandung</b><br>Tidak ada armada bus aktif saat ini.');
 
-                if (trip.locations.length > 0) {
-                    const latestLoc = trip.locations[trip.locations.length - 1];
+                new mapboxgl.Marker({ element: elDepot })
+                    .setLngLat([107.5937, -6.9452])
+                    .setPopup(popup)
+                    .addTo(map);
+            } else {
+                activeTrips.forEach(trip => {
+                    tripDataMap[trip.id] = trip;
+                    plotTrip(trip);
+                });
 
-                    const originName = trip.origin.toLowerCase().trim();
-                    const destName = trip.destination.toLowerCase().trim();
-                    const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
-                    const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
-
-                    fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.routes && data.routes.length > 0) {
-                                const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-                                const plannedPath = L.polyline(coords, { color: '#94a3b8', weight: 3, opacity: 0.5, dashArray: '5, 10' }).addTo(map);
-                                markersGroup.push(plannedPath);
-                            }
-                        });
-
-                    // Polyline history (Actual path taken)
-                    const polyline = L.polyline(trip.locations, { color: '#0d9488', weight: 4, opacity: 0.9 }).addTo(map);
-                    tripPolylines[trip.id] = polyline;
-
-                    // Add Origin/Pickup Marker
-                    const originIcon = L.divIcon({
-                        className: 'route-marker-icon origin',
-                        html: `<div style="background-color:#0d9488; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
-                                 Mulai (#${trip.id}): ${trip.origin}
-                               </div>`,
-                        iconSize: [80, 20],
-                        iconAnchor: [40, 10]
-                    });
-                    const originMarker = L.marker(originCoords, { icon: originIcon }).addTo(map);
-                    tripOriginMarkers[trip.id] = originMarker;
-                    markersGroup.push(originMarker);
-
-                    // Add Destination Marker
-                    const destIcon = L.divIcon({
-                        className: 'route-marker-icon destination',
-                        html: `<div style="background-color:#b91c1c; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
-                                 Tujuan (#${trip.id}): ${trip.destination}
-                               </div>`,
-                        iconSize: [80, 20],
-                        iconAnchor: [40, 10]
-                    });
-                    const destMarker = L.marker(destCoords, { icon: destIcon }).addTo(map);
-                    tripDestMarkers[trip.id] = destMarker;
-                    markersGroup.push(destMarker);
-
-                    const busIcon = L.divIcon({
-                        className: 'custom-bus-icon',
-                        html: `<div style="background-color:#18281e; color:white; padding:6px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px rgba(0,0,0,0.4); text-align:center;">
-                                 <span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>
-                                </div>`,
-                        iconSize: [28, 28],
-                        iconAnchor: [14, 14]
-                    });
-
-                    const marker = L.marker(latestLoc, { icon: busIcon })
-                        .addTo(map)
-                        .bindPopup(`
-                            <div class="text-xs p-1">
-                                <b class="text-sm">Armada: ${trip.vehicle}</b><br>
-                                <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
-                                <b>Driver:</b> ${trip.driver}<br>
-                                <b>Status:</b> ${trip.status.toUpperCase()}<br>
-                                <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
-                            </div>
-                        `);
-                    
-                    marker.on('click', () => {
-                        showPassengerPanel(trip.id);
-                    });
-
-                    tripMarkers[trip.id] = marker;
-                    markersGroup.push(marker);
-                    markersGroup.push(polyline);
-                }
-            });
-
-            // Adjust bounds if multiple active trips
-            if (markersGroup.length > 0) {
-                const group = new L.featureGroup(markersGroup);
-                map.fitBounds(group.getBounds().pad(0.1));
+                // Adjust bounds to fit active trips
+                fitMapBounds(activeTrips);
             }
-        }
+        });
 
         // Real-time location polling every 5 seconds
         setInterval(function() {
@@ -291,92 +217,35 @@
                 .then(res => res.json())
                 .then(data => {
                     data.forEach(trip => {
-                        // Update internal data map
-                        tripDataMap[trip.id] = trip;
-
-                        if (trip.locations.length > 0) {
-                            const latestLoc = trip.locations[trip.locations.length - 1];
-
-                            // Update marker position
-                            if (tripMarkers[trip.id]) {
-                                tripMarkers[trip.id].setLatLng(latestLoc);
-                                
-                                // Update popup content dynamically
-                                tripMarkers[trip.id].getPopup().setContent(`
-                                    <div class="text-xs p-1">
-                                        <b class="text-sm">Armada: ${trip.vehicle}</b><br>
-                                        <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
-                                        <b>Driver:</b> ${trip.driver}<br>
-                                        <b>Status:</b> ${trip.status.toUpperCase()}<br>
-                                        <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
-                                    </div>
-                                `);
-                            } else {
-                                // Create new marker if it didn't exist
-                                const busIcon = L.divIcon({
-                                    className: 'custom-bus-icon',
-                                    html: `<div style="background-color:#18281e; color:white; padding:6px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px rgba(0,0,0,0.4); text-align:center;">
-                                             <span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>
-                                           </div>`,
-                                    iconSize: [28, 28],
-                                    iconAnchor: [14, 14]
-                                });
-
-                                const marker = L.marker(latestLoc, { icon: busIcon })
-                                    .addTo(map)
-                                    .bindPopup(`
-                                        <div class="text-xs p-1">
-                                            <b class="text-sm">Armada: ${trip.vehicle}</b><br>
-                                            <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
-                                            <b>Driver:</b> ${trip.driver}<br>
-                                            <b>Status:</b> ${trip.status.toUpperCase()}<br>
-                                            <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
-                                        </div>
-                                    `);
-                                
-                                marker.on('click', () => {
-                                    showPassengerPanel(trip.id);
-                                });
-                                tripMarkers[trip.id] = marker;
-
-                                // Draw origin and destination markers for the new trip dynamically!
-                                const originName = trip.origin.toLowerCase().trim();
-                                const destName = trip.destination.toLowerCase().trim();
-                                const originCoords = coordinatesMap[originName] || coordinatesMap['bandung'];
-                                const destCoords = coordinatesMap[destName] || coordinatesMap['jakarta'];
-
-                                if (!tripOriginMarkers[trip.id]) {
-                                    const originIcon = L.divIcon({
-                                        className: 'route-marker-icon origin',
-                                        html: `<div style="background-color:#0d9488; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
-                                                 Mulai (#${trip.id}): ${trip.origin}
-                                               </div>`,
-                                        iconSize: [80, 20],
-                                        iconAnchor: [40, 10]
-                                    });
-                                    tripOriginMarkers[trip.id] = L.marker(originCoords, { icon: originIcon }).addTo(map);
-                                }
-
-                                if (!tripDestMarkers[trip.id]) {
-                                    const destIcon = L.divIcon({
-                                        className: 'route-marker-icon destination',
-                                        html: `<div style="background-color:#b91c1c; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
-                                                 Tujuan (#${trip.id}): ${trip.destination}
-                                               </div>`,
-                                        iconSize: [80, 20],
-                                        iconAnchor: [40, 10]
-                                    });
-                                    tripDestMarkers[trip.id] = L.marker(destCoords, { icon: destIcon }).addTo(map);
-                                }
-                            }
-
-                            // Update polyline coordinates
-                            if (tripPolylines[trip.id]) {
-                                tripPolylines[trip.id].setLatLngs(trip.locations);
-                            } else {
-                                const polyline = L.polyline(trip.locations, { color: '#0d9488', weight: 4, opacity: 0.9 }).addTo(map);
-                                tripPolylines[trip.id] = polyline;
-                            }
+                        // Find matching active trip model
+                        const existingTrip = activeTrips.find(t => t.id === trip.id);
+                        if (existingTrip) {
+                            existingTrip.status = trip.status;
+                            existingTrip.locations = trip.locations.map(loc => [loc[1], loc[0]]); // Swap [lat, lng] to [lng, lat]
+                            tripDataMap[trip.id] = existingTrip;
+                            
+                            updateTripMarkerAndPath(existingTrip);
+                        } else {
+                            // If a new trip just started, load it
+                            const newTrip = {
+                                id: trip.id,
+                                origin: trip.origin,
+                                destination: trip.destination,
+                                driver: trip.driver,
+                                vehicle: trip.vehicle,
+                                status: trip.status,
+                                pickup_name: trip.pickup_name || `Pool ${trip.origin}`,
+                                pickup_lat: trip.pickup_lat || -6.2088,
+                                pickup_lng: trip.pickup_lng || 106.8456,
+                                drop_off_name: trip.drop_off_name || `Pool ${trip.destination}`,
+                                drop_off_lat: trip.drop_off_lat || -6.9175,
+                                drop_off_lng: trip.drop_off_lng || 107.6191,
+                                locations: trip.locations.map(loc => [loc[1], loc[0]]), // Swap [lat, lng] to [lng, lat]
+                                passengers: trip.passengers || []
+                            };
+                            activeTrips.push(newTrip);
+                            tripDataMap[newTrip.id] = newTrip;
+                            plotTrip(newTrip);
                         }
                     });
 
@@ -395,6 +264,299 @@
                 .catch(err => console.error("Error polling locations:", err));
         }, 5000);
     });
+
+    function drawRouteLine(tripId, coordinates, color = '#0d9488') {
+        const sourceId = `route-source-${tripId}`;
+        const layerId = `route-layer-${tripId}`;
+        
+        if (map.getSource(sourceId)) {
+            map.getSource(sourceId).setData({
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: coordinates
+                }
+            });
+        } else {
+            map.addSource(sourceId, {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: coordinates
+                    }
+                }
+            });
+            
+            map.addLayer({
+                id: layerId,
+                type: 'line',
+                source: sourceId,
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': color,
+                    'line-width': 4,
+                    'line-opacity': 0.8
+                }
+            });
+        }
+    }
+
+    function drawPlannedRouteLine(tripId, coordinates) {
+        const sourceId = `planned-source-${tripId}`;
+        const layerId = `planned-layer-${tripId}`;
+        
+        const routeColors = [
+            '#1a73e8', // Google Maps Blue
+            '#10b981', // Emerald Green
+            '#8b5cf6', // Violet/Purple
+            '#f97316', // Orange
+            '#ec4899', // Pink
+            '#06b6d4'  // Cyan
+        ];
+        const color = routeColors[tripId % routeColors.length];
+        
+        if (map.getSource(sourceId)) {
+            map.getSource(sourceId).setData({
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: coordinates
+                }
+            });
+        } else {
+            map.addSource(sourceId, {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: coordinates
+                    }
+                }
+            });
+            
+            map.addLayer({
+                id: layerId,
+                type: 'line',
+                source: sourceId,
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': color,
+                    'line-width': 5,
+                    'line-opacity': 0.8
+                }
+            });
+        }
+    }
+
+    const adminRouteStops = {
+        'depok-bandung': [
+            { name: 'Pool Karawang', coords: [107.2913, -6.3073] },
+            { name: 'Pool Purwakarta', coords: [107.4431, -6.5571] }
+        ],
+        'bogor-bandung': [
+            { name: 'Pool Cianjur', coords: [107.1396, -6.8242] },
+            { name: 'Pool Padalarang', coords: [107.4721, -6.8406] }
+        ],
+        'jakarta-bandung': [
+            { name: 'Pool Bekasi', coords: [106.9756, -6.2383] },
+            { name: 'Pool Karawang', coords: [107.2913, -6.3073] }
+        ]
+    };
+
+    const adminCoordinatesMap = {
+        'jakarta': [106.8824, -6.3090],
+        'terminal kampung rambutan': [106.8824, -6.3090],
+        'bandung': [107.5937, -6.9452],
+        'terminal leuwi panjang': [107.5937, -6.9452],
+        'karawang': [107.2913, -6.3073],
+        'sumedang': [107.9234, -6.8524],
+        'subang': [107.7587, -6.5715],
+        'purwakarta': [107.4431, -6.5571],
+        'cikampek': [107.4589, -6.4025],
+        'cirebon': [108.5523, -6.7320],
+        'bogor': [106.7932, -6.5971],
+        'depok': [106.8227, -6.4025],
+        'bekasi': [106.9756, -6.2383],
+        'tangerang': [106.6403, -6.1702]
+    };
+
+    function plotTrip(trip) {
+        // Resolve coordinates with fallback
+        let originCoords = [trip.pickup_lng, trip.pickup_lat];
+        if (!trip.pickup_lng || !trip.pickup_lat || (trip.pickup_lng === 106.8456 && trip.pickup_lat === -6.2088)) {
+            const key = trip.origin.toLowerCase().trim();
+            const mapped = adminCoordinatesMap[key];
+            if (mapped) {
+                originCoords = mapped;
+            }
+        }
+
+        let destCoords = [trip.drop_off_lng, trip.drop_off_lat];
+        if (!trip.drop_off_lng || !trip.drop_off_lat || (trip.drop_off_lng === 107.6191 && trip.drop_off_lat === -6.9175)) {
+            const key = trip.destination.toLowerCase().trim();
+            const mapped = adminCoordinatesMap[key];
+            if (mapped) {
+                destCoords = mapped;
+            }
+        }
+
+        // Get intermediate stops
+        const routeKey = `${trip.origin.toLowerCase().trim()}-${trip.destination.toLowerCase().trim()}`;
+        const stops = adminRouteStops[routeKey] || [];
+
+        // Plot intermediate stops on the map
+        stops.forEach((stop, sIdx) => {
+            const stopMarkerKey = `stop-${trip.id}-${sIdx}`;
+            const elStop = document.createElement('div');
+            elStop.className = 'route-marker-icon stop';
+            elStop.innerHTML = `<div style="background-color:#f59e0b; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:9px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                    Singgah: ${stop.name}
+                                 </div>`;
+            new mapboxgl.Marker({ element: elStop })
+                .setLngLat(stop.coords)
+                .addTo(map);
+        });
+
+        // Construct multi-waypoint URL using Mapbox Directions API or OSRM
+        let waypointStr = `${originCoords[0]},${originCoords[1]}`;
+        stops.forEach(stop => {
+            waypointStr += `;${stop.coords[0]},${stop.coords[1]}`;
+        });
+        waypointStr += `;${destCoords[0]},${destCoords[1]}`;
+
+        // Draw planned route using Mapbox Directions API
+        const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypointStr}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+        fetch(directionsUrl)
+            .then(res => res.json())
+            .then(data => {
+                if (data.routes && data.routes.length > 0) {
+                    const coords = data.routes[0].geometry.coordinates;
+                    drawPlannedRouteLine(trip.id, coords);
+                }
+            })
+            .catch(err => {
+                console.error("Mapbox Directions error, falling back to OSRM", err);
+                // Fallback to OSRM
+                fetch(`https://router.project-osrm.org/route/v1/driving/${waypointStr}?overview=full&geometries=geojson`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.routes && data.routes.length > 0) {
+                            const coords = data.routes[0].geometry.coordinates;
+                            drawPlannedRouteLine(trip.id, coords);
+                        }
+                    });
+            });
+
+        // Draw actual path traveled
+        if (trip.locations.length > 1) {
+            drawRouteLine(trip.id, trip.locations);
+        }
+
+        // Add Origin Marker
+        if (!tripOriginMarkers[trip.id]) {
+            const elOrigin = document.createElement('div');
+            elOrigin.className = 'route-marker-icon origin';
+            elOrigin.innerHTML = `<div style="background-color:#0d9488; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                     Mulai (#${trip.id}): ${trip.pickup_name || trip.origin}
+                                   </div>`;
+            tripOriginMarkers[trip.id] = new mapboxgl.Marker({ element: elOrigin })
+                .setLngLat(originCoords)
+                .addTo(map);
+        }
+
+        // Add Destination Marker
+        if (!tripDestMarkers[trip.id]) {
+            const elDest = document.createElement('div');
+            elDest.className = 'route-marker-icon destination';
+            elDest.innerHTML = `<div style="background-color:#b91c1c; color:white; padding:4px 8px; border-radius:10px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+                                     Tujuan (#${trip.id}): ${trip.drop_off_name || trip.destination}
+                                   </div>`;
+            tripDestMarkers[trip.id] = new mapboxgl.Marker({ element: elDest })
+                .setLngLat(destCoords)
+                .addTo(map);
+        }
+
+        // Add Active Bus Location Marker
+        if (trip.locations.length > 0) {
+            const latestLoc = trip.locations[trip.locations.length - 1];
+
+            const elBus = document.createElement('div');
+            elBus.className = 'custom-bus-icon';
+            elBus.innerHTML = `<div style="background-color:#18281e; color:white; padding:6px; border-radius:50%; border:2px solid white; box-shadow:0 0 8px rgba(0,0,0,0.4); text-align:center; cursor:pointer;">
+                                 <span class="material-symbols-outlined" style="font-size:16px; display:block;">directions_bus</span>
+                                </div>`;
+
+            const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(getBusPopupContent(trip));
+
+            const marker = new mapboxgl.Marker({ element: elBus })
+                .setLngLat(latestLoc)
+                .setPopup(popup)
+                .addTo(map);
+
+            elBus.addEventListener('click', () => {
+                showPassengerPanel(trip.id);
+            });
+
+            tripMarkers[trip.id] = marker;
+        }
+    }
+
+    function updateTripMarkerAndPath(trip) {
+        if (trip.locations.length > 0) {
+            const latestLoc = trip.locations[trip.locations.length - 1];
+            
+            // Move bus marker
+            if (tripMarkers[trip.id]) {
+                tripMarkers[trip.id].setLngLat(latestLoc);
+                tripMarkers[trip.id].getPopup().setHTML(getBusPopupContent(trip));
+            } else {
+                plotTrip(trip);
+            }
+
+            // Update polyline track path
+            if (trip.locations.length > 1) {
+                drawRouteLine(trip.id, trip.locations);
+            }
+        }
+    }
+
+    function getBusPopupContent(trip) {
+        return `
+            <div class="text-xs p-1">
+                <b class="text-sm">Armada: ${trip.vehicle}</b><br>
+                <b>Rute:</b> ${trip.origin} → ${trip.destination}<br>
+                <b>Driver:</b> ${trip.driver}<br>
+                <b>Status:</b> ${trip.status.toUpperCase()}<br>
+                <button onclick="showPassengerPanel(${trip.id})" class="mt-2 w-full px-2 py-1 bg-primary text-white rounded text-xs">Lihat Penumpang</button>
+            </div>
+        `;
+    }
+
+    function fitMapBounds(trips) {
+        if (trips.length === 0) return;
+        const bounds = new mapboxgl.LngLatBounds();
+        trips.forEach(trip => {
+            if (trip.locations.length > 0) {
+                trip.locations.forEach(loc => bounds.extend(loc));
+            }
+            bounds.extend([trip.pickup_lng, trip.pickup_lat]);
+            bounds.extend([trip.drop_off_lng, trip.drop_off_lat]);
+        });
+        map.fitBounds(bounds, { padding: 50, maxZoom: 14 });
+    }
 
     function showPassengerPanel(tripId) {
         const trip = tripDataMap[tripId];
@@ -441,11 +603,19 @@
     }
 
     function focusTripOnMap(tripId) {
-        if (tripMarkers[tripId]) {
-            map.setView(tripMarkers[tripId].getLatLng(), 13);
-            tripMarkers[tripId].openPopup();
+        const trip = tripDataMap[tripId];
+        if (trip && trip.locations.length > 0) {
+            const latestLoc = trip.locations[trip.locations.length - 1];
+            map.flyTo({
+                center: latestLoc,
+                zoom: 12
+            });
+            if (tripMarkers[tripId]) {
+                tripMarkers[tripId].togglePopup();
+            }
             showPassengerPanel(tripId);
         }
     }
 </script>
 @endsection
+

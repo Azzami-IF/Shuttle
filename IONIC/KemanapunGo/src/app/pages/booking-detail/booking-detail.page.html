@@ -85,13 +85,15 @@
           </div>
 
           <!-- UNPAID -->
-          <div class="status-detail unpaid-detail" *ngIf="item.status === 'pending_payment'">
-            <div class="detail-icon-wrap unpaid">
-              <span class="material-symbols-outlined">pending</span>
-            </div>
-            <div class="detail-text">
-              <div class="detail-title">{{ getTranslation('awaitingPayment') }}</div>
-              <div class="detail-sub">{{ getTranslation('pleaseTransfer') }}</div>
+          <div *ngIf="item.status === 'pending_payment'">
+            <div class="status-detail unpaid-detail">
+              <div class="detail-icon-wrap unpaid">
+                <span class="material-symbols-outlined">pending</span>
+              </div>
+              <div class="detail-text">
+                <div class="detail-title">{{ getTranslation('awaitingPayment') }}</div>
+                <div class="detail-sub">{{ getTranslation('pleaseTransfer') }}</div>
+              </div>
             </div>
 
             <!-- Payment Box -->

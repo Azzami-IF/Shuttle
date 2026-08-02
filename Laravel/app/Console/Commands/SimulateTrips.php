@@ -57,8 +57,20 @@ class SimulateTrips extends Command
                     // Otomatis aktifkan trip scheduled ke on-going jika waktu keberangkatan sudah lewat/tiba
                     if ($trip->status === 'scheduled') {
                         if (\Carbon\Carbon::parse($trip->schedule->departure_time)->isPast()) {
-                            $trip->update(['status' => 'on-going']);
-                            $this->info("Trip #{$trip->id} ({$trip->schedule->origin} ➔ {$trip->schedule->destination}) otomatis diaktifkan menjadi ON-GOING!");
+                            $passengerCount = $trip->schedule->bookings()->where('status', '!=', 'cancelled')->count();
+                            
+                            if ($passengerCount > 0) {
+                                $trip->update([
+                                    'status' => 'on-going',
+                                    'started_at' => now(),
+                                ]);
+                                event(new \App\Events\TripStarted($trip->load(['schedule.vehicle', 'schedule.driver'])));
+                                $this->info("Trip #{$trip->id} ({$trip->schedule->origin} ➔ {$trip->schedule->destination}) otomatis diaktifkan menjadi ON-GOING karena memiliki {$passengerCount} penumpang!");
+                            } else {
+                                $trip->update(['status' => 'cancelled_empty']);
+                                $this->info("Trip #{$trip->id} ({$trip->schedule->origin} ➔ {$trip->schedule->destination}) otomatis dibatalkan (cancelled_empty) karena tidak ada penumpang.");
+                                continue;
+                            }
                         } else {
                             // Jangan simulasikan perjalanan yang belum berangkat
                             continue;
@@ -81,10 +93,36 @@ class SimulateTrips extends Command
                     $destLat = $destCoords[0];
                     $destLng = $destCoords[1];
 
-                    // Coba ambil rute jalan raya dari OSRM
+                    // Coba ambil rute jalan raya dari OSRM (melewati Halte/Stops jika ada)
                     $routeCoords = [];
                     try {
-                        $url = "https://router.project-osrm.org/route/v1/driving/{$originLng},{$originLat};{$destLng},{$destLat}?overview=full&geometries=geojson";
+                        $routeStops = [
+                            'depok-bandung' => [
+                                [107.2913, -6.3073], // Pool Karawang [lng, lat]
+                                [107.4431, -6.5571]  // Pool Purwakarta [lng, lat]
+                            ],
+                            'bogor-bandung' => [
+                                [107.1396, -6.8242], // Pool Cianjur [lng, lat]
+                                [107.4721, -6.8406]  // Pool Padalarang [lng, lat]
+                            ],
+                            'jakarta-bandung' => [
+                                [106.9756, -6.2383], // Pool Bekasi [lng, lat]
+                                [107.2913, -6.3073]  // Pool Karawang [lng, lat]
+                            ]
+                        ];
+
+                        $routeKey = "{$originName}-{$destName}";
+                        $waypoints = [];
+                        $waypoints[] = "{$originLng},{$originLat}";
+                        if (isset($routeStops[$routeKey])) {
+                            foreach ($routeStops[$routeKey] as $stop) {
+                                $waypoints[] = "{$stop[0]},{$stop[1]}";
+                            }
+                        }
+                        $waypoints[] = "{$destLng},{$destLat}";
+                        $waypointStr = implode(';', $waypoints);
+
+                        $url = "https://router.project-osrm.org/route/v1/driving/{$waypointStr}?overview=full&geometries=geojson";
                         $ctx = stream_context_create([
                             "http" => [
                                 "header" => "User-Agent: ShuttleAppSimulation/1.0\r\n",
@@ -110,21 +148,23 @@ class SimulateTrips extends Command
 
                         if ($index >= $totalPoints - 1) {
                             // Sudah sampai tujuan
-                            Location::create([
+                            $location = Location::create([
                                 'trip_id' => $trip->id,
                                 'latitude' => $destLat,
                                 'longitude' => $destLng,
                             ]);
-                            $trip->update(['status' => 'completed']);
+                            $this->broadcastLocation($trip, $location);
+                            $this->completeTrip($trip);
                             $this->info("Trip #{$trip->id} ({$trip->schedule->origin} -> {$trip->schedule->destination}) telah TIBA di tujuan!");
                         } else {
                             // Simpan titik koordinat jalan raya (OSRM mengembalikan format [lng, lat])
                             $point = $routeCoords[$index];
-                            Location::create([
+                            $location = Location::create([
                                 'trip_id' => $trip->id,
                                 'latitude' => $point[1],
                                 'longitude' => $point[0],
                             ]);
+                            $this->broadcastLocation($trip, $location);
                             $this->info("Trip #{$trip->id} [{$trip->schedule->origin} -> {$trip->schedule->destination}]: Update lokasi jalan raya ({$point[1]}, {$point[0]})");
                         }
                     } else {
@@ -142,7 +182,7 @@ class SimulateTrips extends Command
                         $distance = sqrt(pow($destLat - $currentLat, 2) + pow($destLng - $currentLng, 2));
 
                         if ($distance < 0.005) {
-                            $trip->update(['status' => 'completed']);
+                            $this->completeTrip($trip);
                             $this->info("Trip #{$trip->id} ({$trip->schedule->origin} -> {$trip->schedule->destination}) telah TIBA di tujuan!");
                             continue;
                         }
@@ -150,11 +190,12 @@ class SimulateTrips extends Command
                         $nextLat = $currentLat + ($destLat - $currentLat) * 0.08;
                         $nextLng = $currentLng + ($destLng - $currentLng) * 0.08;
 
-                        Location::create([
+                        $location = Location::create([
                             'trip_id' => $trip->id,
                             'latitude' => $nextLat,
                             'longitude' => $nextLng,
                         ]);
+                        $this->broadcastLocation($trip, $location);
 
                         $this->info("Trip #{$trip->id} [{$trip->schedule->origin} -> {$trip->schedule->destination}]: Update lokasi garis lurus ({$nextLat}, {$nextLng})");
                     }
@@ -163,5 +204,41 @@ class SimulateTrips extends Command
 
             sleep($interval);
         }
+    }
+
+    private function broadcastLocation(Trip $trip, Location $location)
+    {
+        $schedule = $trip->schedule;
+        $vehicleInfo = [];
+        if ($schedule) {
+            $vehicleInfo = [
+                'plate_number' => $schedule->vehicle->license_plate ?? 'Unknown',
+                'driver_name' => $schedule->driver->name ?? 'Unknown',
+            ];
+        }
+
+        event(new \App\Events\DriverLocationUpdated(
+            (int) $schedule->id,
+            (float) $location->latitude,
+            (float) $location->longitude,
+            $location->created_at->toIso8601String(),
+            $vehicleInfo
+        ));
+    }
+
+    private function completeTrip(Trip $trip)
+    {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($trip) {
+            $trip->update([
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            // Update all bookings for this schedule to completed
+            $trip->schedule->bookings()->where('status', 'booked')->update(['status' => 'completed']);
+
+            // Dispatch event to notify passengers & trigger bot return bookings
+            event(new \App\Events\TripCompleted($trip->load(['schedule.vehicle', 'schedule.driver'])));
+        });
     }
 }

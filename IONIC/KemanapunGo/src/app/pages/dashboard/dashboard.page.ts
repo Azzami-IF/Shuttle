@@ -65,7 +65,7 @@ export class DashboardPage {
 
   ionViewWillEnter() {
     this.currentUser = this.getResolvedUser();
-    if (this.currentUser?.role === 'customer') {
+    if (!this.currentUser || this.currentUser.role === 'customer') {
       this.loadSchedulePreview();
       this.startPromoRotation();
     }

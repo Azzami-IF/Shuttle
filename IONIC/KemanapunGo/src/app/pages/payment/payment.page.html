@@ -113,6 +113,37 @@
         <p class="helper">Nominal dapat diubah jika perlu. Nominal akan diformat ke Rupiah (Rp).</p>
       </section>
 
+      <!-- Pilihan Metode Pembayaran -->
+      <section class="card payment-method-card" *ngIf="lang$ | async">
+        <div class="card-title">
+          <span class="material-symbols-outlined">account_balance_wallet</span>
+          <h3>Pilih Metode Pembayaran</h3>
+        </div>
+        <div class="method-options">
+          <div class="method-option" [class.selected]="selectedMethod === 'manual'" (click)="selectedMethod = 'manual'">
+            <div class="option-header">
+              <span class="material-symbols-outlined icon">account_balance</span>
+              <div class="text">
+                <strong>Transfer Bank Manual</strong>
+                <p>Transfer manual ke rekening BNI</p>
+              </div>
+            </div>
+            <div class="radio-indicator"></div>
+          </div>
+          
+          <div class="method-option" [class.selected]="selectedMethod === 'dompetx'" (click)="selectedMethod = 'dompetx'">
+            <div class="option-header">
+              <span class="material-symbols-outlined icon">wallet</span>
+              <div class="text">
+                <strong>DompetX (E-Wallet)</strong>
+                <p>Bayar instan via DompetX E-Wallet / QRIS</p>
+              </div>
+            </div>
+            <div class="radio-indicator"></div>
+          </div>
+        </div>
+      </section>
+
       <div class="state-card card error compact" *ngIf="createError">
         <span class="material-symbols-outlined">warning</span>
         <p>{{ createError }}</p>
@@ -234,10 +265,18 @@
         <span>Nominal Dibayar</span>
         <strong>{{ formatCurrency(footerNominal) }}</strong>
       </div>
-      <ion-button expand="block" color="primary" (click)="createVirtualAccount()" [disabled]="!canCreateVa" class="h-14">
-        <ion-spinner slot="start" *ngIf="isCreatingVa" name="dots"></ion-spinner>
-        {{ isCreatingVa ? 'Menyiapkan Data Transfer...' : getTranslation('continueToTransfer') }}
-      </ion-button>
+      <ng-container *ngIf="selectedMethod === 'manual'">
+        <ion-button expand="block" color="primary" (click)="createVirtualAccount()" [disabled]="!canCreateVa" class="h-14">
+          <ion-spinner slot="start" *ngIf="isCreatingVa" name="dots"></ion-spinner>
+          {{ isCreatingVa ? 'Menyiapkan Data Transfer...' : getTranslation('continueToTransfer') }}
+        </ion-button>
+      </ng-container>
+      <ng-container *ngIf="selectedMethod === 'dompetx'">
+        <ion-button expand="block" color="success" (click)="payWithDompetX()" [disabled]="!canCreateVa" class="h-14">
+          <ion-spinner slot="start" *ngIf="isCreatingVa" name="dots"></ion-spinner>
+          {{ isCreatingVa ? 'Menghubungkan ke DompetX...' : 'Bayar Sekarang dengan DompetX' }}
+        </ion-button>
+      </ng-container>
     </div>
   </div>
 </ion-content>

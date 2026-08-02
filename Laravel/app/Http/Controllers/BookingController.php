@@ -17,7 +17,9 @@ class BookingController extends Controller
         $user = $request->user();
         $query = Booking::with(['user', 'schedule.trip', 'schedule.vehicle', 'schedule.driver', 'seat']);
 
-        if ($user->role === 'customer') {
+        if ($request->has('payment_code')) {
+            $query->where('payment_code', $request->get('payment_code'));
+        } elseif ($user->role === 'customer') {
             $query->where('user_id', $user->id);
         } elseif ($user->role === 'driver') {
             $query->whereHas('schedule', function ($q) use ($user) {
@@ -46,6 +48,16 @@ class BookingController extends Controller
         }
 
         return response()->json($query->get());
+    }
+
+    private function bookingAccessAllowed(Request $request, Booking $booking): bool
+    {
+        if ($request->user()->id == $booking->user_id || $request->user()->role === 'admin') {
+            return true;
+        }
+
+        $paymentCode = $request->query('payment_code');
+        return $paymentCode && $paymentCode === $booking->payment_code;
     }
 
     public function store(Request $request)
@@ -116,7 +128,7 @@ class BookingController extends Controller
 
     public function confirmPayment(Request $request, Booking $booking)
     {
-        if ($request->user()->id !== $booking->user_id && $request->user()->role !== 'admin') {
+        if (!$this->bookingAccessAllowed($request, $booking)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -134,16 +146,37 @@ class BookingController extends Controller
 
     public function show(Request $request, Booking $booking)
     {
-        if ($request->user()->id !== $booking->user_id && $request->user()->role !== 'admin') {
+        if (!$this->bookingAccessAllowed($request, $booking)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         return response()->json($booking->load(['user', 'schedule', 'seat']));
     }
 
+    public function showByPaymentCode(string $paymentCode)
+    {
+        $bookings = Booking::with(['user', 'schedule', 'seat'])
+            ->where('payment_code', $paymentCode)
+            ->get();
+
+        if ($bookings->isEmpty()) {
+            return response()->json(['message' => 'Payment booking not found'], 404);
+        }
+
+        $totalPrice = $bookings->sum(function ($booking) {
+            return $booking->schedule?->price ?? 0;
+        });
+
+        return response()->json([
+            'payment_code' => $paymentCode,
+            'total_price' => $totalPrice,
+            'bookings' => $bookings,
+        ]);
+    }
+
     public function cancel(Request $request, Booking $booking)
     {
-        if ($request->user()->id !== $booking->user_id && $request->user()->role !== 'admin') {
+        if ($request->user()->id != $booking->user_id && $request->user()->role !== 'admin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -194,7 +227,7 @@ class BookingController extends Controller
 
     public function uploadProof(Request $request, Booking $booking)
     {
-        if ($request->user()->id !== $booking->user_id) {
+        if (!$this->bookingAccessAllowed($request, $booking)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="90a2a4ca-2caa-491d-8325-775b944bf56d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/DriverpunGo/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/DriverpunGo/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DriverpunGo/android/app/src/main/java/app/kemanapungo/id/MainActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DriverpunGo/capacitor.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/DriverpunGo/capacitor.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DriverpunGo/src/app/pages/driver-tracking/driver-tracking.page.ts" beforeDir="false" afterPath="$PROJECT_DIR$/DriverpunGo/src/app/pages/driver-tracking/driver-tracking.page.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DriverpunGo/src/app/pages/login/login.page.html" beforeDir="false" afterPath="$PROJECT_DIR$/DriverpunGo/src/app/pages/login/login.page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DriverpunGo/src/app/pages/login/login.page.scss" beforeDir="false" afterPath="$PROJECT_DIR$/DriverpunGo/src/app/pages/login/login.page.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../repo_remote" beforeDir="false" afterPath="$PROJECT_DIR$/../repo_remote" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="3FNhYFGBYlLahZybZ0ygqprLWTR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main-backup",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="90a2a4ca-2caa-491d-8325-775b944bf56d" name="Changes" comment="" />
+      <created>1781921481160</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781921481160</updated>
+    </task>
+    <servers />
+  </component>
+</project>

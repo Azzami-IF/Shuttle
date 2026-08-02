@@ -180,7 +180,7 @@ export class BookingDetailPage {
     const formData = new FormData();
     formData.append('image', file);
 
-    this.api.post(`bookings/${booking.id}/upload-proof`, formData).subscribe({
+    this.api.postFormData(`bookings/${booking.id}/upload-proof`, formData).subscribe({
       next: (res: any) => {
         void this.ui.hideLoading();
         booking.payment_proof = res.payment_proof;
@@ -220,7 +220,7 @@ export class BookingDetailPage {
 
   isTrackable(booking: any): boolean {
     if (!booking.schedule?.trip) return false;
-    const trackableStatuses = ['boarding', 'on-going', 'arrived', 'delayed', 'completed'];
+    const trackableStatuses = ['scheduled', 'boarding', 'on-going', 'arrived', 'delayed', 'completed'];
     return trackableStatuses.includes(booking.schedule.trip.status);
   }
 

@@ -36,22 +36,27 @@ export class DriverTripsPage {
   }
 
   loadTrips() {
-    this.api.get('trips').subscribe((res: any[]) => {
-      this.trips = res;
-      this.activeTrip = this.trips.find(t => t.status === 'on-going');
+    this.api.get('trips').subscribe({
+      next: (res: any[]) => {
+        this.trips = res;
+        this.activeTrip = this.trips.find(t => t.status === 'on-going');
 
-      const scheduledTrips = this.trips
-        .filter(t => t.status === 'scheduled')
-        .sort((a, b) => new Date(a.schedule.departure_time).getTime() - new Date(b.schedule.departure_time).getTime());
+        const scheduledTrips = this.trips
+          .filter(t => t.status === 'scheduled')
+          .sort((a, b) => new Date(a.schedule.departure_time).getTime() - new Date(b.schedule.departure_time).getTime());
 
-      if (scheduledTrips.length > 0) {
-        this.nextTrip = scheduledTrips[0];
-        this.laterTrips = scheduledTrips.slice(1);
-        this.applySearch();
-      } else {
-        this.nextTrip = null;
-        this.laterTrips = [];
-        this.filteredLaterTrips = [];
+        if (scheduledTrips.length > 0) {
+          this.nextTrip = scheduledTrips[0];
+          this.laterTrips = scheduledTrips.slice(1);
+          this.applySearch();
+        } else {
+          this.nextTrip = null;
+          this.laterTrips = [];
+          this.filteredLaterTrips = [];
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load trips', err);
       }
     });
   }
