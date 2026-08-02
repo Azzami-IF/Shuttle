@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private http = inject(HttpClient);
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'http://localhost:8000/api';
 
   constructor() {}
 
